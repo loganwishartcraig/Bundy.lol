@@ -1,13 +1,8 @@
+import * as axios from 'axios';
 import * as localForage from 'localforage';
 
 
 
-// import { GroupActions } from '../Actions/GroupActions';
-
-// import { UserStore } from '../Stores/UserStore';
-
-
-import * as axios from 'axios';
 
 class _GroupService {
 
@@ -91,12 +86,8 @@ class _GroupService {
   _getGroupInfo(groupId) {
     return new Promise((res, rej) => {
 
-      setTimeout(() => {
-        if (DUMMY_API_RESPONSE.hasOwnProperty(groupId)) {
-          res(DUMMY_API_RESPONSE[groupId])
-        }
-        else rej({msg: 'Group Not Found'})
-      }, Math.floor((Math.random() * (2000-500)) + 500))
+        console.log('trying to get group info for ', groupId, ' -- NOT IMPLEMENTED')
+        rej()
 
     });
   }
@@ -109,12 +100,30 @@ class _GroupService {
     return this._groups !== undefined
   }
 
-  requestJoin(groupName, password) {
+  joinGroup(groupName, password) {
 
   }
 
-  requestLeave(groupName) {
+  leaveGroup(groupName) {
     
+  }
+
+  createGroup(groupReq) {
+    return new Promise((res, rej) => {
+
+      axios
+        .post('/group/create', {
+          groupReq: groupReq
+        })
+        .then(response => {
+          res(response.data.group)
+          ;
+        })
+        .catch(err => {
+          rej(err.response.data)
+        })
+
+    });
   }
 
 }

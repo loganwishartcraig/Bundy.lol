@@ -11,7 +11,9 @@ import { UserActions } from './Actions/UserActions';
 
 import { UserPane } from './Components/UserPane/UserPane.react';
 import { GroupPane } from './Components/GroupPane/GroupPane.react';
-import { TodoPane } from './Components/TodoPane/TodoPane.react';
+// import { TodoPane } from './Components/TodoPane/TodoPane.react';
+import { DisplayPane } from './Components/DisplayPane/DisplayPane.react';
+
 
 import { RegistrationPage } from './Components/Registration/RegistrationPage.react';
 import { LoginPage } from './Components/Login/LoginPage.react';
@@ -28,7 +30,7 @@ class Dashboard extends Component {
       <div>
         <UserPane /><br />
         <GroupPane /><br />
-        <TodoPane />
+        <DisplayPane />
       </div>
     )
   }

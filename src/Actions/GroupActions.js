@@ -14,7 +14,6 @@ const initGroup = (groupIds = []) => {
     .getLastActive()
     .then(lastActive => {
       if (groupIds.indexOf(lastActive.id) >= 0) {
-        // console.log('setting active', lastActive);
         setActive(lastActive);
         GroupService
           .fetch(lastActive.id)
@@ -31,37 +30,6 @@ const initGroup = (groupIds = []) => {
       console.error('ERR: GroupActions.js -> initGroup()', err);
       resetActive(groupIds);
     })
-
-  // GroupService
-  //   .getLastActive()
-  //   .then((lastActive) => {
-  //     if (groupIds.indexOf(lastActive.id) >= 0) {
-  //       setActive(lastActive);
-  //       GroupService
-  //         .fetch(lastActive.id)
-  //         .then(groupInfo => {
-  //           setActive(groupInfo)
-  //           GroupService.saveLastActive(groupInfo);
-  //         })
-  //         .catch(() => {});
-  //     }
-  //     else resetActive(groupIds);
-  //   })
-  //   .catch(() => {
-  //     resetActive(groupIds)
-  //   });
-
-
-
-  // groupIds
-  //   .forEach(groupId => {
-  //     GroupService
-  //       .fetch(groupId)
-  //       .then(groupInfo => setGroup(groupInfo))
-  //       .catch(() => {});
-  //   });
-
-  // return groupIds
 
 };
 
@@ -87,18 +55,6 @@ const updateGroups = (groupIds) => {
     setGroups(groups);
   })
   .catch(() => {});
-  // groupIds
-  //   .forEach(groupId => {
-  //     GroupService
-  //       .fetch(groupId)
-  //       .then(groupInfo => setGroup(groupInfo))
-  //       .catch(() => {});
-  //   });
-
-  // AppDispatcher.dispatch({
-  //   type: GroupConstants.UPDATE_GROUPS,
-  //   groups: groups
-  // });
 };
 
 const setGroups = (groups) => {
@@ -148,7 +104,25 @@ const joinGroup = (groupId, password) => {
   });
 };
 
+const createGroup = (groupReq) => {
 
+  console.log('GroupActions -> createGroup(', groupReq, ')')
+
+  GroupService
+    .createGroup(groupReq)
+    .then(group => {
+      console.log('would be setting new group.', group);
+    })
+    .catch(err =>{
+      console.log('would be dispaying error.', err)
+    })
+
+  // AppDispatcher.dispatch({
+  //   type: GroupConstants.CREATE_GROUP,
+  //   group: groupReq
+  // });
+
+};
 
 export const GroupActions = {
 
@@ -158,6 +132,6 @@ export const GroupActions = {
   updateGroups,
   setActive,
   leaveGroup,
-  joinGroup
-
+  joinGroup,
+  createGroup
 };

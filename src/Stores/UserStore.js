@@ -50,7 +50,9 @@ class _UserStore extends EventEmitter {
   }
 
   setUser(user) {
-    if (user) this._activeUser = user;
+    if (user) {
+      this._activeUser = user;
+    }
   }
 
   clearUser() {

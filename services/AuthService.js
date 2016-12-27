@@ -2,6 +2,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const authConfig = require('../auth/config')
+
 const HashService = require('./HashService');
 
 
@@ -10,7 +12,7 @@ const _generateToken = (userId) => {
       sub: userId
     };
   // create a token string
-  return jwt.sign(payload, "eN6rQiXDq6Qlz8MWqUtJF8ypF8ZvCBE1wZkdwi0tXcig3LULx6aJwgYip495mfN");
+  return jwt.sign(payload, authConfig.secret);
 };
 
 const setCredentials = (userId, password) => {

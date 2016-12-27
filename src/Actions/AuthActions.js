@@ -28,7 +28,8 @@ const login = (credentials) => {
       UserActions.setUser(response.user);
     })
     .catch(err => {
-      console.error('ERR: AuthActions.js -> login()', err)
+      console.error('ERR: AuthActions.js -> login()', err);
+      
     });
 
 };

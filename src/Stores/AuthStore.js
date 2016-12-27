@@ -19,6 +19,8 @@ class _AuthStore extends EventEmitter {
   }
 
   _setAuthHeader(token) {
+
+    // why set this in auth store?
     axios.defaults.headers.common['Authorization'] = token;
   }
 

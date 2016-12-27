@@ -3,12 +3,15 @@ import React, { Component } from 'react';
 import { GroupStore } from '../../Stores/GroupStore';
 import { GroupActions } from '../../Actions/GroupActions';
 
+import { DisplayActions } from '../../Actions/DisplayActions';
+
 import { GroupSelector } from './GroupSelector.react';
 
 
 const getGroupState = () => ({
   activeGroup: GroupStore.getActive(),
-  groups: GroupStore.getGroups()
+  groups: GroupStore.getGroups(),
+  isAdding: false
 });
 
 
@@ -22,6 +25,10 @@ class GroupPane extends Component {
 
   _handleGroupChange() {
     this.setState(getGroupState());
+  }
+
+  _handleGroupAdd() {
+    DisplayActions.gotoAddGroup();
   }
 
   // _handleGroupSwitch(groupId) {
@@ -48,7 +55,7 @@ class GroupPane extends Component {
           ) : (
           <span>U have no groups :(<br /></span>
         )}
-        <button>Add Group</button>
+        <button onClick={this._handleGroupAdd} >Add Group</button>
       </div> 
     );
   }

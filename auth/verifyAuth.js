@@ -1,18 +1,24 @@
 const jwt = require('jsonwebtoken');
+const authConfig = require('./config');
 
 module.exports = (req, res, next) => {
 
-  let authHeader = req.get('Authorization');
-  console.log('\tverifying', authHeader);
+  let token = req.get('Authorization');
+  console.log('\tverifying', token);
 
-  if (authHeader === undefined)
+  if (token === undefined)
     return res.status(403).json({status: 403, msg: 'Not authorized'});
 
-  if ((typeof authHeader !== 'string') || (authHeader.length === 0))
+  if ((typeof token !== 'string') || (token.length === 0))
     return res.status(403).json({status: 403, msg: 'Misconfigured authroization'});
 
-  console.log(`verifying auth for ${token}`)
+  // console.log(`verifying auth for ${token}`)
 
-  next();
+  jwt.verify(token, authConfig.secret, (err, decoded) => {
+    if (err) res.status(403).json({status: 403, msg: 'Malformed authorization'});
+    
+    else next();
+  })
+
 
 };
