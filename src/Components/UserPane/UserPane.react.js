@@ -12,8 +12,7 @@ const getUserState = () => ({
 class UserPane extends Component {
 
   constructor(props, context) {
-    // UserActions.initUser('a');
-    console.log('user mounting');
+    console.log('user mounting', getUserState());
     super(props, context);
     this.state = getUserState();
   }

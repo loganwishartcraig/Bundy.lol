@@ -71,19 +71,11 @@
 
 	var _AuthActions = __webpack_require__(235);
 
-	var _AuthStore = __webpack_require__(274);
+	var _App = __webpack_require__(274);
 
-	var _UserActions = __webpack_require__(267);
+	var _Registration = __webpack_require__(297);
 
-	var _UserPane = __webpack_require__(276);
-
-	var _GroupPane = __webpack_require__(278);
-
-	var _DisplayPane = __webpack_require__(284);
-
-	var _RegistrationPage = __webpack_require__(293);
-
-	var _LoginPage = __webpack_require__(294);
+	var _Login = __webpack_require__(298);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -95,132 +87,9 @@
 
 	// import { UserStore } from './Stores/UserStore';
 
-	// import { TodoPane } from './Components/TodoPane/TodoPane.react';
 
-
-	var Dashboard = function (_Component) {
-	  _inherits(Dashboard, _Component);
-
-	  function Dashboard() {
-	    _classCallCheck(this, Dashboard);
-
-	    return _possibleConstructorReturn(this, (Dashboard.__proto__ || Object.getPrototypeOf(Dashboard)).apply(this, arguments));
-	  }
-
-	  _createClass(Dashboard, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(_UserPane.UserPane, null),
-	        _react2.default.createElement('br', null),
-	        _react2.default.createElement(_GroupPane.GroupPane, null),
-	        _react2.default.createElement('br', null),
-	        _react2.default.createElement(_DisplayPane.DisplayPane, null)
-	      );
-	    }
-	  }]);
-
-	  return Dashboard;
-	}(_react.Component);
-
-	var getAuthState = function getAuthState() {
-	  return {
-	    hasAuth: _AuthStore.AuthStore.hasAuth()
-	  };
-	};
-
-	// bind to authentication changes.
-
-	var App = function (_Component2) {
-	  _inherits(App, _Component2);
-
-	  function App(props, context) {
-	    _classCallCheck(this, App);
-
-	    var _this2 = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props, context));
-
-	    _this2.state = {
-	      hasAuth: _AuthStore.AuthStore.hasAuth()
-	    };
-
-	    return _this2;
-	  }
-
-	  _createClass(App, [{
-	    key: 'componentWillMount',
-	    value: function componentWillMount() {
-	      var _this3 = this;
-
-	      console.log('app mounting', this.state.hasAuth);
-	      _AuthActions.AuthActions.init();
-	      _AuthStore.AuthStore.addListener(function () {
-	        _this3.setState(getAuthState());
-	        _reactRouter.browserHistory.push('/');
-	      });
-	      // if (this.state.hasAuth) {
-	      //   UserActions.initUser('a');
-	      // };
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        this.state.hasAuth ? _react2.default.createElement(Dashboard, null) : _react2.default.createElement(
-	          LandingPage,
-	          null,
-	          this.props.children
-	        )
-	      );
-	    }
-	  }]);
-
-	  return App;
-	}(_react.Component);
-
-	var LandingPage = function (_Component3) {
-	  _inherits(LandingPage, _Component3);
-
-	  function LandingPage() {
-	    _classCallCheck(this, LandingPage);
-
-	    return _possibleConstructorReturn(this, (LandingPage.__proto__ || Object.getPrototypeOf(LandingPage)).apply(this, arguments));
-	  }
-
-	  _createClass(LandingPage, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(
-	          _reactRouter.Link,
-	          { to: '/register' },
-	          'Register'
-	        ),
-	        _react2.default.createElement(
-	          _reactRouter.Link,
-	          { to: '/login' },
-	          'Login'
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          null,
-	          this.props.children
-	        )
-	      );
-	    }
-	  }]);
-
-	  return LandingPage;
-	}(_react.Component);
-
-	var PageNotFound = function (_Component4) {
-	  _inherits(PageNotFound, _Component4);
+	var PageNotFound = function (_Component) {
+	  _inherits(PageNotFound, _Component);
 
 	  function PageNotFound() {
 	    _classCallCheck(this, PageNotFound);
@@ -247,8 +116,8 @@
 	  return PageNotFound;
 	}(_react.Component);
 
-	var RouteHandler = function (_Component5) {
-	  _inherits(RouteHandler, _Component5);
+	var RouteHandler = function (_Component2) {
+	  _inherits(RouteHandler, _Component2);
 
 	  function RouteHandler() {
 	    _classCallCheck(this, RouteHandler);
@@ -264,9 +133,9 @@
 	        { history: _reactRouter.browserHistory },
 	        _react2.default.createElement(
 	          _reactRouter.Route,
-	          { path: '/', component: App },
-	          _react2.default.createElement(_reactRouter.Route, { path: 'register', component: _RegistrationPage.RegistrationPage }),
-	          _react2.default.createElement(_reactRouter.Route, { path: 'login', component: _LoginPage.LoginPage }),
+	          { path: '/', component: _App.App },
+	          _react2.default.createElement(_reactRouter.Route, { path: 'register', component: _Registration.Registration }),
+	          _react2.default.createElement(_reactRouter.Route, { path: 'login', component: _Login.Login }),
 	          _react2.default.createElement(_reactRouter.Route, { path: '*', component: PageNotFound })
 	        )
 	      );
@@ -281,7 +150,7 @@
 	  _reactDom2.default.render(_react2.default.createElement(RouteHandler, null), document.getElementById('root'));
 	};
 
-	render();
+	_AuthActions.AuthActions.init().then(render).catch(render);
 
 /***/ },
 /* 1 */
@@ -27322,19 +27191,26 @@
 
 	var init = function init() {
 
-	  _AuthService.AuthService.getSession().then(function (sessionToken) {
-	    console.log('got session token', sessionToken);
-	    setToken(sessionToken);
-	  }).catch(function (err) {
-	    console.error('ERR: AuthActions.js -> init()', err);
+	  return new Promise(function (res, rej) {
+
+	    _AuthService.AuthService.getSession().then(function (session) {
+	      console.log('AuthActions.js -> init() | msg: Got session token', session.token, 'and user', session.user);
+	      _UserActions.UserActions.setUser(session.user);
+	      setAuth();
+	      res();
+	    }).catch(function (err) {
+	      console.error('ERR: AuthActions.js -> init() |', err);
+	      res();
+	    });
 	  });
 	};
 
 	var login = function login(credentials) {
 
 	  _AuthService.AuthService.login(credentials).then(function (response) {
-	    setToken(response.token);
+	    _AuthService.AuthService.setSession(response);
 	    _UserActions.UserActions.setUser(response.user);
+	    setAuth();
 	  }).catch(function (err) {
 	    console.error('ERR: AuthActions.js -> login()', err);
 	  });
@@ -27347,13 +27223,13 @@
 	  });
 	};
 
-	var setToken = function setToken(token) {
+	var setAuth = function setAuth() {
 
-	  _AuthService.AuthService.setSession(token);
+	  // AuthService.setSession(token);
 
 	  _AppDispatcher.AppDispatcher.dispatch({
-	    type: _AuthConstants.AuthConstants.SET_TOKEN,
-	    token: token
+	    type: _AuthConstants.AuthConstants.SET_AUTH,
+	    authenticated: true
 	  });
 	};
 
@@ -27362,7 +27238,7 @@
 	  init: init,
 	  login: login,
 	  logout: logout,
-	  setToken: setToken
+	  setAuth: setAuth
 
 	};
 
@@ -27648,7 +27524,7 @@
 	var AuthConstants = exports.AuthConstants = {
 
 	  // 'INIT_AUTH': 'INIT_AUTH',
-	  'SET_TOKEN': 'SET_TOKEN',
+	  'SET_AUTH': 'SET_AUTH',
 	  'REQUEST_TOKEN': 'REQUEST_TOKEN',
 	  'CLEAR_TOKEN': 'CLEAR_TOKEN'
 
@@ -27684,30 +27560,34 @@
 	    _classCallCheck(this, _AuthService);
 
 	    // this.token = '';
-	    this.cacheKey = 'bundylol_token';
+	    this.cacheKey = 'access_cred';
 
 	    //check cache for existing token and set
-	    this._removeSession();
-
-	    // this._clearSession();
-	    // this.clearCredentials();
+	    // this._removeSession();
 	  }
 
 	  _createClass(_AuthService, [{
 	    key: '_setSession',
-	    value: function _setSession(token) {
-	      console.log('setting session', token);
-	      localStorage.setItem(this.cacheKey, token);
+	    value: function _setSession(session) {
+	      console.log('AuthService.js -> setSession() | msg: Setting session', session.token, session.user);
+
+	      localForage.setItem(this.cacheKey, {
+	        token: session.token,
+	        user: session.user
+	      });
+
+	      axios.defaults.headers.common['Authorization'] = 'Bearer ' + session.token;
 	    }
 	  }, {
 	    key: '_removeSession',
 	    value: function _removeSession() {
-	      localStorage.removeItem(this.cacheKey);
+	      localForage.removeItem(this.cacheKey);
+	      axios.defaults.headers.common['Authorization'] = undefined;
 	    }
 	  }, {
 	    key: '_getSession',
 	    value: function _getSession() {
-	      return localStorage.getItem(this.cacheKey);
+	      return localForage.getItem(this.cacheKey);
 	    }
 	  }, {
 	    key: '_cacheToken',
@@ -27732,8 +27612,8 @@
 	    }
 	  }, {
 	    key: 'setSession',
-	    value: function setSession(token) {
-	      this._setSession(token);
+	    value: function setSession(session) {
+	      this._setSession(session);
 	    }
 	  }, {
 	    key: 'getSession',
@@ -27742,8 +27622,11 @@
 
 	      return new Promise(function (res, rej) {
 
-	        var session = _this._getSession();
-	        if (session) res(session);else rej({ msg: 'No session token found' });
+	        _this._getSession().then(function (session) {
+	          if (session) res(session);else rej({ msg: 'No session token found' });
+	        }).catch(function (err) {
+	          rej(err);
+	        });
 	      });
 	    }
 	  }, {
@@ -31583,28 +31466,56 @@
 
 	var _Array = __webpack_require__(273);
 
-	var initUser = function initUser(email) {
+	// const initUser = (cachedUser) => {
 
-	  _UserService.UserService.getFromCache().then(function (cachedUser) {
-	    setUser(cachedUser);
-	    _GroupActions.GroupActions.initGroup(cachedUser.memberOf);
-	    _UserService.UserService.fetchUser(email).then(function (updatedUser) {
-	      setUser(updatedUser);
-	      if (!(0, _Array.sameSets)(cachedUser.memberOf, updatedUser.memberOf)) _GroupActions.GroupActions.initGroup(updatedUser.memberOf);
-	      _UserService.UserService.cacheUser(updatedUser);
-	    }).catch(function (err) {
-	      console.error('ERR: UserActions.js -> initUser()', err);
-	    });
-	  }).catch(function () {
-	    _UserService.UserService.fetchUser(email).then(function (user) {
-	      setUser(user);
-	      _GroupActions.GroupActions.initGroup(user.memberOf);
-	      _UserService.UserService.cacheUser(user);
-	    }).catch(function (err) {
-	      console.error('ERR: UserActions.js -> initUser()', err);
-	    });
-	  });
-	};
+	//   if (cachedUser) {
+
+	//     setUser(cachedUser);
+	//     GroupActions.initGroup(cachedUser.memberOf);
+	//     UserService
+	//       .fetchUser(cachedUser.email)
+	//       .then(newUser => {
+	//         setUser(newUser);
+	//         if (!sameSets(cachedUser.memberOf, newUser.memberOf))
+	//           GroupActions.initGroup(updatedUser.memberOf);
+	//       })
+	//       .catch(err => {
+	//         console.error('UserActions.js -> initUser() | msg:', err);
+	//       })
+
+	//   } 
+	//   // update to expect cached user object
+	// UserService
+	//   .getFromCache()
+	//   .then(cachedUser => {
+	//     setUser(cachedUser);
+	//     GroupActions.initGroup(cachedUser.memberOf)
+	//     UserService
+	//       .fetchUser(email)
+	//       .then(updatedUser => {
+	//         setUser(updatedUser);
+	//         if (!sameSets(cachedUser.memberOf, updatedUser.memberOf))
+	//           GroupActions.initGroup(updatedUser.memberOf)
+	//         UserService.cacheUser(updatedUser);
+	//       })
+	//       .catch(err => {
+	//         console.error('ERR: UserActions.js -> initUser()', err);
+	//       });
+	//   })
+	//   .catch(() => {
+	//     UserService
+	//       .fetchUser(email)
+	//       .then((user) => {
+	//         setUser(user);
+	//         GroupActions.initGroup(user.memberOf);
+	//         UserService.cacheUser(user);
+	//       })
+	//       .catch(err => {
+	//         console.error('ERR: UserActions.js -> initUser()', err);
+	//       });
+	// });
+
+	// };
 
 	var setUser = function setUser(user) {
 	  _AppDispatcher.AppDispatcher.dispatch({
@@ -31670,7 +31581,7 @@
 
 	var UserActions = exports.UserActions = {
 
-	  initUser: initUser,
+	  // initUser,
 	  setUser: setUser,
 	  unsetUser: unsetUser,
 	  updateUser: updateUser,
@@ -31718,16 +31629,13 @@
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	// import { UserActions } from '../Actions/UserActions';
-	// import { GroupActions } from '../Actions/GroupActions';
+	var _axios = __webpack_require__(242);
+
+	var axios = _interopRequireWildcard(_axios);
 
 	var _localforage = __webpack_require__(241);
 
 	var localForage = _interopRequireWildcard(_localforage);
-
-	var _axios = __webpack_require__(242);
-
-	var axios = _interopRequireWildcard(_axios);
 
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -31736,41 +31644,47 @@
 	var _UserService = function () {
 	  function _UserService() {
 	    _classCallCheck(this, _UserService);
-
-	    this._cacheKey = 'bundylol_user';
-
-	    this.clearLastActive();
 	  }
 
+	  // this._cacheKey = 'bundylol_user';
+
+	  // this.clearLastActive();
+
+
+	  // clearLastActive() {
+	  //   localForage.removeItem(this._cacheKey);
+	  // }
+
+	  // cacheUser(user) {
+
+	  //   localForage
+	  //     .setItem(this._cacheKey, user)
+	  //     .then(msg => {
+	  //      console.log('Cached user', user);
+	  //     })
+	  //     .catch(err => {
+	  //      console.error('Error caching user', err, user);
+	  //     });
+
+	  //  // axios.defaults.headers.common['User'] = user.id;
+
+	  // }
+
+	  // getFromCache() {
+
+	  //   return new Promise(function(res, rej) {
+	  //     localForage
+	  //       .getItem(this._cacheKey)
+	  //       .then(user => {(user !== null) ? res(user)  : rej(undefined)})
+	  //       .catch(err => {
+	  //         console.error('Error getting user from cache. Rejecting.')
+	  //         rej(err);
+	  //       });
+	  //   }.bind(this))
+
+	  // }
+
 	  _createClass(_UserService, [{
-	    key: 'clearLastActive',
-	    value: function clearLastActive() {
-	      localForage.removeItem(this._cacheKey);
-	    }
-	  }, {
-	    key: 'cacheUser',
-	    value: function cacheUser(user) {
-
-	      localForage.setItem(this._cacheKey, user).then(function (msg) {
-	        console.log('Cached user', user);
-	      }).catch(function (err) {
-	        console.error('Error caching user', err, user);
-	      });
-	    }
-	  }, {
-	    key: 'getFromCache',
-	    value: function getFromCache() {
-
-	      return new Promise(function (res, rej) {
-	        localForage.getItem(this._cacheKey).then(function (user) {
-	          user !== null ? res(user) : rej(undefined);
-	        }).catch(function (err) {
-	          console.error('Error getting user from cache. Rejecting.');
-	          rej(err);
-	        });
-	      }.bind(this));
-	    }
-	  }, {
 	    key: 'fetchUser',
 	    value: function fetchUser(email) {
 
@@ -32151,6 +32065,101 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.App = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouter = __webpack_require__(172);
+
+	var _AuthStore = __webpack_require__(275);
+
+	var _Dashboard = __webpack_require__(277);
+
+	var _Landing = __webpack_require__(296);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	// import { AuthActions } from './Actions/AuthActions';
+
+
+	// import { UserActions } from './Actions/UserActions';
+
+
+	var getAuthState = function getAuthState() {
+	  return {
+	    hasAuth: _AuthStore.AuthStore.hasAuth()
+	  };
+	};
+
+	// bind to authentication changes.
+
+	var App = exports.App = function (_Component) {
+	  _inherits(App, _Component);
+
+	  function App(props, context) {
+	    _classCallCheck(this, App);
+
+	    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props, context));
+
+	    _this.state = {
+	      hasAuth: _AuthStore.AuthStore.hasAuth()
+	    };
+
+	    return _this;
+	  }
+
+	  _createClass(App, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      var _this2 = this;
+
+	      console.log('app mounting', this.state);
+	      _AuthStore.AuthStore.addListener(function () {
+	        _this2.setState(getAuthState());
+	        _reactRouter.browserHistory.push('/');
+	      });
+	      // if (this.state.hasAuth) {
+	      //   UserActions.initUser('a');
+	      // };
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        this.state.hasAuth ? _react2.default.createElement(_Dashboard.Dashboard, null) : _react2.default.createElement(
+	          _Landing.Landing,
+	          null,
+	          this.props.children
+	        )
+	      );
+	    }
+	  }]);
+
+	  return App;
+	}(_react.Component);
+
+/***/ },
+/* 275 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	exports.AuthStore = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -32159,13 +32168,7 @@
 
 	var _AuthConstants = __webpack_require__(239);
 
-	var _axios = __webpack_require__(242);
-
-	var axios = _interopRequireWildcard(_axios);
-
-	var _events = __webpack_require__(275);
-
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	var _events = __webpack_require__(276);
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -32185,40 +32188,29 @@
 	      change: 'CHANGE'
 	    };
 
+	    _this.authenticated = false;
+
 	    return _this;
 	  }
 
 	  _createClass(_AuthStore, [{
-	    key: '_setAuthHeader',
-	    value: function _setAuthHeader(token) {
+	    key: 'setAuth',
+	    value: function setAuth(authenticated) {
 
-	      // why set this in auth store?
-	      axios.defaults.headers.common['Authorization'] = token;
+	      if (!(typeof authenticated === 'boolean')) throw new Error('Tried to set invalid token');
+
+	      this.authenticated = authenticated;
 	    }
 	  }, {
-	    key: '_removeAuthHeader',
-	    value: function _removeAuthHeader() {
-	      axios.defaults.headers.common['Authorization'] = undefined;
-	    }
-	  }, {
-	    key: 'setToken',
-	    value: function setToken(token) {
+	    key: 'removeAuth',
+	    value: function removeAuth() {
 
-	      if (!(typeof token === 'string')) throw new Error('Tried to set invalid token');
-	      if (token.length === 0) throw new Error('Tried to set an empty token');
-
-	      this._setAuthHeader(token);
-	    }
-	  }, {
-	    key: 'removeCredentials',
-	    value: function removeCredentials() {
-
-	      this._removeAuthHeader();
+	      this.authenticated = false;
 	    }
 	  }, {
 	    key: 'hasAuth',
 	    value: function hasAuth() {
-	      return axios.defaults.headers.common['Authorization'] ? true : false;
+	      return this.authenticated;
 	    }
 	  }, {
 	    key: 'emitChange',
@@ -32252,8 +32244,8 @@
 
 	  switch (action.type) {
 
-	    case _AuthConstants.AuthConstants.SET_TOKEN:
-	      AuthStore.setToken(action.token);
+	    case _AuthConstants.AuthConstants.SET_AUTH:
+	      AuthStore.setAuth(action.authenticated);
 	      AuthStore.emitChange();
 	      break;
 	    case _AuthConstants.AuthConstants.CLEAR_TOKEN:
@@ -32269,7 +32261,7 @@
 	exports.AuthStore = AuthStore;
 
 /***/ },
-/* 275 */
+/* 276 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -32577,7 +32569,67 @@
 
 
 /***/ },
-/* 276 */
+/* 277 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.Dashboard = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _UserPane = __webpack_require__(278);
+
+	var _GroupPane = __webpack_require__(280);
+
+	var _DisplayPane = __webpack_require__(286);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	// export 
+
+	var Dashboard = exports.Dashboard = function (_Component) {
+	  _inherits(Dashboard, _Component);
+
+	  function Dashboard() {
+	    _classCallCheck(this, Dashboard);
+
+	    return _possibleConstructorReturn(this, (Dashboard.__proto__ || Object.getPrototypeOf(Dashboard)).apply(this, arguments));
+	  }
+
+	  _createClass(Dashboard, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(_UserPane.UserPane, null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement(_GroupPane.GroupPane, null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement(_DisplayPane.DisplayPane, null)
+	      );
+	    }
+	  }]);
+
+	  return Dashboard;
+	}(_react.Component);
+
+/***/ },
+/* 278 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32593,7 +32645,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _UserStore = __webpack_require__(277);
+	var _UserStore = __webpack_require__(279);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32616,8 +32668,7 @@
 	  function UserPane(props, context) {
 	    _classCallCheck(this, UserPane);
 
-	    // UserActions.initUser('a');
-	    console.log('user mounting');
+	    console.log('user mounting', getUserState());
 
 	    var _this = _possibleConstructorReturn(this, (UserPane.__proto__ || Object.getPrototypeOf(UserPane)).call(this, props, context));
 
@@ -32663,7 +32714,7 @@
 	exports.UserPane = UserPane;
 
 /***/ },
-/* 277 */
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32679,7 +32730,7 @@
 
 	var _UserConstants = __webpack_require__(268);
 
-	var _events = __webpack_require__(275);
+	var _events = __webpack_require__(276);
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -32785,7 +32836,7 @@
 
 	_AppDispatcher.AppDispatcher.register(function (action) {
 
-	  console.log('Action', action);
+	  console.log('ACTION:', action);
 
 	  switch (action.type) {
 	    case _UserConstants.UserConstants.SET_USER:
@@ -32803,7 +32854,7 @@
 	exports.UserStore = UserStore;
 
 /***/ },
-/* 278 */
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32819,13 +32870,13 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _GroupStore = __webpack_require__(279);
+	var _GroupStore = __webpack_require__(281);
 
 	var _GroupActions = __webpack_require__(270);
 
-	var _DisplayActions = __webpack_require__(280);
+	var _DisplayActions = __webpack_require__(282);
 
-	var _GroupSelector = __webpack_require__(283);
+	var _GroupSelector = __webpack_require__(285);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32920,7 +32971,7 @@
 	exports.GroupPane = GroupPane;
 
 /***/ },
-/* 279 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32938,7 +32989,7 @@
 
 	var _GroupConstants = __webpack_require__(271);
 
-	var _events = __webpack_require__(275);
+	var _events = __webpack_require__(276);
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -33057,7 +33108,7 @@
 	exports.GroupStore = GroupStore;
 
 /***/ },
-/* 280 */
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33069,9 +33120,9 @@
 
 	var _AppDispatcher = __webpack_require__(236);
 
-	var _DisplayConstants = __webpack_require__(281);
+	var _DisplayConstants = __webpack_require__(283);
 
-	var _PaneConstants = __webpack_require__(282);
+	var _PaneConstants = __webpack_require__(284);
 
 	var gotoTodos = function gotoTodos() {
 
@@ -33097,7 +33148,7 @@
 	};
 
 /***/ },
-/* 281 */
+/* 283 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -33110,7 +33161,7 @@
 	};
 
 /***/ },
-/* 282 */
+/* 284 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -33124,7 +33175,7 @@
 	};
 
 /***/ },
-/* 283 */
+/* 285 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33223,7 +33274,7 @@
 	// export { GroupSelector };
 
 /***/ },
-/* 284 */
+/* 286 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33239,13 +33290,13 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _DisplayStore = __webpack_require__(285);
+	var _DisplayStore = __webpack_require__(287);
 
-	var _DisplayActions = __webpack_require__(280);
+	var _DisplayActions = __webpack_require__(282);
 
-	var _PaneConstants = __webpack_require__(282);
+	var _PaneConstants = __webpack_require__(284);
 
-	var _TodoPaneReact = __webpack_require__(286);
+	var _TodoPaneReact = __webpack_require__(288);
 
 	var _AddGroupPaneReact = __webpack_require__(295);
 
@@ -33337,7 +33388,7 @@
 	exports.DisplayPane = DisplayPane;
 
 /***/ },
-/* 285 */
+/* 287 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33351,9 +33402,9 @@
 
 	var _AppDispatcher = __webpack_require__(236);
 
-	var _DisplayConstants = __webpack_require__(281);
+	var _DisplayConstants = __webpack_require__(283);
 
-	var _events = __webpack_require__(275);
+	var _events = __webpack_require__(276);
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -33432,7 +33483,7 @@
 	exports.DisplayStore = DisplayStore;
 
 /***/ },
-/* 286 */
+/* 288 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33448,11 +33499,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TodoStore = __webpack_require__(287);
+	var _TodoStore = __webpack_require__(289);
 
-	var _TodoFilterList = __webpack_require__(289);
+	var _TodoFilterList = __webpack_require__(291);
 
-	var _TodoList = __webpack_require__(291);
+	var _TodoList = __webpack_require__(293);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33515,7 +33566,7 @@
 	exports.TodoPane = TodoPane;
 
 /***/ },
-/* 287 */
+/* 289 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33529,13 +33580,13 @@
 
 	var _AppDispatcher = __webpack_require__(236);
 
-	var _TodoConstants = __webpack_require__(288);
+	var _TodoConstants = __webpack_require__(290);
 
-	var _GroupStore = __webpack_require__(279);
+	var _GroupStore = __webpack_require__(281);
 
 	var _GroupConstants = __webpack_require__(271);
 
-	var _events = __webpack_require__(275);
+	var _events = __webpack_require__(276);
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -33656,7 +33707,7 @@
 	exports.TodoStore = TodoStore;
 
 /***/ },
-/* 288 */
+/* 290 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -33676,7 +33727,7 @@
 	};
 
 /***/ },
-/* 289 */
+/* 291 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33690,7 +33741,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TodoActions = __webpack_require__(290);
+	var _TodoActions = __webpack_require__(292);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33735,7 +33786,7 @@
 	};
 
 /***/ },
-/* 290 */
+/* 292 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33747,7 +33798,7 @@
 
 	var _AppDispatcher = __webpack_require__(236);
 
-	var _TodoConstants = __webpack_require__(288);
+	var _TodoConstants = __webpack_require__(290);
 
 	var setTodos = function setTodos(todos) {
 	  _AppDispatcher.AppDispatcher.dispatch({
@@ -33817,7 +33868,7 @@
 	};
 
 /***/ },
-/* 291 */
+/* 293 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33831,9 +33882,9 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TodoActions = __webpack_require__(290);
+	var _TodoActions = __webpack_require__(292);
 
-	var _TodoItem = __webpack_require__(292);
+	var _TodoItem = __webpack_require__(294);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33858,7 +33909,7 @@
 	};
 
 /***/ },
-/* 292 */
+/* 294 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33872,7 +33923,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TodoActions = __webpack_require__(290);
+	var _TodoActions = __webpack_require__(292);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33910,220 +33961,6 @@
 	};
 
 /***/ },
-/* 293 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.RegistrationPage = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _axios = __webpack_require__(242);
-
-	var axios = _interopRequireWildcard(_axios);
-
-	var _UserActions = __webpack_require__(267);
-
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	// import { browserHistory } from 'react-router';
-
-	// import { AuthService } from '../../Services/AuthService';
-
-	var RegistrationPage = exports.RegistrationPage = function (_Component) {
-	  _inherits(RegistrationPage, _Component);
-
-	  function RegistrationPage(props) {
-	    _classCallCheck(this, RegistrationPage);
-
-	    var _this = _possibleConstructorReturn(this, (RegistrationPage.__proto__ || Object.getPrototypeOf(RegistrationPage)).call(this, props));
-
-	    _this.state = {
-	      email: '',
-	      password: '',
-	      fName: '',
-	      lName: ''
-	    };
-
-	    _this._handleRegSubmit = _this._handleRegSubmit.bind(_this);
-	    _this._handleInputChange = _this._handleInputChange.bind(_this);
-	    return _this;
-	  }
-
-	  _createClass(RegistrationPage, [{
-	    key: '_handleRegSubmit',
-	    value: function _handleRegSubmit(e) {
-	      e.preventDefault();
-
-	      _UserActions.UserActions.createUser(this.state);
-
-	      // move to user service 
-
-	      //
-	    }
-	  }, {
-	    key: 'componentWillMount',
-	    value: function componentWillMount() {
-	      // if (AuthService.hasAuth()) browserHistory.push('/')
-	    }
-	  }, {
-	    key: '_handleInputChange',
-	    value: function _handleInputChange(e) {
-	      var inputName = e.target.getAttribute('name');
-	      var value = e.target.value;
-
-	      var stateChange = {};
-	      stateChange[inputName] = value;
-
-	      this.setState(stateChange);
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(
-	          'form',
-	          { onSubmit: this._handleRegSubmit, action: '/user/create', method: 'POST' },
-	          _react2.default.createElement('input', { onChange: this._handleInputChange, type: 'text', name: 'email' }),
-	          _react2.default.createElement('input', { onChange: this._handleInputChange, type: 'password', name: 'password' }),
-	          _react2.default.createElement('input', { onChange: this._handleInputChange, type: 'text', name: 'fName' }),
-	          _react2.default.createElement('input', { onChange: this._handleInputChange, type: 'text', name: 'lName' }),
-	          _react2.default.createElement(
-	            'button',
-	            { type: 'submit' },
-	            'Login'
-	          )
-	        )
-	      );
-	    }
-	  }]);
-
-	  return RegistrationPage;
-	}(_react.Component);
-
-/***/ },
-/* 294 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.LoginPage = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRouter = __webpack_require__(172);
-
-	var _axios = __webpack_require__(242);
-
-	var axios = _interopRequireWildcard(_axios);
-
-	var _UserActions = __webpack_require__(267);
-
-	var _AuthActions = __webpack_require__(235);
-
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	// import { AuthService } from '../../Services/AuthService';
-
-
-	var LoginPage = exports.LoginPage = function (_Component) {
-	  _inherits(LoginPage, _Component);
-
-	  function LoginPage(props) {
-	    _classCallCheck(this, LoginPage);
-
-	    var _this = _possibleConstructorReturn(this, (LoginPage.__proto__ || Object.getPrototypeOf(LoginPage)).call(this, props));
-
-	    _this.state = {
-	      email: '',
-	      password: ''
-	    };
-
-	    _this._handleRegSubmit = _this._handleRegSubmit.bind(_this);
-	    _this._handleInputChange = _this._handleInputChange.bind(_this);
-
-	    return _this;
-	  }
-
-	  _createClass(LoginPage, [{
-	    key: 'componentWillMount',
-	    value: function componentWillMount() {
-	      // if (AuthService.hasAuth()) browserHistory.push('/')
-	    }
-	  }, {
-	    key: '_handleRegSubmit',
-	    value: function _handleRegSubmit(e) {
-	      e.preventDefault();
-	      _AuthActions.AuthActions.login(this.state);
-	    }
-	  }, {
-	    key: '_handleInputChange',
-	    value: function _handleInputChange(e) {
-	      var inputName = e.target.getAttribute('name');
-	      var value = e.target.value;
-
-	      var stateChange = {};
-	      stateChange[inputName] = value;
-
-	      this.setState(stateChange);
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(
-	          'form',
-	          { onSubmit: this._handleRegSubmit, action: '/user/login', method: 'POST' },
-	          _react2.default.createElement('input', { onChange: this._handleInputChange, type: 'text', name: 'email' }),
-	          _react2.default.createElement('input', { onChange: this._handleInputChange, type: 'password', name: 'password' }),
-	          _react2.default.createElement(
-	            'button',
-	            { type: 'submit' },
-	            'Login'
-	          )
-	        )
-	      );
-	    }
-	  }]);
-
-	  return LoginPage;
-	}(_react.Component);
-
-/***/ },
 /* 295 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -34140,11 +33977,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _GroupStore = __webpack_require__(279);
+	var _GroupStore = __webpack_require__(281);
 
 	var _GroupActions = __webpack_require__(270);
 
-	var _DisplayActions = __webpack_require__(280);
+	var _DisplayActions = __webpack_require__(282);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -34222,6 +34059,274 @@
 	}(_react.Component);
 
 	exports.AddGroupPane = AddGroupPane;
+
+/***/ },
+/* 296 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.Landing = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouter = __webpack_require__(172);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Landing = exports.Landing = function (_Component) {
+	  _inherits(Landing, _Component);
+
+	  function Landing() {
+	    _classCallCheck(this, Landing);
+
+	    return _possibleConstructorReturn(this, (Landing.__proto__ || Object.getPrototypeOf(Landing)).apply(this, arguments));
+	  }
+
+	  _createClass(Landing, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          _reactRouter.Link,
+	          { to: '/register' },
+	          'Register'
+	        ),
+	        _react2.default.createElement(
+	          _reactRouter.Link,
+	          { to: '/login' },
+	          'Login'
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          null,
+	          this.props.children
+	        )
+	      );
+	    }
+	  }]);
+
+	  return Landing;
+	}(_react.Component);
+
+/***/ },
+/* 297 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.Registration = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _axios = __webpack_require__(242);
+
+	var axios = _interopRequireWildcard(_axios);
+
+	var _UserActions = __webpack_require__(267);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	// import { browserHistory } from 'react-router';
+
+	// import { AuthService } from '../../Services/AuthService';
+
+	var Registration = exports.Registration = function (_Component) {
+	  _inherits(Registration, _Component);
+
+	  function Registration(props) {
+	    _classCallCheck(this, Registration);
+
+	    var _this = _possibleConstructorReturn(this, (Registration.__proto__ || Object.getPrototypeOf(Registration)).call(this, props));
+
+	    _this.state = {
+	      email: '',
+	      password: '',
+	      fName: '',
+	      lName: ''
+	    };
+
+	    _this._handleRegSubmit = _this._handleRegSubmit.bind(_this);
+	    _this._handleInputChange = _this._handleInputChange.bind(_this);
+	    return _this;
+	  }
+
+	  _createClass(Registration, [{
+	    key: '_handleRegSubmit',
+	    value: function _handleRegSubmit(e) {
+	      e.preventDefault();
+
+	      _UserActions.UserActions.createUser(this.state);
+
+	      // move to user service 
+
+	      //
+	    }
+	  }, {
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      // if (AuthService.hasAuth()) browserHistory.push('/')
+	    }
+	  }, {
+	    key: '_handleInputChange',
+	    value: function _handleInputChange(e) {
+	      var inputName = e.target.getAttribute('name');
+	      var value = e.target.value;
+
+	      var stateChange = {};
+	      stateChange[inputName] = value;
+
+	      this.setState(stateChange);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'form',
+	          { onSubmit: this._handleRegSubmit, action: '/user/create', method: 'POST' },
+	          _react2.default.createElement('input', { onChange: this._handleInputChange, type: 'text', name: 'email' }),
+	          _react2.default.createElement('input', { onChange: this._handleInputChange, type: 'password', name: 'password' }),
+	          _react2.default.createElement('input', { onChange: this._handleInputChange, type: 'text', name: 'fName' }),
+	          _react2.default.createElement('input', { onChange: this._handleInputChange, type: 'text', name: 'lName' }),
+	          _react2.default.createElement(
+	            'button',
+	            { type: 'submit' },
+	            'Login'
+	          )
+	        )
+	      );
+	    }
+	  }]);
+
+	  return Registration;
+	}(_react.Component);
+
+/***/ },
+/* 298 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.Login = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRouter = __webpack_require__(172);
+
+	var _axios = __webpack_require__(242);
+
+	var axios = _interopRequireWildcard(_axios);
+
+	var _AuthActions = __webpack_require__(235);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Login = exports.Login = function (_Component) {
+	  _inherits(Login, _Component);
+
+	  function Login(props) {
+	    _classCallCheck(this, Login);
+
+	    var _this = _possibleConstructorReturn(this, (Login.__proto__ || Object.getPrototypeOf(Login)).call(this, props));
+
+	    _this.state = {
+	      email: '',
+	      password: ''
+	    };
+
+	    _this._handleRegSubmit = _this._handleRegSubmit.bind(_this);
+	    _this._handleInputChange = _this._handleInputChange.bind(_this);
+
+	    return _this;
+	  }
+
+	  _createClass(Login, [{
+	    key: '_handleRegSubmit',
+	    value: function _handleRegSubmit(e) {
+	      e.preventDefault();
+	      _AuthActions.AuthActions.login(this.state);
+	    }
+	  }, {
+	    key: '_handleInputChange',
+	    value: function _handleInputChange(e) {
+	      var inputName = e.target.getAttribute('name');
+	      var value = e.target.value;
+
+	      var stateChange = {};
+	      stateChange[inputName] = value;
+
+	      this.setState(stateChange);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'form',
+	          { onSubmit: this._handleRegSubmit, action: '/user/login', method: 'POST' },
+	          _react2.default.createElement('input', { onChange: this._handleInputChange, type: 'text', name: 'email' }),
+	          _react2.default.createElement('input', { onChange: this._handleInputChange, type: 'password', name: 'password' }),
+	          _react2.default.createElement(
+	            'button',
+	            { type: 'submit' },
+	            'Login'
+	          )
+	        )
+	      );
+	    }
+	  }]);
+
+	  return Login;
+	}(_react.Component);
 
 /***/ }
 /******/ ]);

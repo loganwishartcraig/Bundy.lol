@@ -77,7 +77,7 @@ const UserStore = new _UserStore();
 
 AppDispatcher.register(function(action) {
 
-  console.log('Action', action);
+  console.log('ACTION:', action);
 
   switch(action.type) {
     case UserConstants.SET_USER:

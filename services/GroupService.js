@@ -2,7 +2,12 @@ const mongoose = require('mongoose'),
       GroupModel = require('../models/GroupModel');
 
 
-const newGroup = (groupReq) => {
+const createGroup = (groupReq) => {
+
+  return new Promise((res, rej) => {
+    console.log('GroupService.js -> createGroup() -- NOT IMPLEMENTED --', groupReq)
+    res(groupReq);
+  });
 
 };
 
@@ -17,7 +22,7 @@ const joinGroup = (userId, groupId) => {
 
 module.exports = {
 
-  newGroup: newGroup,
+  createGroup: createGroup,
   getGroup: getGroup,
   joinGroup: joinGroup
 

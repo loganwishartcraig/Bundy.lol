@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
-import { browserHistory } from 'react-router';
+// import { browserHistory } from 'react-router';
 
 import * as axios from 'axios';
 
+import { UserActions } from '../Actions/UserActions';
 // import { AuthService } from '../../Services/AuthService';
-import { UserActions } from '../../Actions/UserActions';
-import { AuthActions } from '../../Actions/AuthActions';
 
-export class LoginPage extends Component {
+export class Registration extends Component {
 
   constructor(props) {
 
@@ -15,22 +14,28 @@ export class LoginPage extends Component {
 
     this.state = {
       email: '',
-      password: ''
-    };
+      password: '',
+      fName: '',
+      lName: ''
+    }
 
     this._handleRegSubmit = this._handleRegSubmit.bind(this);
     this._handleInputChange = this._handleInputChange.bind(this);
-  
+  }
+
+  _handleRegSubmit(e) {
+    e.preventDefault();
+
+    UserActions.createUser(this.state);
+
+    // move to user service 
+    
+    //
+
   }
 
   componentWillMount() {
     // if (AuthService.hasAuth()) browserHistory.push('/')
-  }
-
-
-  _handleRegSubmit(e) {
-    e.preventDefault();
-    AuthActions.login(this.state);
   }
 
   _handleInputChange(e) {
@@ -46,9 +51,11 @@ export class LoginPage extends Component {
   render() {
     return (
       <div>
-        <form onSubmit={this._handleRegSubmit} action="/user/login" method="POST">
+        <form onSubmit={this._handleRegSubmit} action="/user/create" method="POST">
           <input onChange={this._handleInputChange} type="text" name="email" />
           <input onChange={this._handleInputChange} type="password" name="password" />
+          <input onChange={this._handleInputChange} type="text" name="fName" />
+          <input onChange={this._handleInputChange} type="text" name="lName" />
           <button type="submit">Login</button>
         </form>
       </div>

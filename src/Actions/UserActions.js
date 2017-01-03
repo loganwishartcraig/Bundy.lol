@@ -9,39 +9,56 @@ import { GroupActions } from './GroupActions';
 
 import { sameSets } from '../Utility/Array';
 
-const initUser = (email) => {
+// const initUser = (cachedUser) => {
 
-  UserService
-    .getFromCache()
-    .then(cachedUser => {
-      setUser(cachedUser);
-      GroupActions.initGroup(cachedUser.memberOf)
-      UserService
-        .fetchUser(email)
-        .then(updatedUser => {
-          setUser(updatedUser);
-          if (!sameSets(cachedUser.memberOf, updatedUser.memberOf))
-            GroupActions.initGroup(updatedUser.memberOf)
-          UserService.cacheUser(updatedUser);
-        })
-        .catch(err => {
-          console.error('ERR: UserActions.js -> initUser()', err);
-        });
-    })
-    .catch(() => {
-      UserService
-        .fetchUser(email)
-        .then((user) => {
-          setUser(user);
-          GroupActions.initGroup(user.memberOf);
-          UserService.cacheUser(user);
-        })
-        .catch(err => {
-          console.error('ERR: UserActions.js -> initUser()', err);
-        });
-  });
+//   if (cachedUser) {
 
-};
+//     setUser(cachedUser);
+//     GroupActions.initGroup(cachedUser.memberOf);
+//     UserService
+//       .fetchUser(cachedUser.email)
+//       .then(newUser => {
+//         setUser(newUser);
+//         if (!sameSets(cachedUser.memberOf, newUser.memberOf))
+//           GroupActions.initGroup(updatedUser.memberOf);
+//       })
+//       .catch(err => {
+//         console.error('UserActions.js -> initUser() | msg:', err);
+//       })
+
+//   } 
+//   // update to expect cached user object
+  // UserService
+  //   .getFromCache()
+  //   .then(cachedUser => {
+  //     setUser(cachedUser);
+  //     GroupActions.initGroup(cachedUser.memberOf)
+  //     UserService
+  //       .fetchUser(email)
+  //       .then(updatedUser => {
+  //         setUser(updatedUser);
+  //         if (!sameSets(cachedUser.memberOf, updatedUser.memberOf))
+  //           GroupActions.initGroup(updatedUser.memberOf)
+  //         UserService.cacheUser(updatedUser);
+  //       })
+  //       .catch(err => {
+  //         console.error('ERR: UserActions.js -> initUser()', err);
+  //       });
+  //   })
+  //   .catch(() => {
+  //     UserService
+  //       .fetchUser(email)
+  //       .then((user) => {
+  //         setUser(user);
+  //         GroupActions.initGroup(user.memberOf);
+  //         UserService.cacheUser(user);
+  //       })
+  //       .catch(err => {
+  //         console.error('ERR: UserActions.js -> initUser()', err);
+  //       });
+  // });
+
+// };
 
 const setUser = (user) => {
   AppDispatcher.dispatch({
@@ -112,7 +129,7 @@ const editFavorite = (id, message) => {
 
 export const UserActions = {
 
-  initUser,
+  // initUser,
   setUser,
   unsetUser,
   updateUser,

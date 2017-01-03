@@ -7,15 +7,22 @@ import { UserActions } from '../Actions/UserActions';
 
 const init = () => {
 
+  return new Promise((res, rej) => {
+
     AuthService
       .getSession()
-      .then(sessionToken => {
-        console.log('got session token', sessionToken);
-        setToken(sessionToken);
+      .then(session => {
+        console.log('AuthActions.js -> init() | msg: Got session token', session.token, 'and user', session.user);
+        UserActions.setUser(session.user);
+        setAuth();
+        res();
       })
       .catch(err =>{
-        console.error('ERR: AuthActions.js -> init()', err)
-      })
+        console.error('ERR: AuthActions.js -> init() |', err);
+        res();
+      });
+
+  });
 
 }
 
@@ -24,8 +31,9 @@ const login = (credentials) => {
   AuthService
     .login(credentials)
     .then(response => {
-      setToken(response.token);
+      AuthService.setSession(response);
       UserActions.setUser(response.user);
+      setAuth();
     })
     .catch(err => {
       console.error('ERR: AuthActions.js -> login()', err);
@@ -42,13 +50,13 @@ const logout = () => {
 
 }
 
-const setToken = (token) => {
+const setAuth = () => {
 
-  AuthService.setSession(token);
+  // AuthService.setSession(token);
 
   AppDispatcher.dispatch({
-    type: AuthConstants.SET_TOKEN,
-    token: token
+    type: AuthConstants.SET_AUTH,
+    authenticated: true
   });
 
 };
@@ -58,6 +66,6 @@ export const AuthActions = {
   init,
   login,
   logout,
-  setToken
+  setAuth
 
 };

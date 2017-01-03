@@ -1,50 +1,47 @@
-import * as localForage from 'localforage';
-
-// import { UserActions } from '../Actions/UserActions';
-// import { GroupActions } from '../Actions/GroupActions';
-
 import * as axios from 'axios';
-
+import * as localForage from 'localforage';
 
 class _UserService {
 
   constructor() {
 
-    this._cacheKey = 'bundylol_user';
+    // this._cacheKey = 'bundylol_user';
 
-    this.clearLastActive();
+    // this.clearLastActive();
   } 
 
-  clearLastActive() {
-        localForage.removeItem(this._cacheKey);
-  }
+  // clearLastActive() {
+  //   localForage.removeItem(this._cacheKey);
+  // }
 
-  cacheUser(user) {
+  // cacheUser(user) {
 
-    localForage
-      .setItem(this._cacheKey, user)
-      .then(msg => {
-       console.log('Cached user', user);
-      })
-      .catch(err => {
-       console.error('Error caching user', err, user);
-      });
+  //   localForage
+  //     .setItem(this._cacheKey, user)
+  //     .then(msg => {
+  //      console.log('Cached user', user);
+  //     })
+  //     .catch(err => {
+  //      console.error('Error caching user', err, user);
+  //     });
 
-  }
+  //  // axios.defaults.headers.common['User'] = user.id;
 
-  getFromCache() {
+  // }
 
-    return new Promise(function(res, rej) {
-      localForage
-        .getItem(this._cacheKey)
-        .then(user => {(user !== null) ? res(user)  : rej(undefined)})
-        .catch(err => {
-          console.error('Error getting user from cache. Rejecting.')
-          rej(err);
-        });
-    }.bind(this))
+  // getFromCache() {
 
-  }
+  //   return new Promise(function(res, rej) {
+  //     localForage
+  //       .getItem(this._cacheKey)
+  //       .then(user => {(user !== null) ? res(user)  : rej(undefined)})
+  //       .catch(err => {
+  //         console.error('Error getting user from cache. Rejecting.')
+  //         rej(err);
+  //       });
+  //   }.bind(this))
+
+  // }
 
   fetchUser(email) {
 

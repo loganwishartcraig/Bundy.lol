@@ -4,10 +4,11 @@ const mongoose = require('mongoose'),
 // const AuthService = require('./AuthService');
 
 
-exports.serializeUser = (user) => {
+const _serializeUser = (user) => {
 
   
   let requiredKeys = [
+    'id',
     'email',
     'fName',
     'lName',
@@ -37,7 +38,7 @@ exports.getUser = (email) => {
   UserModel
     .findOne({email: email})
     .then((user) => {
-      if (user) res(user);
+      if (user) res(_serializeUser(user));
       else rej({status: 400, msg: `User '${email}' not found`});
     })
     .catch((err) => {
@@ -64,7 +65,7 @@ exports.createUser = (userObject) => {
         user.save(err => {
 
           if (err) return rej({status: 500, msg: 'Error writing user to db'});
-          return res(user);
+          return res(_serializeUser(user));
 
         });
 

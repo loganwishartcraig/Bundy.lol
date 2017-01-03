@@ -2,9 +2,6 @@ import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 
 import { AuthConstants } from '../Constants/AuthConstants';
 
-import * as axios from 'axios'
-
-
 import { EventEmitter } from 'events';
 
 class _AuthStore extends EventEmitter {
@@ -16,35 +13,27 @@ class _AuthStore extends EventEmitter {
       change: 'CHANGE'
     }
 
-  }
-
-  _setAuthHeader(token) {
-
-    // why set this in auth store?
-    axios.defaults.headers.common['Authorization'] = token;
-  }
-
-  _removeAuthHeader() {
-    axios.defaults.headers.common['Authorization'] = undefined;
-  }
-
-  setToken(token) {
-
-    if (!(typeof token === 'string')) throw new Error('Tried to set invalid token')
-    if (token.length === 0) throw new Error('Tried to set an empty token');
-
-    this._setAuthHeader(token)
+    this.authenticated = false;
 
   }
 
-  removeCredentials() {
 
-    this._removeAuthHeader();
+  setAuth(authenticated) {
+
+    if (!(typeof authenticated === 'boolean')) throw new Error('Tried to set invalid token')
+
+    this.authenticated = authenticated
+
+  }
+
+  removeAuth() {
+
+    this.authenticated = false;
 
   }
 
   hasAuth() {
-    return (axios.defaults.headers.common['Authorization']) ? true : false;
+    return this.authenticated
   }
 
   emitChange() {
@@ -68,8 +57,8 @@ AppDispatcher.register(function(action) {
 
   switch (action.type) {
 
-    case AuthConstants.SET_TOKEN:
-      AuthStore.setToken(action.token);
+    case AuthConstants.SET_AUTH:
+      AuthStore.setAuth(action.authenticated);
       AuthStore.emitChange();
       break;
     case AuthConstants.CLEAR_TOKEN:

@@ -7,28 +7,32 @@ class _AuthService {
   constructor() {
 
     // this.token = '';
-    this.cacheKey = 'bundylol_token';
+    this.cacheKey = 'access_cred';
 
     //check cache for existing token and set
-    this._removeSession();
-
-    // this._clearSession();
-    // this.clearCredentials();
+    // this._removeSession();
  
   }
 
 
-  _setSession(token) {
-    console.log('setting session', token)
-    localStorage.setItem(this.cacheKey, token);
+  _setSession(session) {
+    console.log('AuthService.js -> setSession() | msg: Setting session', session.token, session.user)
+    
+    localForage.setItem(this.cacheKey, {
+      token: session.token,
+      user: session.user
+    });
+    
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + session.token;
   }
 
   _removeSession() {
-    localStorage.removeItem(this.cacheKey);
+    localForage.removeItem(this.cacheKey);
+    axios.defaults.headers.common['Authorization'] = undefined;
   }
 
   _getSession() {
-    return localStorage.getItem(this.cacheKey);
+    return localForage.getItem(this.cacheKey);
   }
 
   _cacheToken(token) {
@@ -58,16 +62,22 @@ class _AuthService {
 
   }
 
-  setSession(token) {
-    this._setSession(token);
+  setSession(session) {
+    this._setSession(session);
   }
 
   getSession() {
     return new Promise((res, rej) => {
 
-      let session = this._getSession();
-      if (session) res(session);
-      else rej({msg: 'No session token found'})
+      this
+        ._getSession()
+        .then(session => {
+          if (session) res(session)
+            else rej({msg: 'No session token found'})
+        })
+        .catch(err => {
+          rej(err);
+        });
 
     });
   }

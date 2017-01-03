@@ -9,14 +9,13 @@ module.exports = (req, res, next) => {
   if (token === undefined)
     return res.status(403).json({status: 403, msg: 'Not authorized'});
 
-  if ((typeof token !== 'string') || (token.length === 0))
+  if (typeof token !== 'string' || token.length === 0)
     return res.status(403).json({status: 403, msg: 'Misconfigured authroization'});
 
-  // console.log(`verifying auth for ${token}`)
+  console.log()
 
-  jwt.verify(token, authConfig.secret, (err, decoded) => {
+  jwt.verify(token.split(' ')[1], authConfig.secret, (err, decoded) => {
     if (err) res.status(403).json({status: 403, msg: 'Malformed authorization'});
-    
     else next();
   })
 

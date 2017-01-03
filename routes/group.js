@@ -35,9 +35,19 @@ router.post('/create',
   verifyAuth,
   (req, res) => {
 
-  if (_validateGroupReq(req.body.groupReq)) {
+  let groupReq = Object.assign({}, req.body.groupReq);
 
-    res.status(200).json({group: req.body.groupReq});
+  if (_validateGroupReq(groupReq)) {
+
+    GroupService
+      .createGroup(groupReq)
+      .then(group => {
+        res.status(200).json({group: group});
+      })
+      .catch(err => {
+        res.status(err.status).json(err);
+      });
+
 
   } else {
 
