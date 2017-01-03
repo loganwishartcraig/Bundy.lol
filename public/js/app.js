@@ -69,7 +69,7 @@
 
 	var _reactRouter = __webpack_require__(172);
 
-	var _AuthActions = __webpack_require__(235);
+	var _AuthService = __webpack_require__(240);
 
 	var _App = __webpack_require__(274);
 
@@ -150,7 +150,7 @@
 	  _reactDom2.default.render(_react2.default.createElement(RouteHandler, null), document.getElementById('root'));
 	};
 
-	_AuthActions.AuthActions.init().then(render).catch(render);
+	_AuthService.AuthService.init().then(render).catch(render);
 
 /***/ },
 /* 1 */
@@ -27187,34 +27187,13 @@
 
 	var _AuthService = __webpack_require__(240);
 
+	var _CacheService = __webpack_require__(299);
+
 	var _UserActions = __webpack_require__(267);
-
-	var init = function init() {
-
-	  return new Promise(function (res, rej) {
-
-	    _AuthService.AuthService.getFromCache().then(function (session) {
-	      console.log('AuthActions.js -> init() | msg: Got session token', session.token, 'and user', session.user);
-	      _AuthService.AuthService.setSession(session);
-	      _UserActions.UserActions.setUser(session.user);
-	      setAuth();
-	      res();
-	    }).catch(function (err) {
-	      console.error('ERR: AuthActions.js -> init() |', err);
-	      res();
-	    });
-	  });
-	};
 
 	var login = function login(credentials) {
 
-	  _AuthService.AuthService.login(credentials).then(function (response) {
-	    _AuthService.AuthService.setSession(response);
-	    _UserActions.UserActions.setUser(response.user);
-	    setAuth();
-	  }).catch(function (err) {
-	    console.error('ERR: AuthActions.js -> login()', err);
-	  });
+	  _AuthService.AuthService.login(credentials);
 	};
 
 	var logout = function logout() {
@@ -27224,22 +27203,31 @@
 	  });
 	};
 
-	var setAuth = function setAuth() {
-
-	  // AuthService.setSession(token);
+	var flagAuth = function flagAuth(authenticated) {
 
 	  _AppDispatcher.AppDispatcher.dispatch({
 	    type: _AuthConstants.AuthConstants.SET_AUTH,
-	    authenticated: true
+	    authenticated: authenticated
 	  });
+	};
+
+	var setToken = function setToken(token) {
+
+	  if (token) {
+	    _AuthService.AuthService.setSession(token);
+	    flagAuth(true);
+	  } else {
+	    flagAuth(false);
+	  }
 	};
 
 	var AuthActions = exports.AuthActions = {
 
-	  init: init,
 	  login: login,
 	  logout: logout,
-	  setAuth: setAuth
+	  flagAuth: flagAuth,
+	  setToken: setToken
+	  // setCredentials
 
 	};
 
@@ -27552,6 +27540,12 @@
 
 	var axios = _interopRequireWildcard(_axios);
 
+	var _CacheService = __webpack_require__(299);
+
+	var _AuthActions = __webpack_require__(235);
+
+	var _UserActions = __webpack_require__(267);
+
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -27560,56 +27554,96 @@
 	  function _AuthService() {
 	    _classCallCheck(this, _AuthService);
 
-	    // this.token = '';
 	    this.cacheKey = 'access_cred';
 
+	    // this
+	    //   ._getFromCache()
+	    //   .then(token => {
+	    //     AuthActions.flagAuth();
+	    //     this._setSession(token);
+	    //   })
+	    //   .catch(err => {
+	    //     console.error(err);
+	    //   });
 	    //check cache for existing token and set
 	    // this._removeSession();
 	  }
 
 	  _createClass(_AuthService, [{
-	    key: '_setSession',
-	    value: function _setSession(session) {
-	      console.log('AuthService.js -> setSession() | msg: Setting session', session.token, session.user);
+	    key: 'init',
+	    value: function init() {
+	      var _this = this;
 
-	      localForage.setItem(this.cacheKey, {
-	        token: session.token,
-	        user: session.user
+	      return new Promise(function (res, rej) {
+
+	        _this._getFromCache().then(function (token) {
+	          _AuthActions.AuthActions.flagAuth(true);
+	          console.log('got from session', token);
+	          _this._setSession(token);
+	          res();
+	        }).catch(function (err) {
+	          console.error(err);
+	          _AuthActions.AuthActions.flagAuth(false);
+	          res();
+	        });
 	      });
-
-	      axios.defaults.headers.common['Authorization'] = 'Bearer ' + session.token;
 	    }
+	  }, {
+	    key: '_getFromCache',
+	    value: function _getFromCache() {
+
+	      return _CacheService.CacheService.get(this.cacheKey);
+	    }
+	  }, {
+	    key: '_setSession',
+	    value: function _setSession(token) {
+	      console.log('AuthService.js -> setSession() | msg: Setting session', token);
+	      _CacheService.CacheService.cache(this.cacheKey, token);
+	      axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
+	    }
+
+	    // _setSession(session) {
+	    //   console.log('AuthService.js -> setSession() | msg: Setting session', session.token, session.user)
+
+	    //   localForage.setItem(this.cacheKey, {
+	    //     token: session.token,
+	    //     user: session.user
+	    //   });
+
+	    //   axios.defaults.headers.common['Authorization'] = 'Bearer ' + session.token;
+	    // }
+
+
 	  }, {
 	    key: '_removeSession',
 	    value: function _removeSession() {
-	      localForage.removeItem(this.cacheKey);
+	      _CacheService.CacheService.remove(this.cacheKey);
 	      axios.defaults.headers.common['Authorization'] = undefined;
 	    }
 	  }, {
 	    key: '_getSession',
 	    value: function _getSession() {
-	      return localForage.getItem(this.cacheKey);
+	      return _CacheService.CacheService.get(this.cacheKey);
 	    }
-	  }, {
-	    key: '_cacheToken',
-	    value: function _cacheToken(token) {}
+
+	    // _cacheToken(token) {
+
+	    // }
+
 	  }, {
 	    key: 'login',
 	    value: function login(loginReq) {
 
-	      return new Promise(function (res, rej) {
-
-	        axios.post('/auth/login', {
-	          credentials: loginReq
-	        }).then(function (response) {
-	          console.log('got user', response.data.user);
-	          console.log('got token', response.data.token);
-	          // this._setSession(response.data)
-	          res(response.data);
-	        }).catch(function (err) {
-	          // console.error('error submitting user', err.response.data);
-	          rej(err.response.data);
-	        });
+	      axios.post('/auth/login', {
+	        credentials: loginReq
+	      }).then(function (response) {
+	        console.log('got user', response.data.user);
+	        console.log('got token', response.data.token);
+	        // this._setSession(response.data.token);
+	        _AuthActions.AuthActions.setToken(response.data.token);
+	        _UserActions.UserActions.setUser(response.data.user);
+	      }).catch(function (err) {
+	        _AuthActions.AuthActions.flagAuth(false);
 	      });
 	    }
 	  }, {
@@ -27620,11 +27654,11 @@
 	  }, {
 	    key: 'getFromCache',
 	    value: function getFromCache() {
-	      var _this = this;
+	      var _this2 = this;
 
 	      return new Promise(function (res, rej) {
 
-	        _this._getSession().then(function (session) {
+	        _this2._getSession().then(function (session) {
 	          if (session) res(session);else rej({ msg: 'No session token found' });
 	        }).catch(function (err) {
 	          rej(err);
@@ -27634,10 +27668,6 @@
 	  }, {
 	    key: 'clearCredentials',
 	    value: function clearCredentials() {
-
-	      // delete
-	      // this._removeAuthHeader(); 
-	      //
 
 	      this._removeSession();
 	      this._removeStored();
@@ -31520,6 +31550,9 @@
 	// };
 
 	var setUser = function setUser(user) {
+
+	  _UserService.UserService.cacheUser(user);
+
 	  _AppDispatcher.AppDispatcher.dispatch({
 	    type: _UserConstants.UserConstants.SET_USER,
 	    user: user
@@ -31550,13 +31583,15 @@
 
 	var createUser = function createUser(userReq) {
 
-	  _UserService.UserService.createUser(userReq).then(function (res) {
-	    _AuthActions.AuthActions.setToken(res.token);
-	    _UserService.UserService.cacheUser(res.user);
-	    setUser(res.user);
-	  }).catch(function (err) {
-	    console.error('ERR: UserActions.js -> createUser()', err);
-	  });
+	  _UserService.UserService.createUser(userReq);
+	  // .then(res => {
+	  //   AuthActions.setCredentials(res);
+	  //   // UserService.cacheUser(res.user);
+	  //   // setUser(res.user);
+	  // })
+	  // .catch(err => {
+	  //   console.error('ERR: UserActions.js -> createUser()', err);
+	  // });
 	};
 
 	var addFavorite = function addFavorite(message) {
@@ -31639,6 +31674,12 @@
 
 	var localForage = _interopRequireWildcard(_localforage);
 
+	var _UserActions = __webpack_require__(267);
+
+	var _AuthActions = __webpack_require__(235);
+
+	var _CacheService = __webpack_require__(299);
+
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -31646,47 +31687,64 @@
 	var _UserService = function () {
 	  function _UserService() {
 	    _classCallCheck(this, _UserService);
+
+	    this._cacheKey = 'bundylol_user';
+
+	    this._getFromCache().then(function (user) {
+	      _UserActions.UserActions.setUser(user);
+	    }).catch(function () {});
+	    // this.clearLastActive();
 	  }
 
-	  // this._cacheKey = 'bundylol_user';
-
-	  // this.clearLastActive();
-
-
-	  // clearLastActive() {
-	  //   localForage.removeItem(this._cacheKey);
-	  // }
-
-	  // cacheUser(user) {
-
-	  //   localForage
-	  //     .setItem(this._cacheKey, user)
-	  //     .then(msg => {
-	  //      console.log('Cached user', user);
-	  //     })
-	  //     .catch(err => {
-	  //      console.error('Error caching user', err, user);
-	  //     });
-
-	  //  // axios.defaults.headers.common['User'] = user.id;
-
-	  // }
-
-	  // getFromCache() {
-
-	  //   return new Promise(function(res, rej) {
-	  //     localForage
-	  //       .getItem(this._cacheKey)
-	  //       .then(user => {(user !== null) ? res(user)  : rej(undefined)})
-	  //       .catch(err => {
-	  //         console.error('Error getting user from cache. Rejecting.')
-	  //         rej(err);
-	  //       });
-	  //   }.bind(this))
-
-	  // }
-
 	  _createClass(_UserService, [{
+	    key: '_getFromCache',
+	    value: function _getFromCache() {
+	      return _CacheService.CacheService.get(this._cacheKey);
+	    }
+	  }, {
+	    key: '_cacheUser',
+	    value: function _cacheUser(user) {
+	      _CacheService.CacheService.cache(this._cacheKey, user);
+	    }
+	    // clearLastActive() {
+	    //   localForage.removeItem(this._cacheKey);
+	    // }
+
+	    // cacheUser(user) {
+
+	    //   localForage
+	    //     .setItem(this._cacheKey, user)
+	    //     .then(msg => {
+	    //      console.log('Cached user', user);
+	    //     })
+	    //     .catch(err => {
+	    //      console.error('Error caching user', err, user);
+	    //     });
+
+	    //  // axios.defaults.headers.common['User'] = user.id;
+
+	    // }
+
+	    // getFromCache() {
+
+	    //   return new Promise(function(res, rej) {
+	    //     localForage
+	    //       .getItem(this._cacheKey)
+	    //       .then(user => {(user !== null) ? res(user)  : rej(undefined)})
+	    //       .catch(err => {
+	    //         console.error('Error getting user from cache. Rejecting.')
+	    //         rej(err);
+	    //       });
+	    //   }.bind(this))
+
+	    // }
+
+	  }, {
+	    key: 'cacheUser',
+	    value: function cacheUser(user) {
+	      this._cacheUser(user);
+	    }
+	  }, {
 	    key: 'fetchUser',
 	    value: function fetchUser(email) {
 
@@ -31716,20 +31774,15 @@
 	    key: 'createUser',
 	    value: function createUser(userReq) {
 
-	      return new Promise(function (res, rej) {
-
-	        axios.post('/user/create', {
-	          user: userReq
-	        }).then(function (response) {
-	          console.log('got user', response.data.user);
-	          console.log('got token', response.data.token);
-	          res(response.data);
-	          // set authentication
-	          // AuthService.setAuth(res.data.token);
-	          // browserHistory.push('/')
-	        }).catch(function (err) {
-	          rej(err.response.data);
-	        });
+	      axios.post('/user/create', {
+	        user: userReq
+	      }).then(function (response) {
+	        console.log('got user', response.data.user);
+	        console.log('got token', response.data.token);
+	        _UserActions.UserActions.setUser(response.data.user);
+	        _AuthActions.AuthActions.setToken(response.data.token);
+	      }).catch(function (err) {
+	        console.error(err);
 	      });
 	    }
 	  }]);
@@ -34329,6 +34382,62 @@
 
 	  return Login;
 	}(_react.Component);
+
+/***/ },
+/* 299 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.CacheService = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _localforage = __webpack_require__(241);
+
+	var localForage = _interopRequireWildcard(_localforage);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var _CacheService = function () {
+	  function _CacheService() {
+	    _classCallCheck(this, _CacheService);
+	  }
+
+	  _createClass(_CacheService, [{
+	    key: 'get',
+	    value: function get(key) {
+	      return new Promise(function (res, rej) {
+	        localForage.getItem(key).then(function (data) {
+	          if (data) res(data);else rej({ msg: 'Key \'' + key + '\' not found in cache' });
+	        }).catch(function (err) {
+	          rej(err);
+	        });
+	      });
+	    }
+	  }, {
+	    key: 'cache',
+	    value: function cache(key, data) {
+	      localForage.setItem(key, data);
+	    }
+	  }, {
+	    key: 'remove',
+	    value: function remove(key) {
+	      localForage.removeItem(key);
+	    }
+	  }]);
+
+	  return _CacheService;
+	}();
+
+	;
+
+	var CacheService = exports.CacheService = new _CacheService();
 
 /***/ }
 /******/ ]);

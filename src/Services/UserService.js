@@ -1,15 +1,34 @@
 import * as axios from 'axios';
 import * as localForage from 'localforage';
 
+import { UserActions } from '../Actions/UserActions';
+import { AuthActions } from '../Actions/AuthActions';
+
+import { CacheService } from './CacheService';
+
 class _UserService {
 
   constructor() {
 
-    // this._cacheKey = 'bundylol_user';
+    this._cacheKey = 'bundylol_user';
 
+    this
+      ._getFromCache()
+      .then(user => {
+        UserActions.setUser(user);
+      })
+      .catch(() => {});
     // this.clearLastActive();
   } 
 
+
+  _getFromCache() {
+    return CacheService.get(this._cacheKey);
+  }
+
+  _cacheUser(user) {
+    CacheService.cache(this._cacheKey, user);
+  }
   // clearLastActive() {
   //   localForage.removeItem(this._cacheKey);
   // }
@@ -43,6 +62,10 @@ class _UserService {
 
   // }
 
+  cacheUser(user) {
+    this._cacheUser(user);
+  }
+
   fetchUser(email) {
 
     return new Promise(function(res, rej) {
@@ -73,7 +96,6 @@ class _UserService {
 
   createUser(userReq) {
 
-    return new Promise((res, rej) => {
 
       axios.post('/user/create', {
         user: userReq
@@ -81,17 +103,14 @@ class _UserService {
       .then(response => {
         console.log('got user', response.data.user);
         console.log('got token', response.data.token);
-        res(response.data);
-        // set authentication
-        // AuthService.setAuth(res.data.token);
-        // browserHistory.push('/')
+        UserActions.setUser(response.data.user);
+        AuthActions.setToken(response.data.token);
 
       })
       .catch(err => {
-        rej(err.response.data);
+        console.error(err);
       });
       
-    })
   }
 
 }

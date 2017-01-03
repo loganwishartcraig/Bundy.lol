@@ -61,6 +61,9 @@ import { sameSets } from '../Utility/Array';
 // };
 
 const setUser = (user) => {
+
+  UserService.cacheUser(user);
+
   AppDispatcher.dispatch({
     type: UserConstants.SET_USER,
     user: user
@@ -91,16 +94,15 @@ const deleteUser = (userId) => {
 
 const createUser = (userReq) => {
 
-  UserService
-    .createUser(userReq)
-    .then(res => {
-      AuthActions.setToken(res.token);
-      UserService.cacheUser(res.user);
-      setUser(res.user);
-    })
-    .catch(err => {
-      console.error('ERR: UserActions.js -> createUser()', err);
-    });
+  UserService.createUser(userReq)
+    // .then(res => {
+    //   AuthActions.setCredentials(res);
+    //   // UserService.cacheUser(res.user);
+    //   // setUser(res.user);
+    // })
+    // .catch(err => {
+    //   console.error('ERR: UserActions.js -> createUser()', err);
+    // });
 
 };
 

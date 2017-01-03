@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Router, Route, browserHistory } from 'react-router';
 
 // import { UserStore } from './Stores/UserStore';
-import { AuthActions } from './Actions/AuthActions';
+import { AuthService } from './Services/AuthService';
 
 import { App } from './App.react'
 import { Registration } from './Pages/Registration.react';
@@ -50,7 +50,7 @@ const render = () => {
 };
 
 
-AuthActions
+AuthService
   .init()
   .then(render)
   .catch(render);

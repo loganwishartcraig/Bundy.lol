@@ -3,43 +3,14 @@ import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 import { AuthConstants } from '../Constants/AuthConstants';
 import { AuthService } from '../Services/AuthService';
 
+import { CacheService } from '../Services/CacheService';
+
 import { UserActions } from '../Actions/UserActions';
 
-const init = () => {
-
-  return new Promise((res, rej) => {
-
-    AuthService
-      .getFromCache()
-      .then(session => {
-        console.log('AuthActions.js -> init() | msg: Got session token', session.token, 'and user', session.user);
-        AuthService.setSession(session);
-        UserActions.setUser(session.user);
-        setAuth();
-        res();
-      })
-      .catch(err =>{
-        console.error('ERR: AuthActions.js -> init() |', err);
-        res();
-      });
-
-  });
-
-}
 
 const login = (credentials) => {
 
-  AuthService
-    .login(credentials)
-    .then(response => {
-      AuthService.setSession(response);
-      UserActions.setUser(response.user);
-      setAuth();
-    })
-    .catch(err => {
-      console.error('ERR: AuthActions.js -> login()', err);
-      
-    });
+  AuthService.login(credentials)
 
 };
 
@@ -49,24 +20,34 @@ const logout = () => {
     type: AuthConstants.CLEAR_TOKEN
   });
 
-}
+};
 
-const setAuth = () => {
-
-  // AuthService.setSession(token);
+const flagAuth = (authenticated) => {
 
   AppDispatcher.dispatch({
     type: AuthConstants.SET_AUTH,
-    authenticated: true
+    authenticated: authenticated
   });
+
+};
+
+const setToken = (token) => {
+
+  if (token) {
+    AuthService.setSession(token);
+    flagAuth(true);
+  } else {
+    flagAuth(false);
+  }
 
 };
 
 export const AuthActions = {
 
-  init,
   login,
   logout,
-  setAuth
+  flagAuth,
+  setToken
+  // setCredentials
 
 };
