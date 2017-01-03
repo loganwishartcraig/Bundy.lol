@@ -10,9 +10,10 @@ const init = () => {
   return new Promise((res, rej) => {
 
     AuthService
-      .getSession()
+      .getFromCache()
       .then(session => {
         console.log('AuthActions.js -> init() | msg: Got session token', session.token, 'and user', session.user);
+        AuthService.setSession(session);
         UserActions.setUser(session.user);
         setAuth();
         res();

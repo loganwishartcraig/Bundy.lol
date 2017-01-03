@@ -27193,8 +27193,9 @@
 
 	  return new Promise(function (res, rej) {
 
-	    _AuthService.AuthService.getSession().then(function (session) {
+	    _AuthService.AuthService.getFromCache().then(function (session) {
 	      console.log('AuthActions.js -> init() | msg: Got session token', session.token, 'and user', session.user);
+	      _AuthService.AuthService.setSession(session);
 	      _UserActions.UserActions.setUser(session.user);
 	      setAuth();
 	      res();
@@ -27603,6 +27604,7 @@
 	        }).then(function (response) {
 	          console.log('got user', response.data.user);
 	          console.log('got token', response.data.token);
+	          // this._setSession(response.data)
 	          res(response.data);
 	        }).catch(function (err) {
 	          // console.error('error submitting user', err.response.data);
@@ -27616,8 +27618,8 @@
 	      this._setSession(session);
 	    }
 	  }, {
-	    key: 'getSession',
-	    value: function getSession() {
+	    key: 'getFromCache',
+	    value: function getFromCache() {
 	      var _this = this;
 
 	      return new Promise(function (res, rej) {

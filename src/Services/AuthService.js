@@ -49,6 +49,7 @@ class _AuthService {
       .then(response => {
         console.log('got user', response.data.user);
         console.log('got token', response.data.token);
+        // this._setSession(response.data)
         res(response.data);
       })
       .catch(err => {
@@ -66,7 +67,7 @@ class _AuthService {
     this._setSession(session);
   }
 
-  getSession() {
+  getFromCache() {
     return new Promise((res, rej) => {
 
       this
