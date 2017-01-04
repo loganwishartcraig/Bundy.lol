@@ -21,6 +21,10 @@ export class Login extends Component {
   
   }
 
+  // componentWillMount() {
+  //   console.log(`Login mounting`, this.props, this.state)
+  // }
+
 
   _handleRegSubmit(e) {
     e.preventDefault();

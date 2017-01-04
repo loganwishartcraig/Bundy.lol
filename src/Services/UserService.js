@@ -12,15 +12,24 @@ class _UserService {
 
     this._cacheKey = 'bundylol_user';
 
-    this
-      ._getFromCache()
-      .then(user => {
-        UserActions.setUser(user);
-      })
-      .catch(() => {});
-    // this.clearLastActive();
+    // this._clearCache();
+  
   } 
 
+  init() {
+
+    return new Promise((res, rej) => {
+
+      this
+        ._getFromCache()
+        .then(user => {
+          UserActions.setUser(user);
+          res();
+        })
+        .catch(() => { res(); });
+
+    });
+  }
 
   _getFromCache() {
     return CacheService.get(this._cacheKey);
@@ -29,38 +38,10 @@ class _UserService {
   _cacheUser(user) {
     CacheService.cache(this._cacheKey, user);
   }
-  // clearLastActive() {
-  //   localForage.removeItem(this._cacheKey);
-  // }
 
-  // cacheUser(user) {
-
-  //   localForage
-  //     .setItem(this._cacheKey, user)
-  //     .then(msg => {
-  //      console.log('Cached user', user);
-  //     })
-  //     .catch(err => {
-  //      console.error('Error caching user', err, user);
-  //     });
-
-  //  // axios.defaults.headers.common['User'] = user.id;
-
-  // }
-
-  // getFromCache() {
-
-  //   return new Promise(function(res, rej) {
-  //     localForage
-  //       .getItem(this._cacheKey)
-  //       .then(user => {(user !== null) ? res(user)  : rej(undefined)})
-  //       .catch(err => {
-  //         console.error('Error getting user from cache. Rejecting.')
-  //         rej(err);
-  //       });
-  //   }.bind(this))
-
-  // }
+  _clearCache() {
+    CacheService.remove(this._cacheKey);
+  }
 
   cacheUser(user) {
     this._cacheUser(user);
@@ -105,7 +86,6 @@ class _UserService {
         console.log('got token', response.data.token);
         UserActions.setUser(response.data.user);
         AuthActions.setToken(response.data.token);
-
       })
       .catch(err => {
         console.error(err);

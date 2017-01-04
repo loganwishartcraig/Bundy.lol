@@ -9,56 +9,9 @@ import { GroupActions } from './GroupActions';
 
 import { sameSets } from '../Utility/Array';
 
-// const initUser = (cachedUser) => {
-
-//   if (cachedUser) {
-
-//     setUser(cachedUser);
-//     GroupActions.initGroup(cachedUser.memberOf);
-//     UserService
-//       .fetchUser(cachedUser.email)
-//       .then(newUser => {
-//         setUser(newUser);
-//         if (!sameSets(cachedUser.memberOf, newUser.memberOf))
-//           GroupActions.initGroup(updatedUser.memberOf);
-//       })
-//       .catch(err => {
-//         console.error('UserActions.js -> initUser() | msg:', err);
-//       })
-
-//   } 
-//   // update to expect cached user object
-  // UserService
-  //   .getFromCache()
-  //   .then(cachedUser => {
-  //     setUser(cachedUser);
-  //     GroupActions.initGroup(cachedUser.memberOf)
-  //     UserService
-  //       .fetchUser(email)
-  //       .then(updatedUser => {
-  //         setUser(updatedUser);
-  //         if (!sameSets(cachedUser.memberOf, updatedUser.memberOf))
-  //           GroupActions.initGroup(updatedUser.memberOf)
-  //         UserService.cacheUser(updatedUser);
-  //       })
-  //       .catch(err => {
-  //         console.error('ERR: UserActions.js -> initUser()', err);
-  //       });
-  //   })
-  //   .catch(() => {
-  //     UserService
-  //       .fetchUser(email)
-  //       .then((user) => {
-  //         setUser(user);
-  //         GroupActions.initGroup(user.memberOf);
-  //         UserService.cacheUser(user);
-  //       })
-  //       .catch(err => {
-  //         console.error('ERR: UserActions.js -> initUser()', err);
-  //       });
-  // });
-
-// };
+const initUser = () => {
+  return UserService.init();
+}
 
 const setUser = (user) => {
 
@@ -90,19 +43,10 @@ const deleteUser = (userId) => {
   });
 };
 
-// issue caching user object
 
 const createUser = (userReq) => {
 
   UserService.createUser(userReq)
-    // .then(res => {
-    //   AuthActions.setCredentials(res);
-    //   // UserService.cacheUser(res.user);
-    //   // setUser(res.user);
-    // })
-    // .catch(err => {
-    //   console.error('ERR: UserActions.js -> createUser()', err);
-    // });
 
 };
 
@@ -131,7 +75,7 @@ const editFavorite = (id, message) => {
 
 export const UserActions = {
 
-  // initUser,
+  initUser,
   setUser,
   unsetUser,
   updateUser,

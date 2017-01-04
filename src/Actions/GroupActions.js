@@ -5,44 +5,44 @@ import { GroupService } from '../Services/GroupService';
 
 const initGroup = (groupIds = []) => {
 
-  console.log('ACTION: Initilize group', groupIds)
+  // console.log('ACTION: Initilize group', groupIds)
 
-  updateGroups(groupIds);
+  // updateGroups(groupIds);
 
 
-  GroupService
-    .getLastActive()
-    .then(lastActive => {
-      if (groupIds.indexOf(lastActive.id) >= 0) {
-        setActive(lastActive);
-        GroupService
-          .fetch(lastActive.id)
-          .then(groupInfo => {
-            setActive(groupInfo);
-            GroupService.saveLastActive(groupInfo);
-          })
-          .catch((err) => {console.error('ERR: GroupActions.js -> initGroup()', err)});
-      } else {
-        resetActive(groupIds);
-      }
-    })
-    .catch(err => {
-      console.error('ERR: GroupActions.js -> initGroup()', err);
-      resetActive(groupIds);
-    })
+  // GroupService
+  //   .getLastActive()
+  //   .then(lastActive => {
+  //     if (groupIds.indexOf(lastActive.id) >= 0) {
+  //       setActive(lastActive);
+  //       GroupService
+  //         .fetch(lastActive.id)
+  //         .then(groupInfo => {
+  //           setActive(groupInfo);
+  //           GroupService.saveLastActive(groupInfo);
+  //         })
+  //         .catch((err) => {console.error('ERR: GroupActions.js -> initGroup()', err)});
+  //     } else {
+  //       resetActive(groupIds);
+  //     }
+  //   })
+  //   .catch(err => {
+  //     console.error('ERR: GroupActions.js -> initGroup()', err);
+  //     resetActive(groupIds);
+  //   })
 
 };
 
 const resetActive = (groupIds) => {
-  if (groupIds.length > 0) {
-        GroupService
-          .fetch(groupIds[0])
-          .then(groupInfo => {
-            setActive(groupInfo);
-            GroupService.saveLastActive(groupInfo);
-          })
-          .catch(() => {});
-          }
+  // if (groupIds.length > 0) {
+  //       GroupService
+  //         .fetch(groupIds[0])
+  //         .then(groupInfo => {
+  //           setActive(groupInfo);
+  //           GroupService.saveLastActive(groupInfo);
+  //         })
+  //         .catch(() => {});
+  //         }
 
 }
 

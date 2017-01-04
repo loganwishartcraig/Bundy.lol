@@ -69,7 +69,11 @@
 
 	var _reactRouter = __webpack_require__(172);
 
-	var _AuthService = __webpack_require__(240);
+	var _AuthActions = __webpack_require__(235);
+
+	var _UserActions = __webpack_require__(267);
+
+	var _AuthStore = __webpack_require__(275);
 
 	var _App = __webpack_require__(274);
 
@@ -84,9 +88,6 @@
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	// import { UserStore } from './Stores/UserStore';
-
 
 	var PageNotFound = function (_Component) {
 	  _inherits(PageNotFound, _Component);
@@ -116,6 +117,12 @@
 	  return PageNotFound;
 	}(_react.Component);
 
+	var dashRedirect = function dashRedirect(nextState, replace, callback) {
+
+	  if (_AuthStore.AuthStore.hasAuth()) replace('/');
+	  callback();
+	};
+
 	var RouteHandler = function (_Component2) {
 	  _inherits(RouteHandler, _Component2);
 
@@ -134,8 +141,8 @@
 	        _react2.default.createElement(
 	          _reactRouter.Route,
 	          { path: '/', component: _App.App },
-	          _react2.default.createElement(_reactRouter.Route, { path: 'register', component: _Registration.Registration }),
-	          _react2.default.createElement(_reactRouter.Route, { path: 'login', component: _Login.Login }),
+	          _react2.default.createElement(_reactRouter.Route, { path: 'register', component: _Registration.Registration, onEnter: dashRedirect }),
+	          _react2.default.createElement(_reactRouter.Route, { path: 'login', component: _Login.Login, onEnter: dashRedirect }),
 	          _react2.default.createElement(_reactRouter.Route, { path: '*', component: PageNotFound })
 	        )
 	      );
@@ -150,7 +157,10 @@
 	  _reactDom2.default.render(_react2.default.createElement(RouteHandler, null), document.getElementById('root'));
 	};
 
-	_AuthService.AuthService.init().then(render).catch(render);
+	// should be built to be async?
+	_AuthActions.AuthActions.initAuth().then(function () {
+	  _UserActions.UserActions.initUser().then(render).catch(render);
+	}).catch(render);
 
 /***/ },
 /* 1 */
@@ -27191,6 +27201,10 @@
 
 	var _UserActions = __webpack_require__(267);
 
+	var initAuth = function initAuth() {
+	  return _AuthService.AuthService.init();
+	};
+
 	var login = function login(credentials) {
 
 	  _AuthService.AuthService.login(credentials);
@@ -27223,6 +27237,7 @@
 
 	var AuthActions = exports.AuthActions = {
 
+	  initAuth: initAuth,
 	  login: login,
 	  logout: logout,
 	  flagAuth: flagAuth,
@@ -27556,15 +27571,6 @@
 
 	    this.cacheKey = 'access_cred';
 
-	    // this
-	    //   ._getFromCache()
-	    //   .then(token => {
-	    //     AuthActions.flagAuth();
-	    //     this._setSession(token);
-	    //   })
-	    //   .catch(err => {
-	    //     console.error(err);
-	    //   });
 	    //check cache for existing token and set
 	    // this._removeSession();
 	  }
@@ -27601,19 +27607,6 @@
 	      _CacheService.CacheService.cache(this.cacheKey, token);
 	      axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
 	    }
-
-	    // _setSession(session) {
-	    //   console.log('AuthService.js -> setSession() | msg: Setting session', session.token, session.user)
-
-	    //   localForage.setItem(this.cacheKey, {
-	    //     token: session.token,
-	    //     user: session.user
-	    //   });
-
-	    //   axios.defaults.headers.common['Authorization'] = 'Bearer ' + session.token;
-	    // }
-
-
 	  }, {
 	    key: '_removeSession',
 	    value: function _removeSession() {
@@ -27625,11 +27618,6 @@
 	    value: function _getSession() {
 	      return _CacheService.CacheService.get(this.cacheKey);
 	    }
-
-	    // _cacheToken(token) {
-
-	    // }
-
 	  }, {
 	    key: 'login',
 	    value: function login(loginReq) {
@@ -31498,56 +31486,9 @@
 
 	var _Array = __webpack_require__(273);
 
-	// const initUser = (cachedUser) => {
-
-	//   if (cachedUser) {
-
-	//     setUser(cachedUser);
-	//     GroupActions.initGroup(cachedUser.memberOf);
-	//     UserService
-	//       .fetchUser(cachedUser.email)
-	//       .then(newUser => {
-	//         setUser(newUser);
-	//         if (!sameSets(cachedUser.memberOf, newUser.memberOf))
-	//           GroupActions.initGroup(updatedUser.memberOf);
-	//       })
-	//       .catch(err => {
-	//         console.error('UserActions.js -> initUser() | msg:', err);
-	//       })
-
-	//   } 
-	//   // update to expect cached user object
-	// UserService
-	//   .getFromCache()
-	//   .then(cachedUser => {
-	//     setUser(cachedUser);
-	//     GroupActions.initGroup(cachedUser.memberOf)
-	//     UserService
-	//       .fetchUser(email)
-	//       .then(updatedUser => {
-	//         setUser(updatedUser);
-	//         if (!sameSets(cachedUser.memberOf, updatedUser.memberOf))
-	//           GroupActions.initGroup(updatedUser.memberOf)
-	//         UserService.cacheUser(updatedUser);
-	//       })
-	//       .catch(err => {
-	//         console.error('ERR: UserActions.js -> initUser()', err);
-	//       });
-	//   })
-	//   .catch(() => {
-	//     UserService
-	//       .fetchUser(email)
-	//       .then((user) => {
-	//         setUser(user);
-	//         GroupActions.initGroup(user.memberOf);
-	//         UserService.cacheUser(user);
-	//       })
-	//       .catch(err => {
-	//         console.error('ERR: UserActions.js -> initUser()', err);
-	//       });
-	// });
-
-	// };
+	var initUser = function initUser() {
+	  return _UserService.UserService.init();
+	};
 
 	var setUser = function setUser(user) {
 
@@ -31579,19 +31520,9 @@
 	  });
 	};
 
-	// issue caching user object
-
 	var createUser = function createUser(userReq) {
 
 	  _UserService.UserService.createUser(userReq);
-	  // .then(res => {
-	  //   AuthActions.setCredentials(res);
-	  //   // UserService.cacheUser(res.user);
-	  //   // setUser(res.user);
-	  // })
-	  // .catch(err => {
-	  //   console.error('ERR: UserActions.js -> createUser()', err);
-	  // });
 	};
 
 	var addFavorite = function addFavorite(message) {
@@ -31618,7 +31549,7 @@
 
 	var UserActions = exports.UserActions = {
 
-	  // initUser,
+	  initUser: initUser,
 	  setUser: setUser,
 	  unsetUser: unsetUser,
 	  updateUser: updateUser,
@@ -31690,13 +31621,25 @@
 
 	    this._cacheKey = 'bundylol_user';
 
-	    this._getFromCache().then(function (user) {
-	      _UserActions.UserActions.setUser(user);
-	    }).catch(function () {});
-	    // this.clearLastActive();
+	    // this._clearCache();
 	  }
 
 	  _createClass(_UserService, [{
+	    key: 'init',
+	    value: function init() {
+	      var _this = this;
+
+	      return new Promise(function (res, rej) {
+
+	        _this._getFromCache().then(function (user) {
+	          _UserActions.UserActions.setUser(user);
+	          res();
+	        }).catch(function () {
+	          res();
+	        });
+	      });
+	    }
+	  }, {
 	    key: '_getFromCache',
 	    value: function _getFromCache() {
 	      return _CacheService.CacheService.get(this._cacheKey);
@@ -31706,39 +31649,11 @@
 	    value: function _cacheUser(user) {
 	      _CacheService.CacheService.cache(this._cacheKey, user);
 	    }
-	    // clearLastActive() {
-	    //   localForage.removeItem(this._cacheKey);
-	    // }
-
-	    // cacheUser(user) {
-
-	    //   localForage
-	    //     .setItem(this._cacheKey, user)
-	    //     .then(msg => {
-	    //      console.log('Cached user', user);
-	    //     })
-	    //     .catch(err => {
-	    //      console.error('Error caching user', err, user);
-	    //     });
-
-	    //  // axios.defaults.headers.common['User'] = user.id;
-
-	    // }
-
-	    // getFromCache() {
-
-	    //   return new Promise(function(res, rej) {
-	    //     localForage
-	    //       .getItem(this._cacheKey)
-	    //       .then(user => {(user !== null) ? res(user)  : rej(undefined)})
-	    //       .catch(err => {
-	    //         console.error('Error getting user from cache. Rejecting.')
-	    //         rej(err);
-	    //       });
-	    //   }.bind(this))
-
-	    // }
-
+	  }, {
+	    key: '_clearCache',
+	    value: function _clearCache() {
+	      _CacheService.CacheService.remove(this._cacheKey);
+	    }
 	  }, {
 	    key: 'cacheUser',
 	    value: function cacheUser(user) {
@@ -31810,38 +31725,47 @@
 	var _GroupService = __webpack_require__(272);
 
 	var initGroup = function initGroup() {
+
+	  // console.log('ACTION: Initilize group', groupIds)
+
+	  // updateGroups(groupIds);
+
+
+	  // GroupService
+	  //   .getLastActive()
+	  //   .then(lastActive => {
+	  //     if (groupIds.indexOf(lastActive.id) >= 0) {
+	  //       setActive(lastActive);
+	  //       GroupService
+	  //         .fetch(lastActive.id)
+	  //         .then(groupInfo => {
+	  //           setActive(groupInfo);
+	  //           GroupService.saveLastActive(groupInfo);
+	  //         })
+	  //         .catch((err) => {console.error('ERR: GroupActions.js -> initGroup()', err)});
+	  //     } else {
+	  //       resetActive(groupIds);
+	  //     }
+	  //   })
+	  //   .catch(err => {
+	  //     console.error('ERR: GroupActions.js -> initGroup()', err);
+	  //     resetActive(groupIds);
+	  //   })
+
 	  var groupIds = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-
-
-	  console.log('ACTION: Initilize group', groupIds);
-
-	  updateGroups(groupIds);
-
-	  _GroupService.GroupService.getLastActive().then(function (lastActive) {
-	    if (groupIds.indexOf(lastActive.id) >= 0) {
-	      setActive(lastActive);
-	      _GroupService.GroupService.fetch(lastActive.id).then(function (groupInfo) {
-	        setActive(groupInfo);
-	        _GroupService.GroupService.saveLastActive(groupInfo);
-	      }).catch(function (err) {
-	        console.error('ERR: GroupActions.js -> initGroup()', err);
-	      });
-	    } else {
-	      resetActive(groupIds);
-	    }
-	  }).catch(function (err) {
-	    console.error('ERR: GroupActions.js -> initGroup()', err);
-	    resetActive(groupIds);
-	  });
 	};
 
 	var resetActive = function resetActive(groupIds) {
-	  if (groupIds.length > 0) {
-	    _GroupService.GroupService.fetch(groupIds[0]).then(function (groupInfo) {
-	      setActive(groupInfo);
-	      _GroupService.GroupService.saveLastActive(groupInfo);
-	    }).catch(function () {});
-	  }
+	  // if (groupIds.length > 0) {
+	  //       GroupService
+	  //         .fetch(groupIds[0])
+	  //         .then(groupInfo => {
+	  //           setActive(groupInfo);
+	  //           GroupService.saveLastActive(groupInfo);
+	  //         })
+	  //         .catch(() => {});
+	  //         }
+
 	};
 
 	var updateGroups = function updateGroups(groupIds) {
@@ -32184,7 +32108,7 @@
 	        _reactRouter.browserHistory.push('/');
 	      });
 	      // if (this.state.hasAuth) {
-	      //   UserActions.initUser('a');
+	      //   browserHistory.push('/');
 	      // };
 	    }
 	  }, {
@@ -32640,6 +32564,8 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _UserActions = __webpack_require__(267);
+
 	var _UserPane = __webpack_require__(278);
 
 	var _GroupPane = __webpack_require__(280);
@@ -32667,6 +32593,12 @@
 
 	  _createClass(Dashboard, [{
 	    key: 'render',
+
+
+	    // componentWillMount() {
+	    //   UserActions.initUser()
+	    // }
+
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'div',
@@ -34341,6 +34273,11 @@
 
 	    return _this;
 	  }
+
+	  // componentWillMount() {
+	  //   console.log(`Login mounting`, this.props, this.state)
+	  // }
+
 
 	  _createClass(Login, [{
 	    key: '_handleRegSubmit',

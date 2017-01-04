@@ -8,6 +8,10 @@ import { CacheService } from '../Services/CacheService';
 import { UserActions } from '../Actions/UserActions';
 
 
+const initAuth = () => {
+  return AuthService.init();
+}
+
 const login = (credentials) => {
 
   AuthService.login(credentials)
@@ -44,6 +48,7 @@ const setToken = (token) => {
 
 export const AuthActions = {
 
+  initAuth,
   login,
   logout,
   flagAuth,

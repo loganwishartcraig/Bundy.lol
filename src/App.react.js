@@ -35,7 +35,7 @@ export class App extends Component {
       browserHistory.push('/');
     });
     // if (this.state.hasAuth) {
-    //   UserActions.initUser('a');
+    //   browserHistory.push('/');
     // };
   }
 

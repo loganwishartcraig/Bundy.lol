@@ -13,15 +13,6 @@ class _AuthService {
 
     this.cacheKey = 'access_cred';
 
-    // this
-    //   ._getFromCache()
-    //   .then(token => {
-    //     AuthActions.flagAuth();
-    //     this._setSession(token);
-    //   })
-    //   .catch(err => {
-    //     console.error(err);
-    //   });
     //check cache for existing token and set
     // this._removeSession();
  
@@ -63,17 +54,6 @@ class _AuthService {
   }
 
 
-  // _setSession(session) {
-  //   console.log('AuthService.js -> setSession() | msg: Setting session', session.token, session.user)
-    
-  //   localForage.setItem(this.cacheKey, {
-  //     token: session.token,
-  //     user: session.user
-  //   });
-    
-  //   axios.defaults.headers.common['Authorization'] = 'Bearer ' + session.token;
-  // }
-
 
   _removeSession() {
     CacheService.remove(this.cacheKey);
@@ -84,9 +64,6 @@ class _AuthService {
     return CacheService.get(this.cacheKey);
   }
 
-  // _cacheToken(token) {
-
-  // }
 
   login(loginReq) {
     

@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, browserHistory } from 'react-router';
 
-// import { UserStore } from './Stores/UserStore';
-import { AuthService } from './Services/AuthService';
+import { AuthActions } from './Actions/AuthActions';
+import { UserActions } from './Actions/UserActions';
+
+import { AuthStore } from './Stores/AuthStore';
 
 import { App } from './App.react'
 import { Registration } from './Pages/Registration.react';
@@ -24,6 +26,13 @@ class PageNotFound extends Component {
 }
 
 
+const dashRedirect = (nextState, replace, callback) => {
+
+  if (AuthStore.hasAuth()) replace('/');
+  callback();
+
+};
+
 
 class RouteHandler extends Component { 
 
@@ -31,8 +40,8 @@ class RouteHandler extends Component {
     return (
         <Router history={browserHistory}>
           <Route path="/" component={App} >
-            <Route path="register" component={Registration} />
-            <Route path="login" component={Login} />
+            <Route path="register" component={Registration} onEnter={dashRedirect} />
+            <Route path="login" component={Login} onEnter={dashRedirect} />
             <Route path="*" component={PageNotFound} />
           </Route>
         </Router>
@@ -50,7 +59,14 @@ const render = () => {
 };
 
 
-AuthService
-  .init()
-  .then(render)
+
+// should be built to be async?
+AuthActions
+  .initAuth()
+  .then(() => {
+    UserActions
+      .initUser()
+      .then(render)
+      .catch(render)
+  })
   .catch(render);
