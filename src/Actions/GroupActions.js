@@ -3,7 +3,7 @@ import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 import { GroupConstants } from '../Constants/GroupConstants';
 import { GroupService } from '../Services/GroupService';
 
-const initGroup = (groupIds = []) => {
+const initGroups = (groupIds = []) => {
 
   // console.log('ACTION: Initilize group', groupIds)
 
@@ -126,7 +126,7 @@ const createGroup = (groupReq) => {
 
 export const GroupActions = {
 
-  initGroup,
+  // initGroups,
   setGroup,
   unsetGroup,
   updateGroups,

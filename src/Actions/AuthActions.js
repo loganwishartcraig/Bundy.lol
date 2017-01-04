@@ -3,13 +3,16 @@ import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 import { AuthConstants } from '../Constants/AuthConstants';
 import { AuthService } from '../Services/AuthService';
 
-import { CacheService } from '../Services/CacheService';
+// import { CacheService } from '../Services/CacheService';
 
-import { UserActions } from '../Actions/UserActions';
+// import { UserActions } from '../Actions/UserActions';
 
 
 const initAuth = () => {
+
+  // needs to update user if cached version found.
   return AuthService.init();
+
 }
 
 const login = (credentials) => {
@@ -20,9 +23,7 @@ const login = (credentials) => {
 
 const logout = () => {
 
-  AppDispatcher.dispatch({
-    type: AuthConstants.CLEAR_TOKEN
-  });
+  AuthService.logout();
 
 };
 
@@ -35,24 +36,32 @@ const flagAuth = (authenticated) => {
 
 };
 
-const setToken = (token) => {
+// const clearToken = () => {
 
-  if (token) {
-    AuthService.setSession(token);
-    flagAuth(true);
-  } else {
-    flagAuth(false);
-  }
+//   AppDispatcher.dispatch({
+//     type: AuthConstants.SET_AUTH
+//   });
 
-};
+// };
+
+// const setToken = (token) => {
+
+//   if (token) {
+//     flagAuth(true);
+//   } else {
+//     flagAuth(false);
+//   }
+
+// };
 
 export const AuthActions = {
 
   initAuth,
   login,
   logout,
-  flagAuth,
-  setToken
+  flagAuth
+  // setToken,
+  // clearToken
   // setCredentials
 
 };

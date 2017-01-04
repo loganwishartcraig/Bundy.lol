@@ -16,7 +16,6 @@ class PageNotFound extends Component {
 
 
   render() {
-    console.log('rendering')
     return(
       <div>
         <span>Page Not Found :s</span>

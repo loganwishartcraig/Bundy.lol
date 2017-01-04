@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import { LogoutBtn } from './LogoutBtn.react';
+
 import { UserStore } from '../../Stores/UserStore';
 
 
@@ -31,6 +33,7 @@ class UserPane extends Component {
         <div>User Pane {this.state.hasUser ? 'has user' : 'no user'}</div>
 
         <div>email: {this.state.hasUser ? this.state.user.email : ''}</div>  
+        <LogoutBtn />
       </div> 
     );
   }

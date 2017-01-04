@@ -25,9 +25,9 @@ class _AuthService {
       this
         ._getFromCache()
         .then(token => {
+          this._setSession(token);
           AuthActions.flagAuth(true);
           console.log('got from session', token)
-          this._setSession(token);
           res();
         })
         .catch(err => {
@@ -66,7 +66,6 @@ class _AuthService {
 
 
   login(loginReq) {
-    
 
       axios.post('/auth/login', {
         credentials: loginReq
@@ -75,15 +74,21 @@ class _AuthService {
         console.log('got user', response.data.user);
         console.log('got token', response.data.token);
         // this._setSession(response.data.token);
-        AuthActions.setToken(response.data.token);
+        this._setSession(response.data.token);
+        AuthActions.flagAuth(true);    
         UserActions.setUser(response.data.user);
       })
       .catch(err => {
         AuthActions.flagAuth(false);
       });
       
+  }
 
+  logout() {
 
+    this._removeSession();
+    AuthActions.flagAuth(false);
+    UserActions.setUser(undefined);
 
   }
 
@@ -105,13 +110,6 @@ class _AuthService {
         });
 
     });
-  }
-
-  clearCredentials() {
-
-    this._removeSession();
-    this._removeStored();
-
   }
 
 }

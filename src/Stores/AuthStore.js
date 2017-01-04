@@ -26,11 +26,11 @@ class _AuthStore extends EventEmitter {
 
   }
 
-  removeAuth() {
+  // removeAuth() {
 
-    this.authenticated = false;
+  //   this.authenticated = false;
 
-  }
+  // }
 
   hasAuth() {
     return this.authenticated
@@ -61,10 +61,10 @@ AppDispatcher.register(function(action) {
       AuthStore.setAuth(action.authenticated);
       AuthStore.emitChange();
       break;
-    case AuthConstants.CLEAR_TOKEN:
-      AuthStore.clearToken();
-      AuthStore.emitChange();
-      break;
+    // case AuthConstants.CLEAR_TOKEN:
+    //   AuthStore.setAuth(action.authenticated);
+    //   AuthStore.emitChange();
+      // break;
     default:
       break;
 

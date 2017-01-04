@@ -23,11 +23,11 @@ const setUser = (user) => {
   });
 };
 
-const unsetUser = () => {
-  AppDispatcher.dispatch({
-    type: UserConstants.UNSET_USER
-  });
-};
+// const unsetUser = () => {
+//   AppDispatcher.dispatch({
+//     type: UserConstants.UNSET_USER
+//   });
+// };
 
 const updateUser = (user) => {
   AppDispatcher.dispatch({
@@ -77,7 +77,7 @@ export const UserActions = {
 
   initUser,
   setUser,
-  unsetUser,
+  // unsetUser,
   updateUser,
   deleteUser,
   createUser,

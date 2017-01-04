@@ -47,33 +47,33 @@ class _UserService {
     this._cacheUser(user);
   }
 
-  fetchUser(email) {
+  // fetchUser(email) {
 
-    return new Promise(function(res, rej) {
+  //   return new Promise(function(res, rej) {
 
-      axios
-        .get(`/user/getUser?email=${email}`)
-        .then(response => {
-          console.log(response.data)
-          res(response.data.user);
-        })
-        .catch(err => {
-          rej(err.response.data);
-        });
+  //     axios
+  //       .get(`/user/getUser?email=${email}`)
+  //       .then(response => {
+  //         console.log(response.data)
+  //         res(response.data.user);
+  //       })
+  //       .catch(err => {
+  //         rej(err.response.data);
+  //       });
         
-    });
+  //   });
 
-  }
+  // }
 
-  updateUser(user) {
+  // updateUser(user) {
 
-    // simulated API Call
-    return new Promise(function(res, rej) {
-      // res(user);
-      setTimeout(() => {res(user)}, Math.floor((Math.random() * (2000-500)) + 500))
-    });
+  //   // simulated API Call
+  //   return new Promise(function(res, rej) {
+  //     // res(user);
+  //     setTimeout(() => {res(user)}, Math.floor((Math.random() * (2000-500)) + 500))
+  //   });
 
-  }
+  // }
 
   createUser(userReq) {
 
@@ -85,10 +85,10 @@ class _UserService {
         console.log('got user', response.data.user);
         console.log('got token', response.data.token);
         UserActions.setUser(response.data.user);
-        AuthActions.setToken(response.data.token);
+        AuthActions.flagAuth(true);
       })
       .catch(err => {
-        console.error(err);
+        console.error(err.response.data);
       });
       
   }
