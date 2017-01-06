@@ -7,7 +7,7 @@ var UserService = require('../services/UserService');
 var express = require('express');
 var router = express.Router();
 
-const verifyAuth = require('../auth/verifyAuth');
+const AuthOps = require('../auth/AuthOps');
 
 const _validateUserRequest = (userReq) => {
 
@@ -33,7 +33,7 @@ const _validateUserRequest = (userReq) => {
 
 /* GET home page. */
 router.get('/getUser', 
-  // verifyAuth,
+  AuthOps.verifyAuth,
   function(req, res, next) {
 
   console.log('\t', req.query.email)

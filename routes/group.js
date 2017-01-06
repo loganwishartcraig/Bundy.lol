@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
-const GroupService = require('../services/GroupService')
+const GroupService = require('../services/GroupService');
+const UserService = require('../services/UserService');
 
-const verifyAuth = require('../auth/verifyAuth');
+
+const AuthOps = require('../auth/AuthOps');
 
 
 const _validateGroupReq = (groupReq) => {
@@ -32,22 +34,30 @@ router.get('/getInfo', function(req, res, next) {
 });
 
 router.post('/create', 
-  verifyAuth,
+  AuthOps.verifyAuth,
   (req, res) => {
 
   let groupReq = Object.assign({}, req.body.groupReq);
 
   if (_validateGroupReq(groupReq)) {
 
-    GroupService
-      .createGroup(groupReq)
-      .then(group => {
-        res.status(200).json({group: group});
+    let token = req.get('Authorization');
+
+    UserService
+      .getByToken(token)
+      .then(user => {
+        GroupService
+          .createGroup(groupReq, user)
+          .then(payload => {
+            res.status(200).json(payload);
+          })
+          .catch(err => {
+            res.status(err.status).json(err);
+          });
       })
       .catch(err => {
         res.status(err.status).json(err);
-      });
-
+      })
 
   } else {
 

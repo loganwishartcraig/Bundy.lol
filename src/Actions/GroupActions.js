@@ -46,24 +46,33 @@ const resetActive = (groupIds) => {
 
 }
 
-const updateGroups = (groupIds) => {
+// const updateGroups = (groupIds) => {
 
-  console.log('ACTION: update groups', groupIds)
+//   console.log('ACTION: update groups', groupIds)
   
-  GroupService.fetch(groupIds).then(groups => {
-    console.log('group service returned: ', groups);
-    setGroups(groups);
-  })
-  .catch(() => {});
-};
+//   GroupService.fetch(groupIds).then(groups => {
+//     console.log('group service returned: ', groups);
+//     setGroups(groups);
+//   })
+//   .catch(() => {});
+// };
 
-const setGroups = (groups) => {
-  console.log('action groups set', groups)
+const setAll = (groups) => {
   AppDispatcher.dispatch({
-    type: GroupConstants.SET_GROUPS,
+    type: GroupConstants.SET_ALL,
     groups: groups
   });
-}
+};
+
+const addGroup = (group) => {
+  AppDispatcher.dispatch({
+    type: GroupConstants.ADD_GROUP,
+    group: group
+  });
+};
+
+
+
 
 const setGroup = (group) => {
   AppDispatcher.dispatch({
@@ -129,7 +138,9 @@ export const GroupActions = {
   // initGroups,
   setGroup,
   unsetGroup,
-  updateGroups,
+  setAll,
+  addGroup,
+  // updateGroups,
   setActive,
   leaveGroup,
   joinGroup,

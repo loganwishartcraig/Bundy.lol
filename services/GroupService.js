@@ -1,12 +1,38 @@
 const mongoose = require('mongoose'),
-      GroupModel = require('../models/GroupModel');
+      GroupModel = require('../models/GroupModel')
+      // UserService = require('./UserService');
 
 
-const createGroup = (groupReq) => {
+const createGroup = (groupReq, user) => {
 
   return new Promise((res, rej) => {
-    console.log('GroupService.js -> createGroup() -- NOT IMPLEMENTED --', groupReq)
-    res(groupReq);
+    // console.log('GroupService.js -> createGroup()', groupReq);
+
+    GroupModel
+      .findOne({name: groupReq.name})
+      .then(existing => {
+        if (existing) return rej({status: 400, msg: 'Group already exists.'});
+
+        let group = new GroupModel(groupReq);
+            group.members.push(user);
+            group.save();
+
+        user.memberOf.push(group);
+        user.createdGroups.push(group.id);
+        user.save();
+
+        res({
+          group: group,
+          user: user
+        });
+
+
+
+      })
+      .catch(err => {
+        rej({status: 500, msg: 'Error looking up group.'})
+      });
+
   });
 
 };

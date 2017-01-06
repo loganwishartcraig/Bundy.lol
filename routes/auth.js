@@ -6,7 +6,7 @@ const AuthService = require('../services/AuthService');
 
 // var passport = require('passport');
 
-const verifyAuth = require('../auth/verifyAuth.js');
+const AuthOps = require('../auth/AuthOps.js');
 
 
 // --> new ReqValidator(['email', 'password'])
@@ -28,7 +28,7 @@ const _validateLoginRequest = (loginRequest) => {
 };
 
 router.get('/check', 
-  verifyAuth,
+  AuthOps.verifyAuth,
   (req, res, next) => {
     res.status(200).json({msg: 'logged in!'})
 });

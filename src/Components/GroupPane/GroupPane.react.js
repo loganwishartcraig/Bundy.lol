@@ -11,7 +11,7 @@ import { GroupSelector } from './GroupSelector.react';
 const getGroupState = () => ({
   activeGroup: GroupStore.getActive(),
   groups: GroupStore.getGroups(),
-  isAdding: false
+  isAdding: GroupStore.isAdding()
 });
 
 
@@ -19,6 +19,8 @@ class GroupPane extends Component {
 
   constructor(props, context) {
     super(props, context);
+
+    console.log('GroupPane -> constructor() | GroupStore groups', GroupStore.getGroups())
 
     this.state = getGroupState();
   }
@@ -44,13 +46,11 @@ class GroupPane extends Component {
       <div>
         <div>Group Pane</div>
 
-        {(Array.isArray(this.groups) && this.groups.length > 0) ? (
+        {(Array.isArray(this.state.groups) && this.state.groups.length > 0) ? (
           <div>
-            <span>Active: {JSON.stringify(this.state.activeGroup.id)}</span>
-            <GroupSelector 
-              groups={this.state.groups} 
-              activeId={this.state.activeGroup.id} 
-            />
+            <span>Active: {JSON.stringify(this.state.activeGroup)}</span><br/>
+            <span>Would have {'<'}GroupSelector{'/>'}</span><br/>
+            <span>Groups: {JSON.stringify(this.state.groups)}</span>
           </div>
           ) : (
           <span>U have no groups :(<br /></span>

@@ -13,6 +13,7 @@ class _GroupStore extends EventEmitter {
     super();
     this._activeGroup = {};
     this._groups = [];
+    this._isAdding = false;
 
     this.events = {
       change: 'CHANGE'
@@ -31,6 +32,7 @@ class _GroupStore extends EventEmitter {
   }
 
   setGroups(groups) {
+    console.log("GroupStore -> setGroups() | groups: ", groups, "Setting groups");
     this._groups = groups
   }
 
@@ -48,6 +50,12 @@ class _GroupStore extends EventEmitter {
     return this._activeGroup;
   }
 
+  addGroup(group) {
+    console.log('GroupStore -> addGroup() | Adding', group)
+    this._groups.push(group);
+    console.log(this._groups)
+  }
+
 
   emitChange() {
     this.emit(this.events.change);
@@ -59,6 +67,10 @@ class _GroupStore extends EventEmitter {
 
   unsetListener(callback, event=this.events.change) {
     this.removeListener(event, callback);
+  }
+
+  isAdding() {
+    return this._isAdding;
   }
 
 }
@@ -82,8 +94,16 @@ AppDispatcher.register(function(action) {
       GroupStore.setGroup(action.group.id, action.group);
       GroupStore.emitChange();
       break;
+    case GroupConstants.SET_ALL:
+      GroupStore.setGroups(action.groups);
+      GroupStore.emitChange();
+      break;
     case GroupConstants.SET_ACTIVE:
       GroupStore.setActive(action.group);
+      GroupStore.emitChange();
+      break;
+    case GroupConstants.ADD_GROUP:
+      GroupStore.addGroup(action.group);
       GroupStore.emitChange();
       break;
     // case GroupStore.UPDATE_GROUPS:

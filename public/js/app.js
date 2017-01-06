@@ -77,9 +77,9 @@
 
 	var _App = __webpack_require__(277);
 
-	var _Registration = __webpack_require__(298);
+	var _Registration = __webpack_require__(299);
 
-	var _Login = __webpack_require__(299);
+	var _Login = __webpack_require__(300);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31560,6 +31560,8 @@
 
 	var setUser = function setUser(user) {
 
+	  console.log('setting user', user);
+
 	  _UserService.UserService.cacheUser(user);
 
 	  _AppDispatcher.AppDispatcher.dispatch({
@@ -31677,6 +31679,8 @@
 
 	var _AuthActions = __webpack_require__(235);
 
+	var _GroupActions = __webpack_require__(271);
+
 	var _CacheService = __webpack_require__(267);
 
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
@@ -31692,6 +31696,8 @@
 	    // this._clearCache();
 	  }
 
+	  // should query server for new user if cached.
+
 	  _createClass(_UserService, [{
 	    key: 'init',
 	    value: function init() {
@@ -31701,6 +31707,7 @@
 
 	        _this._getFromCache().then(function (user) {
 	          _UserActions.UserActions.setUser(user);
+	          _GroupActions.GroupActions.setAll(user.memberOf);
 	          res();
 	        }).catch(function () {
 	          res();
@@ -31826,34 +31833,39 @@
 	  var groupIds = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 	};
 
-	var resetActive = function resetActive(groupIds) {
-	  // if (groupIds.length > 0) {
-	  //       GroupService
-	  //         .fetch(groupIds[0])
-	  //         .then(groupInfo => {
-	  //           setActive(groupInfo);
-	  //           GroupService.saveLastActive(groupInfo);
-	  //         })
-	  //         .catch(() => {});
-	  //         }
+	var resetActive = function resetActive(groupIds) {}
+	// if (groupIds.length > 0) {
+	//       GroupService
+	//         .fetch(groupIds[0])
+	//         .then(groupInfo => {
+	//           setActive(groupInfo);
+	//           GroupService.saveLastActive(groupInfo);
+	//         })
+	//         .catch(() => {});
+	//         }
 
-	};
+	// const updateGroups = (groupIds) => {
 
-	var updateGroups = function updateGroups(groupIds) {
+	//   console.log('ACTION: update groups', groupIds)
 
-	  console.log('ACTION: update groups', groupIds);
+	//   GroupService.fetch(groupIds).then(groups => {
+	//     console.log('group service returned: ', groups);
+	//     setGroups(groups);
+	//   })
+	//   .catch(() => {});
+	// };
 
-	  _GroupService.GroupService.fetch(groupIds).then(function (groups) {
-	    console.log('group service returned: ', groups);
-	    setGroups(groups);
-	  }).catch(function () {});
-	};
-
-	var setGroups = function setGroups(groups) {
-	  console.log('action groups set', groups);
+	;var setAll = function setAll(groups) {
 	  _AppDispatcher.AppDispatcher.dispatch({
-	    type: _GroupConstants.GroupConstants.SET_GROUPS,
+	    type: _GroupConstants.GroupConstants.SET_ALL,
 	    groups: groups
+	  });
+	};
+
+	var addGroup = function addGroup(group) {
+	  _AppDispatcher.AppDispatcher.dispatch({
+	    type: _GroupConstants.GroupConstants.ADD_GROUP,
+	    group: group
 	  });
 	};
 
@@ -31915,7 +31927,9 @@
 	  // initGroups,
 	  setGroup: setGroup,
 	  unsetGroup: unsetGroup,
-	  updateGroups: updateGroups,
+	  setAll: setAll,
+	  addGroup: addGroup,
+	  // updateGroups,
 	  setActive: setActive,
 	  leaveGroup: leaveGroup,
 	  joinGroup: joinGroup,
@@ -31934,7 +31948,8 @@
 	var GroupConstants = exports.GroupConstants = {
 	  INIT_GROUP: 'INIT_GROUP',
 	  SET_GROUP: 'SET_GROUP',
-	  SET_GROUPS: 'SET_GROUPS',
+	  SET_ALL: 'SET_ALL',
+	  ADD_GROUP: 'ADD_GROUP',
 	  UNSET_GROUP: 'UNSET_GROUP',
 	  UPDATE_GROUPS: 'UPDATE_GROUPS',
 	  SET_ACTIVE: 'SET_ACTIVE',
@@ -31962,6 +31977,10 @@
 	var _localforage = __webpack_require__(241);
 
 	var localForage = _interopRequireWildcard(_localforage);
+
+	var _UserActions = __webpack_require__(268);
+
+	var _GroupActions = __webpack_require__(271);
 
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -32071,7 +32090,9 @@
 	        axios.post('/group/create', {
 	          groupReq: groupReq
 	        }).then(function (response) {
-	          res(response.data.group);
+	          res(response.data);
+	          _UserActions.UserActions.setUser(response.data.user);
+	          _GroupActions.GroupActions.addGroup(response.data.group);
 	        }).catch(function (err) {
 	          rej(err.response.data);
 	        });
@@ -32547,7 +32568,7 @@
 
 	var _Dashboard = __webpack_require__(278);
 
-	var _Landing = __webpack_require__(297);
+	var _Landing = __webpack_require__(298);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32640,9 +32661,9 @@
 
 	var _UserPane = __webpack_require__(279);
 
-	var _GroupPane = __webpack_require__(281);
+	var _GroupPane = __webpack_require__(282);
 
-	var _DisplayPane = __webpack_require__(287);
+	var _DisplayPane = __webpack_require__(288);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32704,9 +32725,9 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _LogoutBtn = __webpack_require__(300);
+	var _LogoutBtn = __webpack_require__(280);
 
-	var _UserStore = __webpack_require__(280);
+	var _UserStore = __webpack_require__(281);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32777,6 +32798,41 @@
 
 /***/ },
 /* 280 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.LogoutBtn = undefined;
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _AuthActions = __webpack_require__(235);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _objectDestructuringEmpty(obj) { if (obj == null) throw new TypeError("Cannot destructure undefined"); }
+
+	var _handleLogout = function _handleLogout(e) {
+	  _AuthActions.AuthActions.logout();
+	};
+
+	var LogoutBtn = exports.LogoutBtn = function LogoutBtn(_ref) {
+	  _objectDestructuringEmpty(_ref);
+
+	  return _react2.default.createElement(
+	    'button',
+	    { onClick: _handleLogout },
+	    'Logout'
+	  );
+	};
+
+/***/ },
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32916,7 +32972,7 @@
 	exports.UserStore = UserStore;
 
 /***/ },
-/* 281 */
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32932,13 +32988,13 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _GroupStore = __webpack_require__(282);
+	var _GroupStore = __webpack_require__(283);
 
 	var _GroupActions = __webpack_require__(271);
 
-	var _DisplayActions = __webpack_require__(283);
+	var _DisplayActions = __webpack_require__(284);
 
-	var _GroupSelector = __webpack_require__(286);
+	var _GroupSelector = __webpack_require__(287);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32952,7 +33008,7 @@
 	  return {
 	    activeGroup: _GroupStore.GroupStore.getActive(),
 	    groups: _GroupStore.GroupStore.getGroups(),
-	    isAdding: false
+	    isAdding: _GroupStore.GroupStore.isAdding()
 	  };
 	};
 
@@ -32963,6 +33019,8 @@
 	    _classCallCheck(this, GroupPane);
 
 	    var _this = _possibleConstructorReturn(this, (GroupPane.__proto__ || Object.getPrototypeOf(GroupPane)).call(this, props, context));
+
+	    console.log('GroupPane -> constructor() | GroupStore groups', _GroupStore.GroupStore.getGroups());
 
 	    _this.state = getGroupState();
 	    return _this;
@@ -32999,19 +33057,31 @@
 	          null,
 	          'Group Pane'
 	        ),
-	        Array.isArray(this.groups) && this.groups.length > 0 ? _react2.default.createElement(
+	        Array.isArray(this.state.groups) && this.state.groups.length > 0 ? _react2.default.createElement(
 	          'div',
 	          null,
 	          _react2.default.createElement(
 	            'span',
 	            null,
 	            'Active: ',
-	            JSON.stringify(this.state.activeGroup.id)
+	            JSON.stringify(this.state.activeGroup)
 	          ),
-	          _react2.default.createElement(_GroupSelector.GroupSelector, {
-	            groups: this.state.groups,
-	            activeId: this.state.activeGroup.id
-	          })
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement(
+	            'span',
+	            null,
+	            'Would have ',
+	            '<',
+	            'GroupSelector',
+	            '/>'
+	          ),
+	          _react2.default.createElement('br', null),
+	          _react2.default.createElement(
+	            'span',
+	            null,
+	            'Groups: ',
+	            JSON.stringify(this.state.groups)
+	          )
 	        ) : _react2.default.createElement(
 	          'span',
 	          null,
@@ -33033,7 +33103,7 @@
 	exports.GroupPane = GroupPane;
 
 /***/ },
-/* 282 */
+/* 283 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33070,6 +33140,7 @@
 
 	    _this._activeGroup = {};
 	    _this._groups = [];
+	    _this._isAdding = false;
 
 	    _this.events = {
 	      change: 'CHANGE'
@@ -33091,6 +33162,7 @@
 	  }, {
 	    key: 'setGroups',
 	    value: function setGroups(groups) {
+	      console.log("GroupStore -> setGroups() | groups: ", groups, "Setting groups");
 	      this._groups = groups;
 	    }
 	  }, {
@@ -33111,6 +33183,13 @@
 	      return this._activeGroup;
 	    }
 	  }, {
+	    key: 'addGroup',
+	    value: function addGroup(group) {
+	      console.log('GroupStore -> addGroup() | Adding', group);
+	      this._groups.push(group);
+	      console.log(this._groups);
+	    }
+	  }, {
 	    key: 'emitChange',
 	    value: function emitChange() {
 	      this.emit(this.events.change);
@@ -33128,6 +33207,11 @@
 	      var event = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.events.change;
 
 	      this.removeListener(event, callback);
+	    }
+	  }, {
+	    key: 'isAdding',
+	    value: function isAdding() {
+	      return this._isAdding;
 	    }
 	  }]);
 
@@ -33151,8 +33235,16 @@
 	      GroupStore.setGroup(action.group.id, action.group);
 	      GroupStore.emitChange();
 	      break;
+	    case _GroupConstants.GroupConstants.SET_ALL:
+	      GroupStore.setGroups(action.groups);
+	      GroupStore.emitChange();
+	      break;
 	    case _GroupConstants.GroupConstants.SET_ACTIVE:
 	      GroupStore.setActive(action.group);
+	      GroupStore.emitChange();
+	      break;
+	    case _GroupConstants.GroupConstants.ADD_GROUP:
+	      GroupStore.addGroup(action.group);
 	      GroupStore.emitChange();
 	      break;
 	    // case GroupStore.UPDATE_GROUPS:
@@ -33170,7 +33262,7 @@
 	exports.GroupStore = GroupStore;
 
 /***/ },
-/* 283 */
+/* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33182,9 +33274,9 @@
 
 	var _AppDispatcher = __webpack_require__(236);
 
-	var _DisplayConstants = __webpack_require__(284);
+	var _DisplayConstants = __webpack_require__(285);
 
-	var _PaneConstants = __webpack_require__(285);
+	var _PaneConstants = __webpack_require__(286);
 
 	var gotoTodos = function gotoTodos() {
 
@@ -33210,7 +33302,7 @@
 	};
 
 /***/ },
-/* 284 */
+/* 285 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -33223,7 +33315,7 @@
 	};
 
 /***/ },
-/* 285 */
+/* 286 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -33237,7 +33329,7 @@
 	};
 
 /***/ },
-/* 286 */
+/* 287 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33336,7 +33428,7 @@
 	// export { GroupSelector };
 
 /***/ },
-/* 287 */
+/* 288 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33352,15 +33444,15 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _DisplayStore = __webpack_require__(288);
+	var _DisplayStore = __webpack_require__(289);
 
-	var _DisplayActions = __webpack_require__(283);
+	var _DisplayActions = __webpack_require__(284);
 
-	var _PaneConstants = __webpack_require__(285);
+	var _PaneConstants = __webpack_require__(286);
 
-	var _TodoPaneReact = __webpack_require__(289);
+	var _TodoPaneReact = __webpack_require__(290);
 
-	var _AddGroupPaneReact = __webpack_require__(296);
+	var _AddGroupPaneReact = __webpack_require__(297);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33450,7 +33542,7 @@
 	exports.DisplayPane = DisplayPane;
 
 /***/ },
-/* 288 */
+/* 289 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33464,7 +33556,7 @@
 
 	var _AppDispatcher = __webpack_require__(236);
 
-	var _DisplayConstants = __webpack_require__(284);
+	var _DisplayConstants = __webpack_require__(285);
 
 	var _events = __webpack_require__(276);
 
@@ -33545,7 +33637,7 @@
 	exports.DisplayStore = DisplayStore;
 
 /***/ },
-/* 289 */
+/* 290 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33561,11 +33653,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TodoStore = __webpack_require__(290);
+	var _TodoStore = __webpack_require__(291);
 
-	var _TodoFilterList = __webpack_require__(292);
+	var _TodoFilterList = __webpack_require__(293);
 
-	var _TodoList = __webpack_require__(294);
+	var _TodoList = __webpack_require__(295);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33628,7 +33720,7 @@
 	exports.TodoPane = TodoPane;
 
 /***/ },
-/* 290 */
+/* 291 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33642,9 +33734,9 @@
 
 	var _AppDispatcher = __webpack_require__(236);
 
-	var _TodoConstants = __webpack_require__(291);
+	var _TodoConstants = __webpack_require__(292);
 
-	var _GroupStore = __webpack_require__(282);
+	var _GroupStore = __webpack_require__(283);
 
 	var _GroupConstants = __webpack_require__(272);
 
@@ -33769,7 +33861,7 @@
 	exports.TodoStore = TodoStore;
 
 /***/ },
-/* 291 */
+/* 292 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -33789,7 +33881,7 @@
 	};
 
 /***/ },
-/* 292 */
+/* 293 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33803,7 +33895,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TodoActions = __webpack_require__(293);
+	var _TodoActions = __webpack_require__(294);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33848,7 +33940,7 @@
 	};
 
 /***/ },
-/* 293 */
+/* 294 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33860,7 +33952,7 @@
 
 	var _AppDispatcher = __webpack_require__(236);
 
-	var _TodoConstants = __webpack_require__(291);
+	var _TodoConstants = __webpack_require__(292);
 
 	var setTodos = function setTodos(todos) {
 	  _AppDispatcher.AppDispatcher.dispatch({
@@ -33930,7 +34022,7 @@
 	};
 
 /***/ },
-/* 294 */
+/* 295 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33944,9 +34036,9 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TodoActions = __webpack_require__(293);
+	var _TodoActions = __webpack_require__(294);
 
-	var _TodoItem = __webpack_require__(295);
+	var _TodoItem = __webpack_require__(296);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33971,7 +34063,7 @@
 	};
 
 /***/ },
-/* 295 */
+/* 296 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33985,7 +34077,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TodoActions = __webpack_require__(293);
+	var _TodoActions = __webpack_require__(294);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -34023,7 +34115,7 @@
 	};
 
 /***/ },
-/* 296 */
+/* 297 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34039,11 +34131,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _GroupStore = __webpack_require__(282);
+	var _GroupStore = __webpack_require__(283);
 
 	var _GroupActions = __webpack_require__(271);
 
-	var _DisplayActions = __webpack_require__(283);
+	var _DisplayActions = __webpack_require__(284);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -34123,7 +34215,7 @@
 	exports.AddGroupPane = AddGroupPane;
 
 /***/ },
-/* 297 */
+/* 298 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34187,7 +34279,7 @@
 	}(_react.Component);
 
 /***/ },
-/* 298 */
+/* 299 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34296,7 +34388,7 @@
 	}(_react.Component);
 
 /***/ },
-/* 299 */
+/* 300 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34394,41 +34486,6 @@
 
 	  return Login;
 	}(_react.Component);
-
-/***/ },
-/* 300 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.LogoutBtn = undefined;
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _AuthActions = __webpack_require__(235);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _objectDestructuringEmpty(obj) { if (obj == null) throw new TypeError("Cannot destructure undefined"); }
-
-	var _handleLogout = function _handleLogout(e) {
-	  _AuthActions.AuthActions.logout();
-	};
-
-	var LogoutBtn = exports.LogoutBtn = function LogoutBtn(_ref) {
-	  _objectDestructuringEmpty(_ref);
-
-	  return _react2.default.createElement(
-	    'button',
-	    { onClick: _handleLogout },
-	    'Logout'
-	  );
-	};
 
 /***/ }
 /******/ ]);

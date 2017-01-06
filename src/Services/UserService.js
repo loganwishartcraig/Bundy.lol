@@ -3,6 +3,7 @@ import * as localForage from 'localforage';
 
 import { UserActions } from '../Actions/UserActions';
 import { AuthActions } from '../Actions/AuthActions';
+import { GroupActions } from '../Actions/GroupActions';
 
 import { CacheService } from './CacheService';
 
@@ -16,6 +17,9 @@ class _UserService {
   
   } 
 
+
+  // should query server for new user if cached.
+
   init() {
 
     return new Promise((res, rej) => {
@@ -24,6 +28,7 @@ class _UserService {
         ._getFromCache()
         .then(user => {
           UserActions.setUser(user);
+          GroupActions.setAll(user.memberOf);
           res();
         })
         .catch(() => { res(); });

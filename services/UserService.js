@@ -1,5 +1,6 @@
 const mongoose = require('mongoose'),
-      UserModel = require('../models/UserModel');
+      UserModel = require('../models/UserModel'),
+      AuthOps = require('../auth/AuthOps');;
 
 // const AuthService = require('./AuthService');
 
@@ -31,8 +32,8 @@ const _serializeUser = (user) => {
 
 };
 
-exports.getUser = (email) => {
 
+const getUser = email => {
   return new Promise((res, rej) => {
 
   UserModel
@@ -46,19 +47,16 @@ exports.getUser = (email) => {
     })
 
   });
-
 };
 
-
-exports.createUser = (userObject) => {
-
+const createUser = userObject => {
   return new Promise((res, rej) => {
 
     UserModel
       .findOne({email: userObject.email})
       .then(existing => {
 
-        if (existing !== null) return rej({status: 400, msg: `Email "${userObject.email}" already used.`});
+        if (existing) return rej({status: 400, msg: `Email "${userObject.email}" already used.`});
 
         let user = new UserModel(userObject);
 
@@ -75,15 +73,45 @@ exports.createUser = (userObject) => {
       });
 
   });
-
 };
 
-exports.removeUser = (email) => {
-
+const removeUser = email => {
   UserModel
     .findOneAndRemove({email: email})
     .then(err => {
       if (err) console.log('\t', err);
     });
+};
 
+const getByToken = token => {
+  return new Promise((res, rej) => {
+
+    console.log(token);
+
+    AuthOps
+      .decryptToken(token)
+      .then(userId => {
+
+        console.log(userId)
+
+        UserModel
+          .findOne({id: userId})
+          .then(user => {
+            if (!user) return rej({status: 400, msg: 'User not found'});
+            res(user);
+          })
+          .catch(err => {
+            rej({status: 500, msg: 'Error looking up user'});
+          });
+
+      })
+      .catch(err => { rej(err); })  
+  });
+};
+
+module.exports = {
+  getUser,
+  createUser,
+  removeUser,
+  getByToken
 };
