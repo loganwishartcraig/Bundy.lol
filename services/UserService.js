@@ -5,41 +5,14 @@ const mongoose = require('mongoose'),
 // const AuthService = require('./AuthService');
 
 
-const _serializeUser = (user) => {
-
-  
-  let requiredKeys = [
-    'id',
-    'email',
-    'fName',
-    'lName',
-    'createdGroups',
-    'memberOf',
-    'favorites',
-    'accountCreated',
-    'lastLogin',
-    'lastLogout',
-    'tasksCompleted',
-    'tasksStarted'
-  ];
-
-  return requiredKeys.reduce((serializedUser, key) => {
-
-    serializedUser[key] = user[key];
-    return serializedUser;
-
-  }, {});
-
-};
-
-
 const getUser = email => {
   return new Promise((res, rej) => {
 
   UserModel
     .findOne({email: email})
+    .populate('memberOf', 'id name members tasks')
     .then((user) => {
-      if (user) res(_serializeUser(user));
+      if (user) res(user);
       else rej({status: 400, msg: `User '${email}' not found`});
     })
     .catch((err) => {
@@ -63,7 +36,7 @@ const createUser = userObject => {
         user.save(err => {
 
           if (err) return rej({status: 500, msg: 'Error writing user to db'});
-          return res(_serializeUser(user));
+          return res(user);
 
         });
 

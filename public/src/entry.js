@@ -27,6 +27,7 @@ class PageNotFound extends Component {
 
 const dashRedirect = (nextState, replace, callback) => {
 
+  console.log('entry.js -> dashRedirect() | ', AuthStore.hasAuth())
   if (AuthStore.hasAuth()) replace('/');
   callback();
 

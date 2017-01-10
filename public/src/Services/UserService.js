@@ -29,10 +29,19 @@ class _UserService {
         .then(user => {
           UserActions.setUser(user);
           GroupActions.setAll(user.memberOf);
+          this
+            .getUser(user.email)
+            .then(user => {
+              console.log('Recaching user.')
+              this._cacheUser(user);
+              UserActions.setUser(user);
+            })
+            .catch(err => {
+              console.log('UserService.js -> init() | Error refreshing user')
+            });
           res();
         })
         .catch(() => { res(); });
-
     });
   }
 
@@ -50,6 +59,20 @@ class _UserService {
 
   cacheUser(user) {
     this._cacheUser(user);
+  }
+
+  getUser(email) {
+    
+    return new Promise((res, rej) => {
+      axios
+        .get(`/user/getUser?email=${email}`)
+        .then(response => {
+          res(response.data.user);
+        })
+        .catch(err => {
+          rej(err.response.data);
+        });
+    });
   }
 
   // fetchUser(email) {
@@ -90,7 +113,7 @@ class _UserService {
         console.log('got user', response.data.user);
         console.log('got token', response.data.token);
         UserActions.setUser(response.data.user);
-        AuthActions.flagAuth(true);
+        AuthActions.setToken(response.data.token);
       })
       .catch(err => {
         console.error(err.response.data);

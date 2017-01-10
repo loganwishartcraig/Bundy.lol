@@ -17,7 +17,7 @@ const initAuth = () => {
 
 const login = (credentials) => {
 
-  AuthService.login(credentials)
+  AuthService.login(credentials);
 
 };
 
@@ -44,23 +44,24 @@ const flagAuth = (authenticated) => {
 
 // };
 
-// const setToken = (token) => {
+const setToken = (token) => {
 
-//   if (token) {
-//     flagAuth(true);
-//   } else {
-//     flagAuth(false);
-//   }
+  if (token && token.length) {
+    AuthService.setSession(token);
+    flagAuth(true);
+  } else {
+    flagAuth(false);
+  }
 
-// };
+};
 
 export const AuthActions = {
 
   initAuth,
   login,
   logout,
-  flagAuth
-  // setToken,
+  flagAuth,
+  setToken,
   // clearToken
   // setCredentials
 

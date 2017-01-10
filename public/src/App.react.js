@@ -32,11 +32,11 @@ export class App extends Component {
     console.log('app mounting', this.state)
     AuthStore.addListener(() => {
       this.setState(getAuthState());
-      browserHistory.push('/');
+      // browserHistory.push('/');
+      if (this.state.hasAuth) {
+        browserHistory.push('/');
+      };
     });
-    // if (this.state.hasAuth) {
-    //   browserHistory.push('/');
-    // };
   }
 
   render() {

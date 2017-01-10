@@ -27,7 +27,6 @@ class _AuthService {
         .then(token => {
           this._setSession(token);
           AuthActions.flagAuth(true);
-          console.log('got from session', token)
           res();
         })
         .catch(err => {
@@ -79,6 +78,7 @@ class _AuthService {
         UserActions.setUser(response.data.user);
       })
       .catch(err => {
+        console.log('AuthService.js -> login() | Error logging in', err.response.data, loginReq);
         AuthActions.flagAuth(false);
       });
       
@@ -92,8 +92,8 @@ class _AuthService {
 
   }
 
-  setSession(session) {
-    this._setSession(session);
+  setSession(sessionToken) {
+    this._setSession(sessionToken);
   }
 
   getFromCache() {
@@ -101,8 +101,8 @@ class _AuthService {
 
       this
         ._getSession()
-        .then(session => {
-          if (session) res(session)
+        .then(sessionToken => {
+          if (sessionToken) res(sessionToken)
             else rej({msg: 'No session token found'})
         })
         .catch(err => {

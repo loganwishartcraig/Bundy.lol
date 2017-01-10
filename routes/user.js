@@ -30,6 +30,33 @@ const _validateUserRequest = (userReq) => {
 
 };
 
+const _serializeUser = (user) => {
+
+  
+  let requiredKeys = [
+    'id',
+    'email',
+    'fName',
+    'lName',
+    'createdGroups',
+    'memberOf',
+    'favorites',
+    'accountCreated',
+    'lastLogin',
+    'lastLogout',
+    'tasksCompleted',
+    'tasksStarted'
+  ];
+
+  return requiredKeys.reduce((serializedUser, key) => {
+
+    serializedUser[key] = user[key];
+    return serializedUser;
+
+  }, {});
+
+};
+
 
 /* GET home page. */
 router.get('/getUser', 
@@ -42,7 +69,7 @@ router.get('/getUser',
     .getUser(req.query.email)
     .then((user) => {
       console.log(user);
-      res.status(200).json({user: user});
+      res.status(200).json({user: _serializeUser(user)});
     })
     .catch(err => {
       console.log(err);
@@ -67,7 +94,7 @@ router.post('/create', (req, res) => {
         .setCredentials(user.id, userRequest.password)
         .then(token => {
           res.status(200).json({
-            user: user,
+            user: _serializeUser(user),
             token: token
           })
         })

@@ -3,6 +3,7 @@ import * as localForage from 'localforage';
 
 import { UserActions } from '../Actions/UserActions';
 import { GroupActions } from '../Actions/GroupActions';
+import { DisplayActions } from '../Actions/DisplayActions';
 
 
 class _GroupService {
@@ -117,10 +118,9 @@ class _GroupService {
           groupReq: groupReq
         })
         .then(response => {
-          res(response.data)
-          ;
           UserActions.setUser(response.data.user);
           GroupActions.addGroup(response.data.group);
+          DisplayActions.gotoTodos();
         })
         .catch(err => {
           rej(err.response.data)

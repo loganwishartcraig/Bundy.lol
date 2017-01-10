@@ -14,7 +14,7 @@ const getUserState = () => ({
 class UserPane extends Component {
 
   constructor(props, context) {
-    console.log('user mounting', getUserState());
+    console.log('user pane mounting', getUserState());
     super(props, context);
     this.state = getUserState();
   }
@@ -30,7 +30,7 @@ class UserPane extends Component {
   render() {
     return(
       <div>
-        <div>User Pane {this.state.hasUser ? 'has user' : 'no user'}</div>
+        <div>User Pane {this.state.hasUser ? 'has user: '.concat(JSON.stringify(this.state.user)) : 'no user'}</div>
 
         <div>email: {this.state.hasUser ? this.state.user.email : ''}</div>  
         <LogoutBtn />

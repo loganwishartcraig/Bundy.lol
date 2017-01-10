@@ -6,7 +6,7 @@ const mongoose = require('mongoose'),
 const createGroup = (groupReq, user) => {
 
   return new Promise((res, rej) => {
-    // console.log('GroupService.js -> createGroup()', groupReq);
+    console.log('GroupService.js -> createGroup()', groupReq);
 
     GroupModel
       .findOne({name: groupReq.name})
@@ -14,6 +14,7 @@ const createGroup = (groupReq, user) => {
         if (existing) return rej({status: 400, msg: 'Group already exists.'});
 
         let group = new GroupModel(groupReq);
+            console.log(user)
             group.members.push(user);
             group.save();
 
@@ -30,6 +31,7 @@ const createGroup = (groupReq, user) => {
 
       })
       .catch(err => {
+        console.log(err)
         rej({status: 500, msg: 'Error looking up group.'})
       });
 

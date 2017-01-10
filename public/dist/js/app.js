@@ -118,6 +118,7 @@
 
 	var dashRedirect = function dashRedirect(nextState, replace, callback) {
 
+	  console.log('entry.js -> dashRedirect() | ', _AuthStore.AuthStore.hasAuth());
 	  if (_AuthStore.AuthStore.hasAuth()) replace('/');
 	  callback();
 	};
@@ -27233,26 +27234,23 @@
 
 	// };
 
-	// const setToken = (token) => {
+	var setToken = function setToken(token) {
 
-	//   if (token) {
-	//     flagAuth(true);
-	//   } else {
-	//     flagAuth(false);
-	//   }
-
-	// };
+	  if (token && token.length) {
+	    _AuthService.AuthService.setSession(token);
+	    flagAuth(true);
+	  } else {
+	    flagAuth(false);
+	  }
+	};
 
 	var AuthActions = exports.AuthActions = {
 
 	  initAuth: initAuth,
 	  login: login,
 	  logout: logout,
-	  flagAuth: flagAuth
-	  // setToken,
-	  // clearToken
-	  // setCredentials
-
+	  flagAuth: flagAuth,
+	  setToken: setToken
 	};
 
 /***/ },
@@ -27594,7 +27592,6 @@
 	        _this._getFromCache().then(function (token) {
 	          _this._setSession(token);
 	          _AuthActions.AuthActions.flagAuth(true);
-	          console.log('got from session', token);
 	          res();
 	        }).catch(function (err) {
 	          console.error(err);
@@ -27642,6 +27639,7 @@
 	        _AuthActions.AuthActions.flagAuth(true);
 	        _UserActions.UserActions.setUser(response.data.user);
 	      }).catch(function (err) {
+	        console.log('AuthService.js -> login() | Error logging in', err.response.data, loginReq);
 	        _AuthActions.AuthActions.flagAuth(false);
 	      });
 	    }
@@ -27655,8 +27653,8 @@
 	    }
 	  }, {
 	    key: 'setSession',
-	    value: function setSession(session) {
-	      this._setSession(session);
+	    value: function setSession(sessionToken) {
+	      this._setSession(sessionToken);
 	    }
 	  }, {
 	    key: 'getFromCache',
@@ -27665,8 +27663,8 @@
 
 	      return new Promise(function (res, rej) {
 
-	        _this3._getSession().then(function (session) {
-	          if (session) res(session);else rej({ msg: 'No session token found' });
+	        _this3._getSession().then(function (sessionToken) {
+	          if (sessionToken) res(sessionToken);else rej({ msg: 'No session token found' });
 	        }).catch(function (err) {
 	          rej(err);
 	        });
@@ -31708,6 +31706,13 @@
 	        _this._getFromCache().then(function (user) {
 	          _UserActions.UserActions.setUser(user);
 	          _GroupActions.GroupActions.setAll(user.memberOf);
+	          _this.getUser(user.email).then(function (user) {
+	            console.log('Recaching user.');
+	            _this._cacheUser(user);
+	            _UserActions.UserActions.setUser(user);
+	          }).catch(function (err) {
+	            console.log('UserService.js -> init() | Error refreshing user');
+	          });
 	          res();
 	        }).catch(function () {
 	          res();
@@ -31733,6 +31738,18 @@
 	    key: 'cacheUser',
 	    value: function cacheUser(user) {
 	      this._cacheUser(user);
+	    }
+	  }, {
+	    key: 'getUser',
+	    value: function getUser(email) {
+
+	      return new Promise(function (res, rej) {
+	        axios.get('/user/getUser?email=' + email).then(function (response) {
+	          res(response.data.user);
+	        }).catch(function (err) {
+	          rej(err.response.data);
+	        });
+	      });
 	    }
 
 	    // fetchUser(email) {
@@ -31773,7 +31790,7 @@
 	        console.log('got user', response.data.user);
 	        console.log('got token', response.data.token);
 	        _UserActions.UserActions.setUser(response.data.user);
-	        _AuthActions.AuthActions.flagAuth(true);
+	        _AuthActions.AuthActions.setToken(response.data.token);
 	      }).catch(function (err) {
 	        console.error(err.response.data);
 	      });
@@ -31982,6 +31999,8 @@
 
 	var _GroupActions = __webpack_require__(271);
 
+	var _DisplayActions = __webpack_require__(284);
+
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -32090,9 +32109,9 @@
 	        axios.post('/group/create', {
 	          groupReq: groupReq
 	        }).then(function (response) {
-	          res(response.data);
 	          _UserActions.UserActions.setUser(response.data.user);
 	          _GroupActions.GroupActions.addGroup(response.data.group);
+	          _DisplayActions.DisplayActions.gotoTodos();
 	        }).catch(function (err) {
 	          rej(err.response.data);
 	        });
@@ -32615,11 +32634,11 @@
 	      console.log('app mounting', this.state);
 	      _AuthStore.AuthStore.addListener(function () {
 	        _this2.setState(getAuthState());
-	        _reactRouter.browserHistory.push('/');
+	        // browserHistory.push('/');
+	        if (_this2.state.hasAuth) {
+	          _reactRouter.browserHistory.push('/');
+	        };
 	      });
-	      // if (this.state.hasAuth) {
-	      //   browserHistory.push('/');
-	      // };
 	    }
 	  }, {
 	    key: 'render',
@@ -32750,7 +32769,7 @@
 	  function UserPane(props, context) {
 	    _classCallCheck(this, UserPane);
 
-	    console.log('user mounting', getUserState());
+	    console.log('user pane mounting', getUserState());
 
 	    var _this = _possibleConstructorReturn(this, (UserPane.__proto__ || Object.getPrototypeOf(UserPane)).call(this, props, context));
 
@@ -32778,7 +32797,7 @@
 	          'div',
 	          null,
 	          'User Pane ',
-	          this.state.hasUser ? 'has user' : 'no user'
+	          this.state.hasUser ? 'has user: '.concat(JSON.stringify(this.state.user)) : 'no user'
 	        ),
 	        _react2.default.createElement(
 	          'div',
