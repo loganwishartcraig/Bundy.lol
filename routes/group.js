@@ -27,6 +27,25 @@ const _validateGroupReq = (groupReq) => {
 
 };
 
+const _serializeGroup = (group) => {
+
+  
+  let requiredKeys = [
+    'id',
+    'name',
+    'members',
+    'tasks'
+  ];
+
+  return requiredKeys.reduce((serializedUser, key) => {
+
+    serializedUser[key] = group[key];
+    return serializedUser;
+
+  }, {});
+
+};
+
 /* GET home page. */
 router.get('/getInfo', function(req, res, next) {
   res.sendStatus(200);
@@ -48,8 +67,8 @@ router.post('/create',
       .then(user => {
         GroupService
           .createGroup(groupReq, user)
-          .then(payload => {
-            res.status(200).json(payload);
+          .then(group => {
+            res.status(200).json({group: _serializeGroup(group)});
           })
           .catch(err => {
             res.status(err.status).json(err);
