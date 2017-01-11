@@ -15,14 +15,12 @@ const initUser = () => {
 
 const setUser = (user) => {
 
-  console.log('setting user', user)
-
-  UserService.cacheUser(user);
-
   AppDispatcher.dispatch({
     type: UserConstants.SET_USER,
     user: user
   });
+
+  UserService.cacheUser(user);
 };
 
 // const unsetUser = () => {

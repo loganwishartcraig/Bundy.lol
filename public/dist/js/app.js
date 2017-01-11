@@ -73,13 +73,13 @@
 
 	var _UserActions = __webpack_require__(268);
 
-	var _AuthStore = __webpack_require__(275);
+	var _AuthStore = __webpack_require__(273);
 
-	var _App = __webpack_require__(277);
+	var _App = __webpack_require__(275);
 
-	var _Registration = __webpack_require__(299);
+	var _Registration = __webpack_require__(298);
 
-	var _Login = __webpack_require__(300);
+	var _Login = __webpack_require__(299);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -27210,7 +27210,11 @@
 
 	var login = function login(credentials) {
 
-	  _AuthService.AuthService.login(credentials);
+	  _AuthService.AuthService.login(credentials).then(function () {
+	    _AppDispatcher.AppDispatcher.dispatch({
+	      type: _AuthConstants.AuthConstants.LOGIN
+	    });
+	  });
 	};
 
 	var logout = function logout() {
@@ -27535,9 +27539,11 @@
 	var AuthConstants = exports.AuthConstants = {
 
 	  // 'INIT_AUTH': 'INIT_AUTH',
-	  'SET_AUTH': 'SET_AUTH',
-	  'REQUEST_TOKEN': 'REQUEST_TOKEN',
-	  'CLEAR_TOKEN': 'CLEAR_TOKEN'
+	  SET_AUTH: 'SET_AUTH',
+	  // 'REQUEST_TOKEN': 'REQUEST_TOKEN',
+	  // 'CLEAR_TOKEN': 'CLEAR_TOKEN'
+	  LOGIN: 'LOGIN',
+	  LOGOUT: 'LOGOUT'
 
 	};
 
@@ -27632,12 +27638,12 @@
 	      axios.post('/auth/login', {
 	        credentials: loginReq
 	      }).then(function (response) {
-	        console.log('got user', response.data.user);
-	        console.log('got token', response.data.token);
+	        // console.log('got user', response.data.user);
+	        // console.log('got token', response.data.token);
 	        // this._setSession(response.data.token);
 	        _this2._setSession(response.data.token);
-	        _AuthActions.AuthActions.flagAuth(true);
 	        _UserActions.UserActions.setUser(response.data.user);
+	        // AuthActions.flagAuth(true);    
 	      }).catch(function (err) {
 	        console.log('AuthService.js -> login() | Error logging in', err.response.data, loginReq);
 	        _AuthActions.AuthActions.flagAuth(false);
@@ -31550,7 +31556,7 @@
 
 	var _GroupActions = __webpack_require__(271);
 
-	var _Array = __webpack_require__(274);
+	var _Array = __webpack_require__(272);
 
 	var initUser = function initUser() {
 	  return _UserService.UserService.init();
@@ -31558,14 +31564,12 @@
 
 	var setUser = function setUser(user) {
 
-	  console.log('setting user', user);
-
-	  _UserService.UserService.cacheUser(user);
-
 	  _AppDispatcher.AppDispatcher.dispatch({
 	    type: _UserConstants.UserConstants.SET_USER,
 	    user: user
 	  });
+
+	  _UserService.UserService.cacheUser(user);
 	};
 
 	// const unsetUser = () => {
@@ -31705,9 +31709,9 @@
 
 	        _this._getFromCache().then(function (user) {
 	          _UserActions.UserActions.setUser(user);
-	          _GroupActions.GroupActions.setAll(user.memberOf);
+	          // GroupActions.setAll(user.memberOf);
 	          _this.getUser(user.email).then(function (user) {
-	            console.log('Recaching user.');
+	            console.log('UserService -> init() -> then() | Recaching user.');
 	            _this._cacheUser(user);
 	            _UserActions.UserActions.setUser(user);
 	          }).catch(function (err) {
@@ -31727,6 +31731,7 @@
 	  }, {
 	    key: '_cacheUser',
 	    value: function _cacheUser(user) {
+	      console.log('UserService -> _cacheUser() | Caching user:', user);
 	      _CacheService.CacheService.cache(this._cacheKey, user);
 	    }
 	  }, {
@@ -31815,9 +31820,9 @@
 
 	var _AppDispatcher = __webpack_require__(236);
 
-	var _GroupConstants = __webpack_require__(272);
+	var _GroupConstants = __webpack_require__(282);
 
-	var _GroupService = __webpack_require__(273);
+	var _GroupService = __webpack_require__(300);
 
 	var initGroups = function initGroups() {
 
@@ -31879,16 +31884,17 @@
 	  });
 	};
 
-	var addGroup = function addGroup(group) {
+	var setGroup = function setGroup(group) {
 	  _AppDispatcher.AppDispatcher.dispatch({
-	    type: _GroupConstants.GroupConstants.ADD_GROUP,
+	    type: _GroupConstants.GroupConstants.SET_GROUP,
 	    group: group
 	  });
 	};
 
-	var setGroup = function setGroup(group) {
+	var addGroup = function addGroup(group) {
+
 	  _AppDispatcher.AppDispatcher.dispatch({
-	    type: _GroupConstants.GroupConstants.SET_GROUP,
+	    type: _GroupConstants.GroupConstants.ADD_GROUP,
 	    group: group
 	  });
 	};
@@ -31928,9 +31934,9 @@
 	  console.log('GroupActions -> createGroup(', groupReq, ')');
 
 	  _GroupService.GroupService.createGroup(groupReq).then(function (group) {
-	    console.log('would be setting new group.', group);
+	    addGroup(group);
 	  }).catch(function (err) {
-	    console.log('would be dispaying error.', err);
+	    console.log('GroupActions -> createGroup() |', err);
 	  });
 
 	  // AppDispatcher.dispatch({
@@ -31944,7 +31950,7 @@
 	  // initGroups,
 	  setGroup: setGroup,
 	  unsetGroup: unsetGroup,
-	  setAll: setAll,
+	  // setAll,
 	  addGroup: addGroup,
 	  // updateGroups,
 	  setActive: setActive,
@@ -31955,177 +31961,6 @@
 
 /***/ },
 /* 272 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var GroupConstants = exports.GroupConstants = {
-	  INIT_GROUP: 'INIT_GROUP',
-	  SET_GROUP: 'SET_GROUP',
-	  SET_ALL: 'SET_ALL',
-	  ADD_GROUP: 'ADD_GROUP',
-	  UNSET_GROUP: 'UNSET_GROUP',
-	  UPDATE_GROUPS: 'UPDATE_GROUPS',
-	  SET_ACTIVE: 'SET_ACTIVE',
-	  LEAVE_GROUP: 'LEAVE_GROUP',
-	  JOIN_GROUP: 'JOIN_GROUP'
-	};
-
-/***/ },
-/* 273 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.GroupService = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _axios = __webpack_require__(242);
-
-	var axios = _interopRequireWildcard(_axios);
-
-	var _localforage = __webpack_require__(241);
-
-	var localForage = _interopRequireWildcard(_localforage);
-
-	var _UserActions = __webpack_require__(268);
-
-	var _GroupActions = __webpack_require__(271);
-
-	var _DisplayActions = __webpack_require__(284);
-
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var _GroupService = function () {
-	  function _GroupService() {
-	    _classCallCheck(this, _GroupService);
-
-	    // console.log('constructing groups', groups)
-
-	    this._cacheKey = 'bundylol_lastActive';
-
-	    this.clearLastActive();
-	  }
-
-	  _createClass(_GroupService, [{
-	    key: 'clearLastActive',
-	    value: function clearLastActive() {
-	      localForage.removeItem(this._cacheKey);
-	    }
-	  }, {
-	    key: 'saveLastActive',
-	    value: function saveLastActive(group) {
-
-	      console.log('caching last active', group);
-	      localForage.setItem(this._cacheKey, group);
-	    }
-	  }, {
-	    key: 'getLastActive',
-	    value: function getLastActive() {
-	      var _this = this;
-
-	      return new Promise(function (res, rej) {
-
-	        localForage.getItem(_this._cacheKey).then(function (group) {
-	          console.log('found last active', group);
-	          group !== null ? res(group) : rej(undefined);
-	        }).catch(function (err) {
-	          rej(err.response.data);
-	        });
-	      });
-	    }
-	  }, {
-	    key: '_sortTodosAlpha',
-	    value: function _sortTodosAlpha(a, b) {
-	      if (a.id > b.id) return 1;
-	      if (a.id === b.id) return 0;
-	      if (a.id < b.id) return -1;
-	    }
-	  }, {
-	    key: 'fetch',
-	    value: function fetch(toFetch) {
-	      var _this2 = this;
-
-	      return new Promise(function (res, rej) {
-
-	        var collection = [];
-
-	        if (Array.isArray(toFetch)) {
-	          toFetch.forEach(function (groupId) {
-	            _this2._getGroupInfo(groupId).then(function (groupInfo) {
-	              collection.push(groupInfo);
-	              if (collection.length === toFetch.length) res(collection.sort(_this2._sortTodosAlpha));
-	            }).catch(function (err) {
-	              rej(err);
-	            });
-	          });
-	        } else if (typeof toFetch === 'string') {
-	          _this2._getGroupInfo(toFetch).then(function (groupInfo) {
-	            // collection[toFetch] = groupInfo
-	            res(groupInfo);
-	          }).catch(function (err) {
-	            rej(err);
-	          });
-	        }
-	      });
-	    }
-	  }, {
-	    key: '_getGroupInfo',
-	    value: function _getGroupInfo(groupId) {
-	      return new Promise(function (res, rej) {
-
-	        console.log('trying to get group info for ', groupId, ' -- NOT IMPLEMENTED');
-	        rej();
-	      });
-	    }
-	  }, {
-	    key: 'updateGroup',
-	    value: function updateGroup(groupId, newGroup) {}
-	  }, {
-	    key: 'hasGroups',
-	    value: function hasGroups() {
-	      return this._groups !== undefined;
-	    }
-	  }, {
-	    key: 'joinGroup',
-	    value: function joinGroup(groupName, password) {}
-	  }, {
-	    key: 'leaveGroup',
-	    value: function leaveGroup(groupName) {}
-	  }, {
-	    key: 'createGroup',
-	    value: function createGroup(groupReq) {
-	      return new Promise(function (res, rej) {
-
-	        axios.post('/group/create', {
-	          groupReq: groupReq
-	        }).then(function (response) {
-	          _UserActions.UserActions.setUser(response.data.user);
-	          _GroupActions.GroupActions.addGroup(response.data.group);
-	          _DisplayActions.DisplayActions.gotoTodos();
-	        }).catch(function (err) {
-	          rej(err.response.data);
-	        });
-	      });
-	    }
-	  }]);
-
-	  return _GroupService;
-	}();
-
-	var GroupService = exports.GroupService = new _GroupService();
-
-/***/ },
-/* 274 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -32147,7 +31982,7 @@
 	exports.sameSets = sameSets;
 
 /***/ },
-/* 275 */
+/* 273 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32163,7 +31998,7 @@
 
 	var _AuthConstants = __webpack_require__(239);
 
-	var _events = __webpack_require__(276);
+	var _events = __webpack_require__(274);
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -32257,7 +32092,7 @@
 	exports.AuthStore = AuthStore;
 
 /***/ },
-/* 276 */
+/* 274 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -32565,7 +32400,7 @@
 
 
 /***/ },
-/* 277 */
+/* 275 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32583,11 +32418,11 @@
 
 	var _reactRouter = __webpack_require__(172);
 
-	var _AuthStore = __webpack_require__(275);
+	var _AuthStore = __webpack_require__(273);
 
-	var _Dashboard = __webpack_require__(278);
+	var _Dashboard = __webpack_require__(276);
 
-	var _Landing = __webpack_require__(298);
+	var _Landing = __webpack_require__(297);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32660,7 +32495,7 @@
 	}(_react.Component);
 
 /***/ },
-/* 278 */
+/* 276 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32678,11 +32513,11 @@
 
 	var _UserActions = __webpack_require__(268);
 
-	var _UserPane = __webpack_require__(279);
+	var _UserPane = __webpack_require__(277);
 
-	var _GroupPane = __webpack_require__(282);
+	var _GroupPane = __webpack_require__(280);
 
-	var _DisplayPane = __webpack_require__(288);
+	var _DisplayPane = __webpack_require__(287);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32728,7 +32563,7 @@
 	}(_react.Component);
 
 /***/ },
-/* 279 */
+/* 277 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32744,9 +32579,9 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _LogoutBtn = __webpack_require__(280);
+	var _LogoutBtn = __webpack_require__(278);
 
-	var _UserStore = __webpack_require__(281);
+	var _UserStore = __webpack_require__(279);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32816,7 +32651,7 @@
 	exports.UserPane = UserPane;
 
 /***/ },
-/* 280 */
+/* 278 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32851,7 +32686,7 @@
 	};
 
 /***/ },
-/* 281 */
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32867,7 +32702,9 @@
 
 	var _UserConstants = __webpack_require__(269);
 
-	var _events = __webpack_require__(276);
+	var _GroupConstants = __webpack_require__(282);
+
+	var _events = __webpack_require__(274);
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -32890,12 +32727,11 @@
 	    return _this2;
 	  }
 
+	  // _getProp(prop) {
+	  //   return (this.hasUser()) ? this._activeUser[prop] : undefined;
+	  // }
+
 	  _createClass(_UserStore, [{
-	    key: '_getProp',
-	    value: function _getProp(prop) {
-	      return this.hasUser() ? this._activeUser[prop] : undefined;
-	    }
-	  }, {
 	    key: 'hasUser',
 	    value: function hasUser() {
 	      return this._activeUser !== undefined;
@@ -32910,35 +32746,37 @@
 	    value: function getUser() {
 	      return this._activeUser;
 	    }
-	  }, {
-	    key: 'getUsername',
-	    value: function getUsername() {
-	      return this._getProp('username');
-	    }
-	  }, {
-	    key: 'getId',
-	    value: function getId() {
-	      return this._getProp('id');
-	    }
-	  }, {
-	    key: 'getFullName',
-	    value: function getFullName() {
-	      return {
-	        fName: this._getProp('fName'),
-	        lName: this._getProp('lName')
-	      };
-	    }
-	  }, {
-	    key: 'getGroups',
-	    value: function getGroups() {
-	      return this._getProp('groups');
-	    }
+
+	    // getUsername() {
+	    //   return this._getProp('username');
+	    // }
+
+	    // getId() {
+	    //   return this._getProp('id');
+	    // }
+
+	    // getFullName() {
+	    //   return {
+	    //     fName: this._getProp('fName'),
+	    //     lName: this._getProp('lName')
+	    //   }
+	    // }
+
+	    // getGroups() {
+	    //   return this._getProp('groups');
+	    // }
+
 	  }, {
 	    key: 'setUser',
 	    value: function setUser(user) {
 	      if (user) {
 	        this._activeUser = user;
 	      }
+	    }
+	  }, {
+	    key: 'addGroup',
+	    value: function addGroup(group) {
+	      if (this.hasUser()) this._activeUser.memberOf.push(group);
 	    }
 	  }, {
 	    key: 'clearUser',
@@ -32983,6 +32821,9 @@
 	    case _UserConstants.UserConstants.UPDATE_USER:
 	      UserStore.setUser(action.user);
 	      UserStore.emitChange();
+	    case _GroupConstants.GroupConstants.ADD_GROUP:
+	      UserStore.addGroup(action.group);
+	      UserStore.emitChange();
 	    default:
 	      break;
 	  }
@@ -32991,7 +32832,7 @@
 	exports.UserStore = UserStore;
 
 /***/ },
-/* 282 */
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33007,13 +32848,13 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _GroupStore = __webpack_require__(283);
+	var _GroupStore = __webpack_require__(281);
 
 	var _GroupActions = __webpack_require__(271);
 
-	var _DisplayActions = __webpack_require__(284);
+	var _DisplayActions = __webpack_require__(283);
 
-	var _GroupSelector = __webpack_require__(287);
+	var _GroupSelector = __webpack_require__(286);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33122,7 +32963,7 @@
 	exports.GroupPane = GroupPane;
 
 /***/ },
-/* 283 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33138,9 +32979,9 @@
 
 	var _UserConstants = __webpack_require__(269);
 
-	var _GroupConstants = __webpack_require__(272);
+	var _GroupConstants = __webpack_require__(282);
 
-	var _events = __webpack_require__(276);
+	var _events = __webpack_require__(274);
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -33181,15 +33022,15 @@
 	  }, {
 	    key: 'setGroups',
 	    value: function setGroups(groups) {
-	      console.log("GroupStore -> setGroups() | groups: ", groups, "Setting groups");
+	      console.log('GroupStore -> setGroups() | groups: ', groups, 'Setting groups');
 	      this._groups = groups;
 	    }
 	  }, {
 	    key: 'setGroup',
 	    value: function setGroup(id, group) {
 
+	      console.log('GroupStore -> setGroup() | groups: ", groups, "Setting groups', id, group, this._groups);
 	      this._groups[id] = group;
-	      console.log('setGorup', id, group, this._groups);
 	    }
 	  }, {
 	    key: 'setActive',
@@ -33206,7 +33047,11 @@
 	    value: function addGroup(group) {
 	      console.log('GroupStore -> addGroup() | Adding', group);
 	      this._groups.push(group);
-	      console.log(this._groups);
+	    }
+	  }, {
+	    key: 'clearGroups',
+	    value: function clearGroups() {
+	      this._groups = [];
 	    }
 	  }, {
 	    key: 'emitChange',
@@ -33242,15 +33087,11 @@
 	_AppDispatcher.AppDispatcher.register(function (action) {
 
 	  switch (action.type) {
-	    // case UserConstants.SET_USER:
-	    //   console.log('group set user');
-	    //   break;
-	    // case UserConstants.UPDATE_USER:
-	    //   console.log('group update user');
-	    //   break;
+	    case _UserConstants.UserConstants.SET_USER:
+	      if (action.user) GroupStore.setGroups(action.user.memberOf);else GroupStore.clearGroups();
+	      GroupStore.emitChange();
+	      break;
 	    case _GroupConstants.GroupConstants.SET_GROUP:
-
-	      // console.log('group store setting groups', action.group)
 	      GroupStore.setGroup(action.group.id, action.group);
 	      GroupStore.emitChange();
 	      break;
@@ -33266,13 +33107,11 @@
 	      GroupStore.addGroup(action.group);
 	      GroupStore.emitChange();
 	      break;
-	    // case GroupStore.UPDATE_GROUPS:
-	    // GroupStore.updateGroups(action.groups);
 	    case _GroupConstants.GroupConstants.SET_GROUPS:
-	      console.log('setting groups', action.groups);
 	      GroupStore.setGroups(action.groups);
 	      GroupStore.emitChange();
 	      break;
+
 	    default:
 	      break;
 	  }
@@ -33281,7 +33120,28 @@
 	exports.GroupStore = GroupStore;
 
 /***/ },
-/* 284 */
+/* 282 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var GroupConstants = exports.GroupConstants = {
+	  INIT_GROUP: 'INIT_GROUP',
+	  SET_GROUP: 'SET_GROUP',
+	  SET_ALL: 'SET_ALL',
+	  ADD_GROUP: 'ADD_GROUP',
+	  UNSET_GROUP: 'UNSET_GROUP',
+	  UPDATE_GROUPS: 'UPDATE_GROUPS',
+	  SET_ACTIVE: 'SET_ACTIVE',
+	  LEAVE_GROUP: 'LEAVE_GROUP',
+	  JOIN_GROUP: 'JOIN_GROUP'
+	};
+
+/***/ },
+/* 283 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33293,9 +33153,9 @@
 
 	var _AppDispatcher = __webpack_require__(236);
 
-	var _DisplayConstants = __webpack_require__(285);
+	var _DisplayConstants = __webpack_require__(284);
 
-	var _PaneConstants = __webpack_require__(286);
+	var _PaneConstants = __webpack_require__(285);
 
 	var gotoTodos = function gotoTodos() {
 
@@ -33321,7 +33181,7 @@
 	};
 
 /***/ },
-/* 285 */
+/* 284 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -33334,7 +33194,7 @@
 	};
 
 /***/ },
-/* 286 */
+/* 285 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -33348,7 +33208,7 @@
 	};
 
 /***/ },
-/* 287 */
+/* 286 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33447,7 +33307,7 @@
 	// export { GroupSelector };
 
 /***/ },
-/* 288 */
+/* 287 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33463,15 +33323,15 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _DisplayStore = __webpack_require__(289);
+	var _DisplayStore = __webpack_require__(288);
 
-	var _DisplayActions = __webpack_require__(284);
+	var _DisplayActions = __webpack_require__(283);
 
-	var _PaneConstants = __webpack_require__(286);
+	var _PaneConstants = __webpack_require__(285);
 
-	var _TodoPaneReact = __webpack_require__(290);
+	var _TodoPaneReact = __webpack_require__(289);
 
-	var _AddGroupPaneReact = __webpack_require__(297);
+	var _AddGroupPaneReact = __webpack_require__(296);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33561,7 +33421,7 @@
 	exports.DisplayPane = DisplayPane;
 
 /***/ },
-/* 289 */
+/* 288 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33575,9 +33435,9 @@
 
 	var _AppDispatcher = __webpack_require__(236);
 
-	var _DisplayConstants = __webpack_require__(285);
+	var _DisplayConstants = __webpack_require__(284);
 
-	var _events = __webpack_require__(276);
+	var _events = __webpack_require__(274);
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -33656,7 +33516,7 @@
 	exports.DisplayStore = DisplayStore;
 
 /***/ },
-/* 290 */
+/* 289 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33672,11 +33532,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TodoStore = __webpack_require__(291);
+	var _TodoStore = __webpack_require__(290);
 
-	var _TodoFilterList = __webpack_require__(293);
+	var _TodoFilterList = __webpack_require__(292);
 
-	var _TodoList = __webpack_require__(295);
+	var _TodoList = __webpack_require__(294);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33739,7 +33599,7 @@
 	exports.TodoPane = TodoPane;
 
 /***/ },
-/* 291 */
+/* 290 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33753,13 +33613,13 @@
 
 	var _AppDispatcher = __webpack_require__(236);
 
-	var _TodoConstants = __webpack_require__(292);
+	var _TodoConstants = __webpack_require__(291);
 
-	var _GroupStore = __webpack_require__(283);
+	var _GroupStore = __webpack_require__(281);
 
-	var _GroupConstants = __webpack_require__(272);
+	var _GroupConstants = __webpack_require__(282);
 
-	var _events = __webpack_require__(276);
+	var _events = __webpack_require__(274);
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -33880,7 +33740,7 @@
 	exports.TodoStore = TodoStore;
 
 /***/ },
-/* 292 */
+/* 291 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -33900,7 +33760,7 @@
 	};
 
 /***/ },
-/* 293 */
+/* 292 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33914,7 +33774,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TodoActions = __webpack_require__(294);
+	var _TodoActions = __webpack_require__(293);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33959,7 +33819,7 @@
 	};
 
 /***/ },
-/* 294 */
+/* 293 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -33971,7 +33831,7 @@
 
 	var _AppDispatcher = __webpack_require__(236);
 
-	var _TodoConstants = __webpack_require__(292);
+	var _TodoConstants = __webpack_require__(291);
 
 	var setTodos = function setTodos(todos) {
 	  _AppDispatcher.AppDispatcher.dispatch({
@@ -34041,7 +33901,7 @@
 	};
 
 /***/ },
-/* 295 */
+/* 294 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34055,9 +33915,9 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TodoActions = __webpack_require__(294);
+	var _TodoActions = __webpack_require__(293);
 
-	var _TodoItem = __webpack_require__(296);
+	var _TodoItem = __webpack_require__(295);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -34082,7 +33942,7 @@
 	};
 
 /***/ },
-/* 296 */
+/* 295 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34096,7 +33956,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _TodoActions = __webpack_require__(294);
+	var _TodoActions = __webpack_require__(293);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -34134,7 +33994,7 @@
 	};
 
 /***/ },
-/* 297 */
+/* 296 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34150,11 +34010,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _GroupStore = __webpack_require__(283);
+	var _GroupStore = __webpack_require__(281);
 
 	var _GroupActions = __webpack_require__(271);
 
-	var _DisplayActions = __webpack_require__(284);
+	var _DisplayActions = __webpack_require__(283);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -34234,7 +34094,7 @@
 	exports.AddGroupPane = AddGroupPane;
 
 /***/ },
-/* 298 */
+/* 297 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34298,7 +34158,7 @@
 	}(_react.Component);
 
 /***/ },
-/* 299 */
+/* 298 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34407,7 +34267,7 @@
 	}(_react.Component);
 
 /***/ },
-/* 300 */
+/* 299 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34505,6 +34365,157 @@
 
 	  return Login;
 	}(_react.Component);
+
+/***/ },
+/* 300 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.GroupService = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _axios = __webpack_require__(242);
+
+	var axios = _interopRequireWildcard(_axios);
+
+	var _localforage = __webpack_require__(241);
+
+	var localForage = _interopRequireWildcard(_localforage);
+
+	var _UserActions = __webpack_require__(268);
+
+	var _GroupActions = __webpack_require__(271);
+
+	var _DisplayActions = __webpack_require__(283);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var _GroupService = function () {
+	  function _GroupService() {
+	    _classCallCheck(this, _GroupService);
+
+	    // console.log('constructing groups', groups)
+
+	    this._cacheKey = 'bundylol_lastActive';
+
+	    this.clearLastActive();
+	  }
+
+	  _createClass(_GroupService, [{
+	    key: 'clearLastActive',
+	    value: function clearLastActive() {
+	      localForage.removeItem(this._cacheKey);
+	    }
+	  }, {
+	    key: 'saveLastActive',
+	    value: function saveLastActive(group) {
+
+	      console.log('caching last active', group);
+	      localForage.setItem(this._cacheKey, group);
+	    }
+	  }, {
+	    key: 'getLastActive',
+	    value: function getLastActive() {
+	      var _this = this;
+
+	      return new Promise(function (res, rej) {
+
+	        localForage.getItem(_this._cacheKey).then(function (group) {
+	          console.log('found last active', group);
+	          group !== null ? res(group) : rej(undefined);
+	        }).catch(function (err) {
+	          rej(err.response.data);
+	        });
+	      });
+	    }
+	  }, {
+	    key: '_sortTodosAlpha',
+	    value: function _sortTodosAlpha(a, b) {
+	      if (a.id > b.id) return 1;
+	      if (a.id === b.id) return 0;
+	      if (a.id < b.id) return -1;
+	    }
+	  }, {
+	    key: 'fetch',
+	    value: function fetch(toFetch) {
+	      var _this2 = this;
+
+	      return new Promise(function (res, rej) {
+
+	        var collection = [];
+
+	        if (Array.isArray(toFetch)) {
+	          toFetch.forEach(function (groupId) {
+	            _this2._getGroupInfo(groupId).then(function (groupInfo) {
+	              collection.push(groupInfo);
+	              if (collection.length === toFetch.length) res(collection.sort(_this2._sortTodosAlpha));
+	            }).catch(function (err) {
+	              rej(err);
+	            });
+	          });
+	        } else if (typeof toFetch === 'string') {
+	          _this2._getGroupInfo(toFetch).then(function (groupInfo) {
+	            // collection[toFetch] = groupInfo
+	            res(groupInfo);
+	          }).catch(function (err) {
+	            rej(err);
+	          });
+	        }
+	      });
+	    }
+	  }, {
+	    key: '_getGroupInfo',
+	    value: function _getGroupInfo(groupId) {
+	      return new Promise(function (res, rej) {
+
+	        console.log('trying to get group info for ', groupId, ' -- NOT IMPLEMENTED');
+	        rej();
+	      });
+	    }
+	  }, {
+	    key: 'updateGroup',
+	    value: function updateGroup(groupId, newGroup) {}
+	  }, {
+	    key: 'hasGroups',
+	    value: function hasGroups() {
+	      return this._groups !== undefined;
+	    }
+	  }, {
+	    key: 'joinGroup',
+	    value: function joinGroup(groupName, password) {}
+	  }, {
+	    key: 'leaveGroup',
+	    value: function leaveGroup(groupName) {}
+	  }, {
+	    key: 'createGroup',
+	    value: function createGroup(groupReq) {
+	      return new Promise(function (res, rej) {
+
+	        axios.post('/group/create', {
+	          groupReq: groupReq
+	        }).then(function (response) {
+	          // UserActions.setUser(response.data.user);
+	          _DisplayActions.DisplayActions.gotoTodos();
+	          res(response.data.group);
+	          // GroupActions.addGroup(response.data.group);
+	        }).catch(function (err) {
+	          rej(err.response.data);
+	        });
+	      });
+	    }
+	  }]);
+
+	  return _GroupService;
+	}();
+
+	var GroupService = exports.GroupService = new _GroupService();
 
 /***/ }
 /******/ ]);

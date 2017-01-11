@@ -22,10 +22,7 @@ const createGroup = (groupReq, user) => {
         user.createdGroups.push(group.id);
         user.save();
 
-        res({
-          group: group,
-          user: user
-        });
+        res(group);
 
 
 

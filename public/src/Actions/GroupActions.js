@@ -64,13 +64,6 @@ const setAll = (groups) => {
   });
 };
 
-const addGroup = (group) => {
-  AppDispatcher.dispatch({
-    type: GroupConstants.ADD_GROUP,
-    group: group
-  });
-};
-
 
 
 
@@ -79,6 +72,15 @@ const setGroup = (group) => {
     type: GroupConstants.SET_GROUP,
     group: group
   });
+};
+
+const addGroup = group => {
+
+  AppDispatcher.dispatch({
+    type: GroupConstants.ADD_GROUP,
+    group: group
+  })
+
 };
 
 const unsetGroup = () => {
@@ -120,10 +122,10 @@ const createGroup = (groupReq) => {
   GroupService
     .createGroup(groupReq)
     .then(group => {
-      console.log('would be setting new group.', group);
+      addGroup(group);
     })
     .catch(err =>{
-      console.log('would be dispaying error.', err)
+      console.log('GroupActions -> createGroup() |', err)
     })
 
   // AppDispatcher.dispatch({
@@ -138,7 +140,7 @@ export const GroupActions = {
   // initGroups,
   setGroup,
   unsetGroup,
-  setAll,
+  // setAll,
   addGroup,
   // updateGroups,
   setActive,

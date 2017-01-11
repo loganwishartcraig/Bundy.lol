@@ -118,9 +118,10 @@ class _GroupService {
           groupReq: groupReq
         })
         .then(response => {
-          UserActions.setUser(response.data.user);
-          GroupActions.addGroup(response.data.group);
+          // UserActions.setUser(response.data.user);
           DisplayActions.gotoTodos();
+          res(response.data.group);
+          // GroupActions.addGroup(response.data.group);
         })
         .catch(err => {
           rej(err.response.data)

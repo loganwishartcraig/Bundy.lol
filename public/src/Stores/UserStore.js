@@ -1,6 +1,7 @@
 import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 
 import { UserConstants } from '../Constants/UserConstants';
+import { GroupConstants } from '../Constants/GroupConstants';
 
 import { EventEmitter } from 'events';
 
@@ -14,9 +15,9 @@ class _UserStore extends EventEmitter {
     }   
   }
 
-  _getProp(prop) {
-    return (this.hasUser()) ? this._activeUser[prop] : undefined;
-  }
+  // _getProp(prop) {
+  //   return (this.hasUser()) ? this._activeUser[prop] : undefined;
+  // }
 
   hasUser() {
     return this._activeUser !== undefined;
@@ -30,29 +31,33 @@ class _UserStore extends EventEmitter {
     return this._activeUser;
   }
 
-  getUsername() {
-    return this._getProp('username');
-  }
+  // getUsername() {
+  //   return this._getProp('username');
+  // }
 
-  getId() {
-    return this._getProp('id');
-  }
+  // getId() {
+  //   return this._getProp('id');
+  // }
 
-  getFullName() {
-    return {
-      fName: this._getProp('fName'),
-      lName: this._getProp('lName')
-    }
-  }
+  // getFullName() {
+  //   return {
+  //     fName: this._getProp('fName'),
+  //     lName: this._getProp('lName')
+  //   }
+  // }
 
-  getGroups() {
-    return this._getProp('groups');
-  }
+  // getGroups() {
+  //   return this._getProp('groups');
+  // }
 
   setUser(user) {
     if (user) {
       this._activeUser = user;
     }
+  }
+
+  addGroup(group) {
+    if (this.hasUser()) this._activeUser.memberOf.push(group);
   }
 
   clearUser() {
@@ -86,6 +91,9 @@ AppDispatcher.register(function(action) {
       break;
     case UserConstants.UPDATE_USER:
       UserStore.setUser(action.user);
+      UserStore.emitChange();
+    case GroupConstants.ADD_GROUP:
+      UserStore.addGroup(action.group);
       UserStore.emitChange();
     default:
       break;

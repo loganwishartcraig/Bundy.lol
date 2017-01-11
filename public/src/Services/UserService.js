@@ -28,11 +28,11 @@ class _UserService {
         ._getFromCache()
         .then(user => {
           UserActions.setUser(user);
-          GroupActions.setAll(user.memberOf);
+          // GroupActions.setAll(user.memberOf);
           this
             .getUser(user.email)
             .then(user => {
-              console.log('Recaching user.')
+              console.log('UserService -> init() -> then() | Recaching user.')
               this._cacheUser(user);
               UserActions.setUser(user);
             })
@@ -50,6 +50,7 @@ class _UserService {
   }
 
   _cacheUser(user) {
+    console.log('UserService -> _cacheUser() | Caching user:', user)
     CacheService.cache(this._cacheKey, user);
   }
 

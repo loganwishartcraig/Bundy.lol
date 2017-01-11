@@ -17,7 +17,15 @@ const initAuth = () => {
 
 const login = (credentials) => {
 
-  AuthService.login(credentials);
+  AuthService
+    .login(credentials)
+    .then(() => {
+      AppDispatcher.dispatch({
+        type: AuthConstants.LOGIN
+      });
+    });
+
+
 
 };
 

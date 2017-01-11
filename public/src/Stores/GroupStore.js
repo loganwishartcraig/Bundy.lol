@@ -1,7 +1,7 @@
 import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 
-import { UserConstants } from '../Constants/UserConstants';
 
+import { UserConstants } from '../Constants/UserConstants';
 import { GroupConstants } from '../Constants/GroupConstants';
 // import { GroupService } from '../Services/GroupService';
 
@@ -32,14 +32,14 @@ class _GroupStore extends EventEmitter {
   }
 
   setGroups(groups) {
-    console.log("GroupStore -> setGroups() | groups: ", groups, "Setting groups");
+    console.log('GroupStore -> setGroups() | groups: ', groups, 'Setting groups');
     this._groups = groups
   }
 
   setGroup(id, group) {
 
+    console.log('GroupStore -> setGroup() | groups: ", groups, "Setting groups', id, group, this._groups);
     this._groups[id] = group;
-    console.log('setGorup', id, group, this._groups)
   }
 
   setActive(group) {
@@ -53,7 +53,10 @@ class _GroupStore extends EventEmitter {
   addGroup(group) {
     console.log('GroupStore -> addGroup() | Adding', group)
     this._groups.push(group);
-    console.log(this._groups)
+  }
+
+  clearGroups() {
+    this._groups = [];
   }
 
 
@@ -82,15 +85,12 @@ const GroupStore = new _GroupStore();
 AppDispatcher.register(function(action) {
 
   switch(action.type) {
-    // case UserConstants.SET_USER:
-    //   console.log('group set user');
-    //   break;
-    // case UserConstants.UPDATE_USER:
-    //   console.log('group update user');
-    //   break;
+    case UserConstants.SET_USER:
+      if (action.user) GroupStore.setGroups(action.user.memberOf);
+      else GroupStore.clearGroups();
+      GroupStore.emitChange();
+      break;
     case GroupConstants.SET_GROUP:
-
-      // console.log('group store setting groups', action.group)
       GroupStore.setGroup(action.group.id, action.group);
       GroupStore.emitChange();
       break;
@@ -106,13 +106,11 @@ AppDispatcher.register(function(action) {
       GroupStore.addGroup(action.group);
       GroupStore.emitChange();
       break;
-    // case GroupStore.UPDATE_GROUPS:
-      // GroupStore.updateGroups(action.groups);
     case GroupConstants.SET_GROUPS:
-      console.log('setting groups', action.groups)
       GroupStore.setGroups(action.groups);
       GroupStore.emitChange();
       break;
+    
     default:
       break;
   }

@@ -70,12 +70,12 @@ class _AuthService {
         credentials: loginReq
       })
       .then(response => {
-        console.log('got user', response.data.user);
-        console.log('got token', response.data.token);
+        // console.log('got user', response.data.user);
+        // console.log('got token', response.data.token);
         // this._setSession(response.data.token);
         this._setSession(response.data.token);
-        AuthActions.flagAuth(true);    
         UserActions.setUser(response.data.user);
+        // AuthActions.flagAuth(true);    
       })
       .catch(err => {
         console.log('AuthService.js -> login() | Error logging in', err.response.data, loginReq);
