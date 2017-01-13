@@ -20,15 +20,22 @@ class DisplayPane extends Component {
     this.state = {
       page: PaneConstants.TODO_PANE
     };
+
+    this._handleDisplayChange = this._handleDisplayChange.bind(this);
   }
 
   _handleDisplayChange() {
+    console.log('handling display chacnge')
     this.setState(getDisplayState());
   }
 
   componentWillMount() {
     // GroupActions.initGroups(this.props.memberOf);
-    DisplayStore.addListener(this._handleDisplayChange.bind(this));
+    DisplayStore.setListener(this._handleDisplayChange);
+  }
+
+  componentWillUnmount() {
+    DisplayStore.unsetListener(this._handleDisplayChange);
   }
 
   renderPage(pageName) {

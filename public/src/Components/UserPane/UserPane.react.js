@@ -17,6 +17,9 @@ class UserPane extends Component {
     console.log('user pane mounting', getUserState());
     super(props, context);
     this.state = getUserState();
+
+    this._handleUserChange = this._handleUserChange.bind(this);
+
   }
 
   _handleUserChange() {
@@ -24,7 +27,12 @@ class UserPane extends Component {
   }
 
   componentWillMount() {
-    UserStore.addListener(this._handleUserChange.bind(this));
+    UserStore.setListener(this._handleUserChange);
+  }
+
+  componentWillUnmount() {
+    console.log('USERPANE UNMOUNTING')
+    UserStore.unsetListener(this._handleUserChange);
   }
 
   render() {

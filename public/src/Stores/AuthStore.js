@@ -40,7 +40,7 @@ class _AuthStore extends EventEmitter {
     this.emit(this.events.change);
   }
 
-  addListener(callback, event=this.events.change) {
+  setListener(callback, event=this.events.change) {
     this.on(event, callback);
   } 
 

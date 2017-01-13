@@ -66,6 +66,8 @@ class _AuthService {
 
   login(loginReq) {
 
+    return new Promise((res, rej) => {
+
       axios.post('/auth/login', {
         credentials: loginReq
       })
@@ -75,12 +77,17 @@ class _AuthService {
         // this._setSession(response.data.token);
         this._setSession(response.data.token);
         UserActions.setUser(response.data.user);
+        res();
         // AuthActions.flagAuth(true);    
       })
       .catch(err => {
         console.log('AuthService.js -> login() | Error logging in', err.response.data, loginReq);
-        AuthActions.flagAuth(false);
+        // AuthActions.flagAuth(false);
+        rej(err);
       });
+
+    });
+
       
   }
 

@@ -68,12 +68,14 @@ class _UserStore extends EventEmitter {
     this.emit(this.events.change);
   }
 
-  addListener(callback, event=this.events.change) {
+  setListener(callback, event=this.events.change) {
     this.on(event, callback);
   } 
 
   unsetListener(callback, event=this.events.change) {
+    console.log()
     this.removeListener(event, callback);
+    console.log('removed listener', this, this.removeListener(event, callback))
   }
 
 }

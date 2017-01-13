@@ -23,13 +23,16 @@ class GroupPane extends Component {
     console.log('GroupPane -> constructor() | GroupStore groups', GroupStore.getGroups())
 
     this.state = getGroupState();
+
+    this._handleGroupChange = this._handleGroupChange.bind(this);
+  
   }
 
   _handleGroupChange() {
     this.setState(getGroupState());
   }
 
-  _handleGroupAdd() {
+  _handleGroupAdd(evt) {
     DisplayActions.gotoAddGroup();
   }
 
@@ -38,7 +41,11 @@ class GroupPane extends Component {
   // }
 
   componentWillMount() {
-    GroupStore.addListener(this._handleGroupChange.bind(this));
+    GroupStore.setListener(this._handleGroupChange);
+  }
+
+  componentWillUnmount() {
+    GroupStore.unsetListener(this._handleGroupChange);
   }
 
   render() {

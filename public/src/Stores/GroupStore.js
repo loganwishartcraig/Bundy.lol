@@ -64,7 +64,7 @@ class _GroupStore extends EventEmitter {
     this.emit(this.events.change);
   }
 
-  addListener(callback, event=this.events.change) {
+  setListener(callback, event=this.events.change) {
     this.on(event, callback);
   } 
 
@@ -85,11 +85,14 @@ const GroupStore = new _GroupStore();
 AppDispatcher.register(function(action) {
 
   switch(action.type) {
+    
     case UserConstants.SET_USER:
       if (action.user) GroupStore.setGroups(action.user.memberOf);
       else GroupStore.clearGroups();
       GroupStore.emitChange();
       break;
+
+
     case GroupConstants.SET_GROUP:
       GroupStore.setGroup(action.group.id, action.group);
       GroupStore.emitChange();

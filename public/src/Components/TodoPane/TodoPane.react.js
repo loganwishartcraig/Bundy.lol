@@ -15,16 +15,21 @@ class TodoPane extends Component {
   constructor(props, context) {
     super(props, context);
     this.state = getTodoState();
+
+    this._handleTodoChange = this._handleTodoChange.bind(this);
   }
 
-  _handleGroupChange() {
+  _handleTodoChange() {
     console.log('handling todo change', getTodoState());
     this.setState(getTodoState());
   }
 
   componentWillMount() {
-    // GroupActions.initGroups(this.props.memberOf);
-    TodoStore.addListener(this._handleGroupChange.bind(this));
+    TodoStore.setListener(this._handleTodoChange);
+  }
+
+  componentWillUnmount() {
+    TodoStore.unsetListener(this._handleTodoChange);
   }
 
   render() {

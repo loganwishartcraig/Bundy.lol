@@ -30,13 +30,17 @@ export class App extends Component {
 
   componentWillMount() {
     console.log('app mounting', this.state)
-    AuthStore.addListener(() => {
+    AuthStore.setListener(() => {
       this.setState(getAuthState());
       // browserHistory.push('/');
       if (this.state.hasAuth) {
         browserHistory.push('/');
       };
     });
+  }
+
+  componentWillUnmount() {
+
   }
 
   render() {

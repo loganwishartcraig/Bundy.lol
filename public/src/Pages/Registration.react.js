@@ -28,10 +28,6 @@ export class Registration extends Component {
 
     UserActions.createUser(this.state);
 
-    // move to user service 
-    
-    //
-
   }
 
   componentWillMount() {

@@ -21,8 +21,12 @@ const login = (credentials) => {
     .login(credentials)
     .then(() => {
       AppDispatcher.dispatch({
-        type: AuthConstants.LOGIN
+        type: AuthConstants.SET_AUTH,
+        authenticated: true
       });
+    })
+    .catch(err => {
+      // console.log(err);
     });
 
 
