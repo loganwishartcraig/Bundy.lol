@@ -31719,8 +31719,7 @@
 	          _UserActions.UserActions.setUser(user);
 	          // GroupActions.setAll(user.memberOf);
 	          _this.getUser(user.email).then(function (user) {
-	            console.log('UserService -> init() -> then() | Recaching user.');
-	            _this._cacheUser(user);
+	            console.log('UserService -> init() -> then() | Recaching user.', user);
 	            _UserActions.UserActions.setUser(user);
 	          }).catch(function (err) {
 	            console.log('UserService.js -> init() | Error refreshing user');

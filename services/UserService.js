@@ -10,8 +10,12 @@ const getUser = email => {
 
   UserModel
     .findOne({email: email})
-    .populate('memberOf', 'id name members tasks')
+    .populate({
+      path: 'memberOf',
+      select: 'id name members tasks -_id'
+    })
     .then((user) => {
+      console.log('USER', user)
       if (user) res(user);
       else rej({status: 400, msg: `User '${email}' not found`});
     })

@@ -32,8 +32,7 @@ class _UserService {
           this
             .getUser(user.email)
             .then(user => {
-              console.log('UserService -> init() -> then() | Recaching user.')
-              this._cacheUser(user);
+              console.log('UserService -> init() -> then() | Recaching user.', user)
               UserActions.setUser(user);
             })
             .catch(err => {
