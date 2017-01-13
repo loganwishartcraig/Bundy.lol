@@ -3,15 +3,38 @@ import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 import { UserConstants } from '../Constants/UserConstants';
 import { UserService } from '../Services/UserService';
 
+// import { GroupActions } from './GroupActions';
 import { AuthActions } from './AuthActions';
-import { GroupActions } from './GroupActions';
 
 
 import { sameSets } from '../Utility/Array';
 
 const initUser = () => {
-  return UserService.init();
-}
+  UserService
+    .fromCache()
+    .then(user => {
+      setUser(user);
+      updateUser(user);
+    })
+    .catch(err => {
+      console.error(err);
+      setUser(undefined);
+    });
+
+};
+
+const createUser = (userReq) => {
+
+  UserService
+    .createUser(userReq)
+    .then(payload => {
+      setUser(payload.user);
+      AuthActions.setToken(payload.token);
+    })
+    .catch(err => {
+      console.log(err);
+    })
+};
 
 const setUser = (user) => {
 
@@ -23,6 +46,7 @@ const setUser = (user) => {
   UserService.cacheUser(user);
 };
 
+
 // const unsetUser = () => {
 //   AppDispatcher.dispatch({
 //     type: UserConstants.UNSET_USER
@@ -30,11 +54,23 @@ const setUser = (user) => {
 // };
 
 const updateUser = (user) => {
-  AppDispatcher.dispatch({
-    type: UserConstants.UPDATE_USER,
-    user: user
-  });
+
+  UserService
+    .getUser()
+    .then(updated => {
+      setUser(updated)
+    })
+    .catch(err => {
+      console.log(err);
+    })
+
 };
+  // AppDispatcher.dispatch({
+  //   type: UserConstants.UPDATE_USER,
+  //   user: user
+  // });
+
+  
 
 const deleteUser = (userId) => {
   AppDispatcher.dispatch({
@@ -44,11 +80,7 @@ const deleteUser = (userId) => {
 };
 
 
-const createUser = (userReq) => {
 
-  UserService.createUser(userReq)
-
-};
 
 const addFavorite = (message) => {
   AppDispatcher.dispatch({

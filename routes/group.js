@@ -34,7 +34,8 @@ const _serializeGroup = (group) => {
     'id',
     'name',
     'members',
-    'tasks'
+    'tasks',
+    'createdBy'
   ];
 
   return requiredKeys.reduce((serializedUser, key) => {
@@ -42,7 +43,7 @@ const _serializeGroup = (group) => {
     serializedUser[key] = group[key];
     return serializedUser;
 
-  }, {});
+  }, {issued: new Date()});
 
 };
 

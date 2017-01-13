@@ -53,7 +53,7 @@ const _serializeUser = (user) => {
     serializedUser[key] = user[key];
     return serializedUser;
 
-  }, {});
+  }, {issued: new Date()});
 
 };
 
@@ -63,10 +63,10 @@ router.get('/getUser',
   AuthOps.verifyAuth,
   function(req, res, next) {
 
-  console.log('\t', req.query.email)
+  // console.log('\t', req.query.email)
 
   UserService
-    .getUser(req.query.email)
+    .getByToken(req.get('Authorization'))
     .then((user) => {
       console.log(user);
       res.status(200).json({user: _serializeUser(user)});

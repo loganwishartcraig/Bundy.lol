@@ -16,6 +16,7 @@ const createGroup = (groupReq, user) => {
         let group = new GroupModel(groupReq);
             console.log(user)
             group.members.push(user);
+            group.createdBy = user.id;
             group.save();
 
         user.memberOf.push(group);

@@ -12,7 +12,7 @@ const getUser = email => {
     .findOne({email: email})
     .populate({
       path: 'memberOf',
-      select: 'id name members tasks -_id'
+      select: 'id name members tasks createdBy -_id'
     })
     .then((user) => {
       console.log('USER', user)
@@ -71,8 +71,15 @@ const getByToken = token => {
 
         console.log(userId)
 
+
+
+        /// ***** ABSTRACT TO FUNCTION THAT TAKES A QUERY OBJECT *****
         UserModel
           .findOne({id: userId})
+          .populate({
+            path: 'memberOf',
+            select: 'id name members tasks createdBy -_id'
+          })
           .then(user => {
             if (!user) return rej({status: 400, msg: 'User not found'});
             res(user);

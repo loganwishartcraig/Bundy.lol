@@ -158,9 +158,19 @@
 	};
 
 	// should be built to be async?
-	_AuthActions.AuthActions.initAuth().then(function () {
-	  _UserActions.UserActions.initUser().then(render).catch(render);
-	}).catch(render);
+	// AuthActions
+	//   .initAuth()
+	//   .then(() => {
+	//     UserActions
+	//       .initUser()
+	//       .then(render)
+	//       .catch(render)
+	//   })
+	//   .catch(render);
+	(function () {
+	  _AuthActions.AuthActions.initAuth().then(render).catch(render);
+	  _UserActions.UserActions.initUser();
+	})();
 
 /***/ },
 /* 1 */
@@ -27197,32 +27207,41 @@
 
 	var _AuthService = __webpack_require__(240);
 
-	// import { CacheService } from '../Services/CacheService';
-
-	// import { UserActions } from '../Actions/UserActions';
-
+	var _UserActions = __webpack_require__(268);
 
 	var initAuth = function initAuth() {
 
 	  // needs to update user if cached version found.
-	  return _AuthService.AuthService.init();
+	  return new Promise(function (res, rej) {
+
+	    _AuthService.AuthService.init().then(function () {
+	      flagAuth(true);
+	      res();
+	    }).catch(function () {
+	      flagAuth(false);
+	      rej();
+	    });
+	  });
 	};
+
+	// import { CacheService } from '../Services/CacheService';
 
 	var login = function login(credentials) {
 
-	  _AuthService.AuthService.login(credentials).then(function () {
-	    _AppDispatcher.AppDispatcher.dispatch({
-	      type: _AuthConstants.AuthConstants.SET_AUTH,
-	      authenticated: true
-	    });
+	  _AuthService.AuthService.login(credentials).then(function (user) {
+	    flagAuth(true);
+	    _UserActions.UserActions.setUser(user);
 	  }).catch(function (err) {
-	    // console.log(err);
+	    flagAuth(false);
+	    _UserActions.UserActions.setUser(undefined);
 	  });
 	};
 
 	var logout = function logout() {
 
 	  _AuthService.AuthService.logout();
+	  flagAuth(false);
+	  _UserActions.UserActions.setUser(undefined);
 	};
 
 	var flagAuth = function flagAuth(authenticated) {
@@ -27573,13 +27592,12 @@
 
 	var _CacheService = __webpack_require__(267);
 
-	var _AuthActions = __webpack_require__(235);
-
-	var _UserActions = __webpack_require__(268);
-
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	// import { AuthActions } from '../Actions/AuthActions';
+	// import { UserActions } from '../Actions/UserActions';
 
 	var _AuthService = function () {
 	  function _AuthService() {
@@ -27600,12 +27618,10 @@
 
 	        _this._getFromCache().then(function (token) {
 	          _this._setSession(token);
-	          _AuthActions.AuthActions.flagAuth(true);
 	          res();
 	        }).catch(function (err) {
 	          console.error(err);
-	          _AuthActions.AuthActions.flagAuth(false);
-	          res();
+	          rej();
 	        });
 	      });
 	    }
@@ -27643,16 +27659,10 @@
 	        axios.post('/auth/login', {
 	          credentials: loginReq
 	        }).then(function (response) {
-	          // console.log('got user', response.data.user);
-	          // console.log('got token', response.data.token);
-	          // this._setSession(response.data.token);
 	          _this2._setSession(response.data.token);
-	          _UserActions.UserActions.setUser(response.data.user);
-	          res();
-	          // AuthActions.flagAuth(true);    
+	          res(response.data.user);
 	        }).catch(function (err) {
 	          console.log('AuthService.js -> login() | Error logging in', err.response.data, loginReq);
-	          // AuthActions.flagAuth(false);
 	          rej(err);
 	        });
 	      });
@@ -27662,8 +27672,6 @@
 	    value: function logout() {
 
 	      this._removeSession();
-	      _AuthActions.AuthActions.flagAuth(false);
-	      _UserActions.UserActions.setUser(undefined);
 	    }
 	  }, {
 	    key: 'setSession',
@@ -31562,12 +31570,27 @@
 
 	var _AuthActions = __webpack_require__(235);
 
-	var _GroupActions = __webpack_require__(271);
-
 	var _Array = __webpack_require__(277);
 
+	// import { GroupActions } from './GroupActions';
 	var initUser = function initUser() {
-	  return _UserService.UserService.init();
+	  _UserService.UserService.fromCache().then(function (user) {
+	    setUser(user);
+	    updateUser(user);
+	  }).catch(function (err) {
+	    console.error(err);
+	    setUser(undefined);
+	  });
+	};
+
+	var createUser = function createUser(userReq) {
+
+	  _UserService.UserService.createUser(userReq).then(function (payload) {
+	    setUser(payload.user);
+	    _AuthActions.AuthActions.setToken(payload.token);
+	  }).catch(function (err) {
+	    console.log(err);
+	  });
 	};
 
 	var setUser = function setUser(user) {
@@ -31587,22 +31610,24 @@
 	// };
 
 	var updateUser = function updateUser(user) {
-	  _AppDispatcher.AppDispatcher.dispatch({
-	    type: _UserConstants.UserConstants.UPDATE_USER,
-	    user: user
+
+	  _UserService.UserService.getUser().then(function (updated) {
+	    setUser(updated);
+	  }).catch(function (err) {
+	    console.log(err);
 	  });
 	};
+	// AppDispatcher.dispatch({
+	//   type: UserConstants.UPDATE_USER,
+	//   user: user
+	// });
+
 
 	var deleteUser = function deleteUser(userId) {
 	  _AppDispatcher.AppDispatcher.dispatch({
 	    type: _UserConstants.UserConstants.DELETE_USER,
 	    userId: userId
 	  });
-	};
-
-	var createUser = function createUser(userReq) {
-
-	  _UserService.UserService.createUser(userReq);
 	};
 
 	var addFavorite = function addFavorite(message) {
@@ -31708,29 +31733,31 @@
 
 	  // should query server for new user if cached.
 
+	  // init() {
+
+	  //   return new Promise((res, rej) => {
+
+	  //     this
+	  //       ._getFromCache()
+	  //       .then(user => {
+	  //         UserActions.setUser(user);
+	  //         // GroupActions.setAll(user.memberOf);
+	  //         this
+	  //           .getUser(user.email)
+	  //           .then(user => {
+	  //             console.log('UserService -> init() -> then() | Recaching user.', user)
+	  //             UserActions.setUser(user);
+	  //           })
+	  //           .catch(err => {
+	  //             console.log('UserService.js -> init() | Error refreshing user')
+	  //           });
+	  //         res();
+	  //       })
+	  //       .catch(() => { res(); });
+	  //   });
+	  // }
+
 	  _createClass(_UserService, [{
-	    key: 'init',
-	    value: function init() {
-	      var _this = this;
-
-	      return new Promise(function (res, rej) {
-
-	        _this._getFromCache().then(function (user) {
-	          _UserActions.UserActions.setUser(user);
-	          // GroupActions.setAll(user.memberOf);
-	          _this.getUser(user.email).then(function (user) {
-	            console.log('UserService -> init() -> then() | Recaching user.', user);
-	            _UserActions.UserActions.setUser(user);
-	          }).catch(function (err) {
-	            console.log('UserService.js -> init() | Error refreshing user');
-	          });
-	          res();
-	        }).catch(function () {
-	          res();
-	        });
-	      });
-	    }
-	  }, {
 	    key: '_getFromCache',
 	    value: function _getFromCache() {
 	      return _CacheService.CacheService.get(this._cacheKey);
@@ -31752,11 +31779,16 @@
 	      this._cacheUser(user);
 	    }
 	  }, {
+	    key: 'fromCache',
+	    value: function fromCache() {
+	      return this._getFromCache();
+	    }
+	  }, {
 	    key: 'getUser',
-	    value: function getUser(email) {
+	    value: function getUser() {
 
 	      return new Promise(function (res, rej) {
-	        axios.get('/user/getUser?email=' + email).then(function (response) {
+	        axios.get('user/getUser').then(function (response) {
 	          res(response.data.user);
 	        }).catch(function (err) {
 	          rej(err.response.data);
@@ -31796,15 +31828,18 @@
 	    key: 'createUser',
 	    value: function createUser(userReq) {
 
-	      axios.post('/user/create', {
-	        user: userReq
-	      }).then(function (response) {
-	        console.log('got user', response.data.user);
-	        console.log('got token', response.data.token);
-	        _UserActions.UserActions.setUser(response.data.user);
-	        _AuthActions.AuthActions.setToken(response.data.token);
-	      }).catch(function (err) {
-	        console.error(err.response.data);
+	      return new Promise(function (res, rej) {
+
+	        axios.post('/user/create', {
+	          user: userReq
+	        }).then(function (response) {
+	          console.log('got user', response.data.user);
+	          console.log('got token', response.data.token);
+	          res(response.data);
+	        }).catch(function (err) {
+	          console.error(err.response.data);
+	          rej(err.response.data);
+	        });
 	      });
 	    }
 	  }]);
@@ -31831,60 +31866,17 @@
 
 	var _GroupService = __webpack_require__(273);
 
+	var _DisplayActions = __webpack_require__(274);
+
+	var _UserActions = __webpack_require__(268);
+
 	var initGroups = function initGroups() {
-
-	  // console.log('ACTION: Initilize group', groupIds)
-
-	  // updateGroups(groupIds);
-
-
-	  // GroupService
-	  //   .getLastActive()
-	  //   .then(lastActive => {
-	  //     if (groupIds.indexOf(lastActive.id) >= 0) {
-	  //       setActive(lastActive);
-	  //       GroupService
-	  //         .fetch(lastActive.id)
-	  //         .then(groupInfo => {
-	  //           setActive(groupInfo);
-	  //           GroupService.saveLastActive(groupInfo);
-	  //         })
-	  //         .catch((err) => {console.error('ERR: GroupActions.js -> initGroup()', err)});
-	  //     } else {
-	  //       resetActive(groupIds);
-	  //     }
-	  //   })
-	  //   .catch(err => {
-	  //     console.error('ERR: GroupActions.js -> initGroup()', err);
-	  //     resetActive(groupIds);
-	  //   })
-
 	  var groupIds = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 	};
 
-	var resetActive = function resetActive(groupIds) {}
-	// if (groupIds.length > 0) {
-	//       GroupService
-	//         .fetch(groupIds[0])
-	//         .then(groupInfo => {
-	//           setActive(groupInfo);
-	//           GroupService.saveLastActive(groupInfo);
-	//         })
-	//         .catch(() => {});
-	//         }
+	var resetActive = function resetActive(groupIds) {};
 
-	// const updateGroups = (groupIds) => {
-
-	//   console.log('ACTION: update groups', groupIds)
-
-	//   GroupService.fetch(groupIds).then(groups => {
-	//     console.log('group service returned: ', groups);
-	//     setGroups(groups);
-	//   })
-	//   .catch(() => {});
-	// };
-
-	;var setAll = function setAll(groups) {
+	var setAll = function setAll(groups) {
 	  _AppDispatcher.AppDispatcher.dispatch({
 	    type: _GroupConstants.GroupConstants.SET_ALL,
 	    groups: groups
@@ -31942,24 +31934,18 @@
 
 	  _GroupService.GroupService.createGroup(groupReq).then(function (group) {
 	    addGroup(group);
+	    _DisplayActions.DisplayActions.gotoTodos();
+	    _UserActions.UserActions.updateUser();
 	  }).catch(function (err) {
 	    console.log('GroupActions -> createGroup() |', err);
 	  });
-
-	  // AppDispatcher.dispatch({
-	  //   type: GroupConstants.CREATE_GROUP,
-	  //   group: groupReq
-	  // });
 	};
 
 	var GroupActions = exports.GroupActions = {
 
-	  // initGroups,
 	  setGroup: setGroup,
 	  unsetGroup: unsetGroup,
-	  // setAll,
 	  addGroup: addGroup,
-	  // updateGroups,
 	  setActive: setActive,
 	  leaveGroup: leaveGroup,
 	  joinGroup: joinGroup,
@@ -32008,15 +31994,14 @@
 
 	var localForage = _interopRequireWildcard(_localforage);
 
-	var _UserActions = __webpack_require__(268);
-
-	var _GroupActions = __webpack_require__(271);
-
-	var _DisplayActions = __webpack_require__(274);
-
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	// import { UserActions } from '../Actions/UserActions';
+	// import { GroupActions } from '../Actions/GroupActions';
+	// import { DisplayActions } from '../Actions/DisplayActions';
+
 
 	var _GroupService = function () {
 	  function _GroupService() {
@@ -32063,34 +32048,41 @@
 	      if (a.id === b.id) return 0;
 	      if (a.id < b.id) return -1;
 	    }
-	  }, {
-	    key: 'fetch',
-	    value: function fetch(toFetch) {
-	      var _this2 = this;
 
-	      return new Promise(function (res, rej) {
+	    // fetch(toFetch) {
 
-	        var collection = [];
+	    //   return new Promise((res, rej) => {
 
-	        if (Array.isArray(toFetch)) {
-	          toFetch.forEach(function (groupId) {
-	            _this2._getGroupInfo(groupId).then(function (groupInfo) {
-	              collection.push(groupInfo);
-	              if (collection.length === toFetch.length) res(collection.sort(_this2._sortTodosAlpha));
-	            }).catch(function (err) {
-	              rej(err);
-	            });
-	          });
-	        } else if (typeof toFetch === 'string') {
-	          _this2._getGroupInfo(toFetch).then(function (groupInfo) {
-	            // collection[toFetch] = groupInfo
-	            res(groupInfo);
-	          }).catch(function (err) {
-	            rej(err);
-	          });
-	        }
-	      });
-	    }
+	    //     let collection = [];
+
+	    //     if (Array.isArray(toFetch)) {
+	    //       toFetch.forEach(groupId => {
+	    //         this
+	    //           ._getGroupInfo(groupId)
+	    //           .then(groupInfo => {
+	    //             collection.push(groupInfo)
+	    //             if (collection.length === toFetch.length) res(collection.sort(this._sortTodosAlpha));
+	    //           })
+	    //           .catch(err => {
+	    //             rej(err);
+	    //           });
+	    //       });
+	    //     } else if (typeof toFetch === 'string') {
+	    //       this
+	    //         ._getGroupInfo(toFetch)
+	    //         .then(groupInfo => {
+	    //           // collection[toFetch] = groupInfo
+	    //           res(groupInfo);
+	    //         })
+	    //         .catch(err => {
+	    //           rej(err);
+	    //         })
+	    //     }
+
+	    //   })
+
+	    // }
+
 	  }, {
 	    key: '_getGroupInfo',
 	    value: function _getGroupInfo(groupId) {
@@ -32122,10 +32114,7 @@
 	        axios.post('/group/create', {
 	          groupReq: groupReq
 	        }).then(function (response) {
-	          // UserActions.setUser(response.data.user);
-	          _DisplayActions.DisplayActions.gotoTodos();
 	          res(response.data.group);
-	          // GroupActions.addGroup(response.data.group);
 	        }).catch(function (err) {
 	          rej(err.response.data);
 	        });
@@ -33058,9 +33047,7 @@
 	    value: function unsetListener(callback) {
 	      var event = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.events.change;
 
-	      console.log();
 	      this.removeListener(event, callback);
-	      console.log('removed listener', this, this.removeListener(event, callback));
 	    }
 	  }]);
 
@@ -33081,9 +33068,12 @@
 	    case _UserConstants.UserConstants.UPDATE_USER:
 	      UserStore.setUser(action.user);
 	      UserStore.emitChange();
-	    case _GroupConstants.GroupConstants.ADD_GROUP:
-	      UserStore.addGroup(action.group);
-	      UserStore.emitChange();
+
+	    // case GroupConstants.ADD_GROUP:
+	    //   UserStore.addGroup(action.group);
+	    //   UserStore.emitChange();
+
+
 	    default:
 	      break;
 	  }

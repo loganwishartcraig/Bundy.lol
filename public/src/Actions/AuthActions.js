@@ -5,13 +5,25 @@ import { AuthService } from '../Services/AuthService';
 
 // import { CacheService } from '../Services/CacheService';
 
-// import { UserActions } from '../Actions/UserActions';
+import { UserActions } from '../Actions/UserActions';
 
 
 const initAuth = () => {
 
   // needs to update user if cached version found.
-  return AuthService.init();
+  return new Promise((res, rej) => {
+
+  AuthService
+    .init()
+    .then(() => {
+      flagAuth(true);
+      res();
+    })
+    .catch(() => {
+      flagAuth(false);
+      rej();
+    });
+  });
 
 }
 
@@ -19,23 +31,22 @@ const login = (credentials) => {
 
   AuthService
     .login(credentials)
-    .then(() => {
-      AppDispatcher.dispatch({
-        type: AuthConstants.SET_AUTH,
-        authenticated: true
-      });
+    .then((user) => {
+      flagAuth(true);
+      UserActions.setUser(user);
     })
     .catch(err => {
-      // console.log(err);
+      flagAuth(false);
+      UserActions.setUser(undefined);
     });
-
-
 
 };
 
 const logout = () => {
 
   AuthService.logout();
+  flagAuth(false);
+  UserActions.setUser(undefined);
 
 };
 

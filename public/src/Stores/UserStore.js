@@ -73,9 +73,7 @@ class _UserStore extends EventEmitter {
   } 
 
   unsetListener(callback, event=this.events.change) {
-    console.log()
     this.removeListener(event, callback);
-    console.log('removed listener', this, this.removeListener(event, callback))
   }
 
 }
@@ -94,9 +92,13 @@ AppDispatcher.register(function(action) {
     case UserConstants.UPDATE_USER:
       UserStore.setUser(action.user);
       UserStore.emitChange();
-    case GroupConstants.ADD_GROUP:
-      UserStore.addGroup(action.group);
-      UserStore.emitChange();
+
+
+    // case GroupConstants.ADD_GROUP:
+    //   UserStore.addGroup(action.group);
+    //   UserStore.emitChange();
+
+
     default:
       break;
   }

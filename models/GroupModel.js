@@ -10,6 +10,7 @@ const GroupModel = mongoose.model('Group', new Schema({
   password: { type: String },
   members: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   tasks: { type: Array, default: [] },
+  createdBy: String,
   groupCreated: { type: Date, default: Date.now },
   tasksCompleted: { type: Number, default: 0 },
   tasksStarted: { type: Number, default: 0}

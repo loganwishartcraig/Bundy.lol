@@ -20,29 +20,29 @@ class _UserService {
 
   // should query server for new user if cached.
 
-  init() {
+  // init() {
 
-    return new Promise((res, rej) => {
+  //   return new Promise((res, rej) => {
 
-      this
-        ._getFromCache()
-        .then(user => {
-          UserActions.setUser(user);
-          // GroupActions.setAll(user.memberOf);
-          this
-            .getUser(user.email)
-            .then(user => {
-              console.log('UserService -> init() -> then() | Recaching user.', user)
-              UserActions.setUser(user);
-            })
-            .catch(err => {
-              console.log('UserService.js -> init() | Error refreshing user')
-            });
-          res();
-        })
-        .catch(() => { res(); });
-    });
-  }
+  //     this
+  //       ._getFromCache()
+  //       .then(user => {
+  //         UserActions.setUser(user);
+  //         // GroupActions.setAll(user.memberOf);
+  //         this
+  //           .getUser(user.email)
+  //           .then(user => {
+  //             console.log('UserService -> init() -> then() | Recaching user.', user)
+  //             UserActions.setUser(user);
+  //           })
+  //           .catch(err => {
+  //             console.log('UserService.js -> init() | Error refreshing user')
+  //           });
+  //         res();
+  //       })
+  //       .catch(() => { res(); });
+  //   });
+  // }
 
   _getFromCache() {
     return CacheService.get(this._cacheKey);
@@ -61,11 +61,15 @@ class _UserService {
     this._cacheUser(user);
   }
 
-  getUser(email) {
+  fromCache() {
+    return this._getFromCache();
+  }
+
+  getUser() {
     
     return new Promise((res, rej) => {
       axios
-        .get(`/user/getUser?email=${email}`)
+        .get('user/getUser')
         .then(response => {
           res(response.data.user);
         })
@@ -105,6 +109,7 @@ class _UserService {
 
   createUser(userReq) {
 
+    return new Promise((res, rej) => {
 
       axios.post('/user/create', {
         user: userReq
@@ -112,13 +117,15 @@ class _UserService {
       .then(response => {
         console.log('got user', response.data.user);
         console.log('got token', response.data.token);
-        UserActions.setUser(response.data.user);
-        AuthActions.setToken(response.data.token);
+        res(response.data);
       })
       .catch(err => {
         console.error(err.response.data);
+        rej(err.response.data);
       });
       
+    });
+
   }
 
 }

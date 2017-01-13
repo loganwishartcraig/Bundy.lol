@@ -61,12 +61,19 @@ const render = () => {
 
 
 // should be built to be async?
-AuthActions
-  .initAuth()
-  .then(() => {
-    UserActions
-      .initUser()
-      .then(render)
-      .catch(render)
-  })
-  .catch(render);
+// AuthActions
+//   .initAuth()
+//   .then(() => {
+//     UserActions
+//       .initUser()
+//       .then(render)
+//       .catch(render)
+//   })
+//   .catch(render);
+(() => {
+  AuthActions
+    .initAuth()
+    .then(render)
+    .catch(render);
+  UserActions.initUser();
+})();

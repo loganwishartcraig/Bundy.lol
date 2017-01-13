@@ -3,8 +3,8 @@ import * as axios from 'axios';
 
 import { CacheService } from './CacheService';
 
-import { AuthActions } from '../Actions/AuthActions';
-import { UserActions } from '../Actions/UserActions';
+// import { AuthActions } from '../Actions/AuthActions';
+// import { UserActions } from '../Actions/UserActions';
 
 class _AuthService {
 
@@ -26,13 +26,11 @@ class _AuthService {
         ._getFromCache()
         .then(token => {
           this._setSession(token);
-          AuthActions.flagAuth(true);
           res();
         })
         .catch(err => {
           console.error(err);
-          AuthActions.flagAuth(false);
-          res();
+          rej();
         });
 
     })
@@ -72,17 +70,11 @@ class _AuthService {
         credentials: loginReq
       })
       .then(response => {
-        // console.log('got user', response.data.user);
-        // console.log('got token', response.data.token);
-        // this._setSession(response.data.token);
         this._setSession(response.data.token);
-        UserActions.setUser(response.data.user);
-        res();
-        // AuthActions.flagAuth(true);    
+        res(response.data.user);
       })
       .catch(err => {
         console.log('AuthService.js -> login() | Error logging in', err.response.data, loginReq);
-        // AuthActions.flagAuth(false);
         rej(err);
       });
 
@@ -94,8 +86,6 @@ class _AuthService {
   logout() {
 
     this._removeSession();
-    AuthActions.flagAuth(false);
-    UserActions.setUser(undefined);
 
   }
 
