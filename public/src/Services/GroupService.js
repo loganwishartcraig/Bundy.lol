@@ -28,6 +28,7 @@ class _GroupService {
 
   }
 
+
   getLastActive() {
 
     return new Promise((res, rej) => {
@@ -102,12 +103,25 @@ class _GroupService {
     return this._groups !== undefined
   }
 
-  joinGroup(groupName, password) {
-
-  }
+  
 
   leaveGroup(groupName) {
     
+  }
+
+  joinGroup(groupReq) {
+    return new Promise((res, rej) => {
+      axios
+        .post('/group/join', {
+          groupReq: groupReq
+        })
+        .then(response => {
+          res(response.data.group);
+        })
+        .catch(err => {
+          rej(err.response.data);
+        });
+    });
   }
 
   createGroup(groupReq) {

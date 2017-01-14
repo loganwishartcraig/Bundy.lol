@@ -25,8 +25,6 @@ const createGroup = (groupReq, user) => {
 
         res(group);
 
-
-
       })
       .catch(err => {
         console.log(err)
@@ -37,14 +35,32 @@ const createGroup = (groupReq, user) => {
 
 };
 
+const joinGroup = (groupReq, user) => {
+
+
+  return new Promise((res, rej) => {
+    
+    GroupModel
+      .findOne({name: groupReq.name})
+      .then(existing => {
+        console.log('JOINING GROUP', existing)
+        if (!existing) return rej({status: 400, msg: 'Group doesnt exist.'});
+        if (groupReq.password !== existing.password) return rej({status: 400, msg: 'Incorrect password'});
+        res();
+      })
+      .catch(err => {
+        console.log(err)
+        rej({status: 500, msg: 'Error looking up group.'})
+      });
+
+  });
+
+};
 
 const getGroup = (groupId) => {
 
 };
 
-const joinGroup = (userId, groupId) => {
-
-};
 
 module.exports = {
 

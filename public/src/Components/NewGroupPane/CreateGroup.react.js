@@ -6,7 +6,7 @@ import { GroupActions } from '../../Actions/GroupActions';
 import { DisplayActions } from '../../Actions/DisplayActions';
 
 
-class AddGroupPane extends Component {
+class CreateGroup extends Component {
 
 
   constructor(props, context) {
@@ -60,4 +60,4 @@ class AddGroupPane extends Component {
 
 }
 
-export { AddGroupPane }
+export { CreateGroup }

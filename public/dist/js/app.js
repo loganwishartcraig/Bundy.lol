@@ -77,9 +77,9 @@
 
 	var _App = __webpack_require__(280);
 
-	var _Registration = __webpack_require__(299);
+	var _Registration = __webpack_require__(300);
 
-	var _Login = __webpack_require__(300);
+	var _Login = __webpack_require__(301);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -27237,6 +27237,24 @@
 	  });
 	};
 
+	// const requestUser = () => {
+
+	//   return new Promise((res, rej) => {
+
+	//     AuthService
+	//       .requestFromToken()
+	//       .then(user => {
+	//         res(user);
+	//       })
+	//       .catch(err => {
+	//         rej(err);
+	//       });
+
+	//   });
+
+
+	// };
+
 	var logout = function logout() {
 
 	  _AuthService.AuthService.logout();
@@ -31576,10 +31594,10 @@
 	var initUser = function initUser() {
 	  _UserService.UserService.fromCache().then(function (user) {
 	    setUser(user);
-	    updateUser(user);
+	    updateUser();
 	  }).catch(function (err) {
 	    console.error(err);
-	    setUser(undefined);
+	    updateUser();
 	  });
 	};
 
@@ -31609,7 +31627,7 @@
 	//   });
 	// };
 
-	var updateUser = function updateUser(user) {
+	var updateUser = function updateUser() {
 
 	  _UserService.UserService.getUser().then(function (updated) {
 	    setUser(updated);
@@ -31920,11 +31938,14 @@
 	  });
 	};
 
-	var joinGroup = function joinGroup(groupId, password) {
-	  _AppDispatcher.AppDispatcher.dispatch({
-	    type: _GroupConstants.GroupConstants.JOIN_GROUP,
-	    groupId: groupId,
-	    password: password
+	var joinGroup = function joinGroup(groupReq) {
+
+	  _GroupService.GroupService.joinGroup(groupReq).then(function (group) {
+	    addGroup(group);
+	    _DisplayActions.DisplayActions.gotoTodos();
+	    _UserActions.UserActions.updateUser();
+	  }).catch(function (err) {
+	    console.error('GroupActions -> createGroup() | ', err);
 	  });
 	};
 
@@ -31937,7 +31958,7 @@
 	    _DisplayActions.DisplayActions.gotoTodos();
 	    _UserActions.UserActions.updateUser();
 	  }).catch(function (err) {
-	    console.log('GroupActions -> createGroup() |', err);
+	    console.error('GroupActions -> createGroup() |', err);
 	  });
 	};
 
@@ -32101,11 +32122,21 @@
 	      return this._groups !== undefined;
 	    }
 	  }, {
-	    key: 'joinGroup',
-	    value: function joinGroup(groupName, password) {}
-	  }, {
 	    key: 'leaveGroup',
 	    value: function leaveGroup(groupName) {}
+	  }, {
+	    key: 'joinGroup',
+	    value: function joinGroup(groupReq) {
+	      return new Promise(function (res, rej) {
+	        axios.post('/group/join', {
+	          groupReq: groupReq
+	        }).then(function (response) {
+	          res(response.data.group);
+	        }).catch(function (err) {
+	          rej(err.response.data);
+	        });
+	      });
+	    }
 	  }, {
 	    key: 'createGroup',
 	    value: function createGroup(groupReq) {
@@ -32156,7 +32187,7 @@
 
 	  _AppDispatcher.AppDispatcher.dispatch({
 	    type: _DisplayConstants.DisplayConstants.UPDATE_PAGE,
-	    page: _PaneConstants.PaneConstants.ADD_GROUP_PANE
+	    page: _PaneConstants.PaneConstants.NEW_GROUP_PANE
 	  });
 	};
 
@@ -32191,7 +32222,7 @@
 	});
 	var PaneConstants = exports.PaneConstants = {
 	  TODO_PANE: 'TODO_PANE',
-	  ADD_GROUP_PANE: 'ADD_GROUP_PANE'
+	  NEW_GROUP_PANE: 'NEW_GROUP_PANE'
 	};
 
 /***/ },
@@ -32657,7 +32688,7 @@
 
 	var _Dashboard = __webpack_require__(281);
 
-	var _Landing = __webpack_require__(298);
+	var _Landing = __webpack_require__(299);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33503,7 +33534,7 @@
 
 	var _TodoPaneReact = __webpack_require__(290);
 
-	var _AddGroupPaneReact = __webpack_require__(297);
+	var _NewGroupPaneReact = __webpack_require__(297);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -33560,8 +33591,8 @@
 	        case _PaneConstants.PaneConstants.TODO_PANE:
 	          return _react2.default.createElement(_TodoPaneReact.TodoPane, null);
 	          break;
-	        case _PaneConstants.PaneConstants.ADD_GROUP_PANE:
-	          return _react2.default.createElement(_AddGroupPaneReact.AddGroupPane, null);
+	        case _PaneConstants.PaneConstants.NEW_GROUP_PANE:
+	          return _react2.default.createElement(_NewGroupPaneReact.NewGroupPane, null);
 	        default:
 	          return _react2.default.createElement(
 	            'span',
@@ -34188,7 +34219,72 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.AddGroupPane = undefined;
+	exports.NewGroupPane = undefined;
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _GroupStore = __webpack_require__(286);
+
+	var _GroupActions = __webpack_require__(271);
+
+	var _DisplayActions = __webpack_require__(274);
+
+	var _DisplayStore = __webpack_require__(289);
+
+	var _CreateGroupReact = __webpack_require__(298);
+
+	var _JoinGroupReact = __webpack_require__(302);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _objectDestructuringEmpty(obj) { if (obj == null) throw new TypeError("Cannot destructure undefined"); }
+
+	// class NewGroupPane extends Component {
+
+
+	// }
+
+	// const _handleGroupCreate = (evt) => {
+
+	//   console.log(evt);
+
+	//   evt.preventDefualt();
+	//   // evt.target
+	//   // GroupActions.createGroup(evt.target);
+
+	// };
+
+
+	// const _handleGroupJoin = (evt) => {
+
+	//   evt.preventDefualt();
+	//   GroupActions.joinGroup(this.state);    
+
+	// };
+
+	var NewGroupPane = exports.NewGroupPane = function NewGroupPane(_ref) {
+	  _objectDestructuringEmpty(_ref);
+
+	  return _react2.default.createElement(
+	    'div',
+	    null,
+	    _react2.default.createElement(_CreateGroupReact.CreateGroup, null),
+	    _react2.default.createElement(_JoinGroupReact.JoinGroup, null)
+	  );
+	};
+
+/***/ },
+/* 298 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.CreateGroup = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -34210,13 +34306,13 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var AddGroupPane = function (_Component) {
-	  _inherits(AddGroupPane, _Component);
+	var CreateGroup = function (_Component) {
+	  _inherits(CreateGroup, _Component);
 
-	  function AddGroupPane(props, context) {
-	    _classCallCheck(this, AddGroupPane);
+	  function CreateGroup(props, context) {
+	    _classCallCheck(this, CreateGroup);
 
-	    var _this = _possibleConstructorReturn(this, (AddGroupPane.__proto__ || Object.getPrototypeOf(AddGroupPane)).call(this, props, context));
+	    var _this = _possibleConstructorReturn(this, (CreateGroup.__proto__ || Object.getPrototypeOf(CreateGroup)).call(this, props, context));
 
 	    _this.state = {
 	      name: '',
@@ -34229,7 +34325,7 @@
 	    return _this;
 	  }
 
-	  _createClass(AddGroupPane, [{
+	  _createClass(CreateGroup, [{
 	    key: '_handleGroupSubmit',
 	    value: function _handleGroupSubmit(e) {
 
@@ -34274,13 +34370,13 @@
 	    }
 	  }]);
 
-	  return AddGroupPane;
+	  return CreateGroup;
 	}(_react.Component);
 
-	exports.AddGroupPane = AddGroupPane;
+	exports.CreateGroup = CreateGroup;
 
 /***/ },
-/* 298 */
+/* 299 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34344,7 +34440,7 @@
 	}(_react.Component);
 
 /***/ },
-/* 299 */
+/* 300 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34449,7 +34545,7 @@
 	}(_react.Component);
 
 /***/ },
-/* 300 */
+/* 301 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34547,6 +34643,107 @@
 
 	  return Login;
 	}(_react.Component);
+
+/***/ },
+/* 302 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.JoinGroup = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _GroupStore = __webpack_require__(286);
+
+	var _GroupActions = __webpack_require__(271);
+
+	var _DisplayActions = __webpack_require__(274);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var JoinGroup = function (_Component) {
+	  _inherits(JoinGroup, _Component);
+
+	  function JoinGroup(props, context) {
+	    _classCallCheck(this, JoinGroup);
+
+	    var _this = _possibleConstructorReturn(this, (JoinGroup.__proto__ || Object.getPrototypeOf(JoinGroup)).call(this, props, context));
+
+	    _this.state = {
+	      name: '',
+	      password: ''
+	    };
+
+	    _this._handleGroupSubmit = _this._handleGroupSubmit.bind(_this);
+	    _this._handleInputChange = _this._handleInputChange.bind(_this);
+
+	    return _this;
+	  }
+
+	  _createClass(JoinGroup, [{
+	    key: '_handleGroupSubmit',
+	    value: function _handleGroupSubmit(e) {
+
+	      e.preventDefault();
+	      console.log(e);
+	      _GroupActions.GroupActions.joinGroup(this.state);
+	    }
+	  }, {
+	    key: '_handleInputChange',
+	    value: function _handleInputChange(e) {
+
+	      var inputName = e.target.getAttribute('name'),
+	          value = e.target.value,
+	          stateChange = {};
+
+	      stateChange[inputName] = value;
+
+	      this.setState(stateChange);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'span',
+	          null,
+	          'Join an existing group'
+	        ),
+	        _react2.default.createElement(
+	          'form',
+	          { onSubmit: this._handleGroupSubmit, action: '/group/join', method: 'POST' },
+	          _react2.default.createElement('input', { onChange: this._handleInputChange, type: 'text', name: 'name' }),
+	          _react2.default.createElement('input', { onChange: this._handleInputChange, type: 'password', name: 'password' }),
+	          _react2.default.createElement(
+	            'button',
+	            { type: 'submit' },
+	            'Join'
+	          )
+	        )
+	      );
+	    }
+	  }]);
+
+	  return JoinGroup;
+	}(_react.Component);
+
+	exports.JoinGroup = JoinGroup;
 
 /***/ }
 /******/ ]);

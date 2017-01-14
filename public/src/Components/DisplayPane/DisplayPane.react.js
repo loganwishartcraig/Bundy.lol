@@ -6,7 +6,7 @@ import { DisplayActions } from '../../Actions/DisplayActions';
 import { PaneConstants } from '../../Constants/PaneConstants';
 
 import { TodoPane } from '../TodoPane/TodoPane.react.js'
-import { AddGroupPane } from '../AddGroupPane/AddGroupPane.react.js'
+import { NewGroupPane } from '../NewGroupPane/NewGroupPane.react.js'
 
 const getDisplayState = () => ({
   page: DisplayStore.getActivePage()
@@ -44,8 +44,8 @@ class DisplayPane extends Component {
       case PaneConstants.TODO_PANE:
         return <TodoPane />;
         break;
-      case PaneConstants.ADD_GROUP_PANE:
-        return <AddGroupPane />
+      case PaneConstants.NEW_GROUP_PANE:
+        return <NewGroupPane />
       default:
         return <span>Uh oh, unknown display page (should return todos)</span>;
         break;

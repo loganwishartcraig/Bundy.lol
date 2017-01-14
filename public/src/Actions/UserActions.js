@@ -14,11 +14,11 @@ const initUser = () => {
     .fromCache()
     .then(user => {
       setUser(user);
-      updateUser(user);
+      updateUser();
     })
     .catch(err => {
       console.error(err);
-      setUser(undefined);
+      updateUser();
     });
 
 };
@@ -53,7 +53,7 @@ const setUser = (user) => {
 //   });
 // };
 
-const updateUser = (user) => {
+const updateUser = () => {
 
   UserService
     .getUser()

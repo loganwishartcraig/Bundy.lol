@@ -65,12 +65,19 @@ const leaveGroup = (groupId) => {
   });
 };
 
-const joinGroup = (groupId, password) => {
-  AppDispatcher.dispatch({
-    type: GroupConstants.JOIN_GROUP,
-    groupId: groupId,
-    password: password
-  });
+const joinGroup = (groupReq) => {
+
+  GroupService
+    .joinGroup(groupReq)
+    .then(group => {
+      addGroup(group);
+      DisplayActions.gotoTodos();
+      UserActions.updateUser();
+    })
+    .catch(err => {
+      console.error('GroupActions -> createGroup() | ', err);
+    });
+
 };
 
 const createGroup = (groupReq) => {
@@ -85,7 +92,7 @@ const createGroup = (groupReq) => {
       UserActions.updateUser();
     })
     .catch(err =>{
-      console.log('GroupActions -> createGroup() |', err)
+      console.error('GroupActions -> createGroup() |', err)
     })
 
 };

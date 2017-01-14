@@ -13,21 +13,22 @@ const initAuth = () => {
   // needs to update user if cached version found.
   return new Promise((res, rej) => {
 
-  AuthService
-    .init()
-    .then(() => {
-      flagAuth(true);
-      res();
-    })
-    .catch(() => {
-      flagAuth(false);
-      rej();
-    });
+    AuthService
+      .init()
+      .then(() => {
+        flagAuth(true);
+        res();
+      })
+      .catch(() => {
+        flagAuth(false);
+        rej();
+      });
+
   });
 
 }
 
-const login = (credentials) => {
+const login = credentials => {
 
   AuthService
     .login(credentials)
@@ -41,6 +42,24 @@ const login = (credentials) => {
     });
 
 };
+
+// const requestUser = () => {
+
+//   return new Promise((res, rej) => {
+
+//     AuthService
+//       .requestFromToken()
+//       .then(user => {
+//         res(user);
+//       })
+//       .catch(err => {
+//         rej(err);
+//       });
+
+//   });
+
+
+// };
 
 const logout = () => {
 

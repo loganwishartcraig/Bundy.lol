@@ -16,7 +16,7 @@ const gotoAddGroup = () => {
 
   AppDispatcher.dispatch({
     type: DisplayConstants.UPDATE_PAGE,
-    page: PaneConstants.ADD_GROUP_PANE
+    page: PaneConstants.NEW_GROUP_PANE
   });
 
 };
