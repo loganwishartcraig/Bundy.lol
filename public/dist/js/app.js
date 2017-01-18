@@ -77,9 +77,9 @@
 
 	var _App = __webpack_require__(280);
 
-	var _Registration = __webpack_require__(300);
+	var _Registration = __webpack_require__(301);
 
-	var _Login = __webpack_require__(301);
+	var _Login = __webpack_require__(302);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32069,41 +32069,6 @@
 	      if (a.id === b.id) return 0;
 	      if (a.id < b.id) return -1;
 	    }
-
-	    // fetch(toFetch) {
-
-	    //   return new Promise((res, rej) => {
-
-	    //     let collection = [];
-
-	    //     if (Array.isArray(toFetch)) {
-	    //       toFetch.forEach(groupId => {
-	    //         this
-	    //           ._getGroupInfo(groupId)
-	    //           .then(groupInfo => {
-	    //             collection.push(groupInfo)
-	    //             if (collection.length === toFetch.length) res(collection.sort(this._sortTodosAlpha));
-	    //           })
-	    //           .catch(err => {
-	    //             rej(err);
-	    //           });
-	    //       });
-	    //     } else if (typeof toFetch === 'string') {
-	    //       this
-	    //         ._getGroupInfo(toFetch)
-	    //         .then(groupInfo => {
-	    //           // collection[toFetch] = groupInfo
-	    //           res(groupInfo);
-	    //         })
-	    //         .catch(err => {
-	    //           rej(err);
-	    //         })
-	    //     }
-
-	    //   })
-
-	    // }
-
 	  }, {
 	    key: '_getGroupInfo',
 	    value: function _getGroupInfo(groupId) {
@@ -32688,7 +32653,7 @@
 
 	var _Dashboard = __webpack_require__(281);
 
-	var _Landing = __webpack_require__(299);
+	var _Landing = __webpack_require__(300);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -34235,7 +34200,7 @@
 
 	var _CreateGroupReact = __webpack_require__(298);
 
-	var _JoinGroupReact = __webpack_require__(302);
+	var _JoinGroupReact = __webpack_require__(299);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -34384,6 +34349,107 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.JoinGroup = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _GroupStore = __webpack_require__(286);
+
+	var _GroupActions = __webpack_require__(271);
+
+	var _DisplayActions = __webpack_require__(274);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var JoinGroup = function (_Component) {
+	  _inherits(JoinGroup, _Component);
+
+	  function JoinGroup(props, context) {
+	    _classCallCheck(this, JoinGroup);
+
+	    var _this = _possibleConstructorReturn(this, (JoinGroup.__proto__ || Object.getPrototypeOf(JoinGroup)).call(this, props, context));
+
+	    _this.state = {
+	      name: '',
+	      password: ''
+	    };
+
+	    _this._handleGroupSubmit = _this._handleGroupSubmit.bind(_this);
+	    _this._handleInputChange = _this._handleInputChange.bind(_this);
+
+	    return _this;
+	  }
+
+	  _createClass(JoinGroup, [{
+	    key: '_handleGroupSubmit',
+	    value: function _handleGroupSubmit(e) {
+
+	      e.preventDefault();
+	      console.log(e);
+	      _GroupActions.GroupActions.joinGroup(this.state);
+	    }
+	  }, {
+	    key: '_handleInputChange',
+	    value: function _handleInputChange(e) {
+
+	      var inputName = e.target.getAttribute('name'),
+	          value = e.target.value,
+	          stateChange = {};
+
+	      stateChange[inputName] = value;
+
+	      this.setState(stateChange);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	          'span',
+	          null,
+	          'Join an existing group'
+	        ),
+	        _react2.default.createElement(
+	          'form',
+	          { onSubmit: this._handleGroupSubmit, action: '/group/join', method: 'POST' },
+	          _react2.default.createElement('input', { onChange: this._handleInputChange, type: 'text', name: 'name' }),
+	          _react2.default.createElement('input', { onChange: this._handleInputChange, type: 'password', name: 'password' }),
+	          _react2.default.createElement(
+	            'button',
+	            { type: 'submit' },
+	            'Join'
+	          )
+	        )
+	      );
+	    }
+	  }]);
+
+	  return JoinGroup;
+	}(_react.Component);
+
+	exports.JoinGroup = JoinGroup;
+
+/***/ },
+/* 300 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	exports.Landing = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -34440,7 +34506,7 @@
 	}(_react.Component);
 
 /***/ },
-/* 300 */
+/* 301 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34545,7 +34611,7 @@
 	}(_react.Component);
 
 /***/ },
-/* 301 */
+/* 302 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34643,107 +34709,6 @@
 
 	  return Login;
 	}(_react.Component);
-
-/***/ },
-/* 302 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.JoinGroup = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _GroupStore = __webpack_require__(286);
-
-	var _GroupActions = __webpack_require__(271);
-
-	var _DisplayActions = __webpack_require__(274);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var JoinGroup = function (_Component) {
-	  _inherits(JoinGroup, _Component);
-
-	  function JoinGroup(props, context) {
-	    _classCallCheck(this, JoinGroup);
-
-	    var _this = _possibleConstructorReturn(this, (JoinGroup.__proto__ || Object.getPrototypeOf(JoinGroup)).call(this, props, context));
-
-	    _this.state = {
-	      name: '',
-	      password: ''
-	    };
-
-	    _this._handleGroupSubmit = _this._handleGroupSubmit.bind(_this);
-	    _this._handleInputChange = _this._handleInputChange.bind(_this);
-
-	    return _this;
-	  }
-
-	  _createClass(JoinGroup, [{
-	    key: '_handleGroupSubmit',
-	    value: function _handleGroupSubmit(e) {
-
-	      e.preventDefault();
-	      console.log(e);
-	      _GroupActions.GroupActions.joinGroup(this.state);
-	    }
-	  }, {
-	    key: '_handleInputChange',
-	    value: function _handleInputChange(e) {
-
-	      var inputName = e.target.getAttribute('name'),
-	          value = e.target.value,
-	          stateChange = {};
-
-	      stateChange[inputName] = value;
-
-	      this.setState(stateChange);
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2.default.createElement(
-	        'div',
-	        null,
-	        _react2.default.createElement(
-	          'span',
-	          null,
-	          'Join an existing group'
-	        ),
-	        _react2.default.createElement(
-	          'form',
-	          { onSubmit: this._handleGroupSubmit, action: '/group/join', method: 'POST' },
-	          _react2.default.createElement('input', { onChange: this._handleInputChange, type: 'text', name: 'name' }),
-	          _react2.default.createElement('input', { onChange: this._handleInputChange, type: 'password', name: 'password' }),
-	          _react2.default.createElement(
-	            'button',
-	            { type: 'submit' },
-	            'Join'
-	          )
-	        )
-	      );
-	    }
-	  }]);
-
-	  return JoinGroup;
-	}(_react.Component);
-
-	exports.JoinGroup = JoinGroup;
 
 /***/ }
 /******/ ]);

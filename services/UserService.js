@@ -15,7 +15,6 @@ const getUser = email => {
       select: 'id name members tasks createdBy -_id'
     })
     .then((user) => {
-      console.log('USER', user)
       if (user) res(user);
       else rej({status: 400, msg: `User '${email}' not found`});
     })
@@ -63,15 +62,11 @@ const removeUser = email => {
 const getByToken = token => {
   return new Promise((res, rej) => {
 
-    console.log(token);
+    console.log('\t|- UserService --> getByToken() --> Getting user by token');
 
     AuthOps
       .decryptToken(token)
       .then(userId => {
-
-        console.log(userId)
-
-
 
         /// ***** ABSTRACT TO FUNCTION THAT TAKES A QUERY OBJECT *****
         UserModel

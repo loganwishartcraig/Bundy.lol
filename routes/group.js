@@ -108,13 +108,8 @@ router.post('/join',
         // console.log('FOUND USE')
         GroupService
           .joinGroup(groupReq, user)
-          .then(() => {
-
-
-            res.sendStatus(200);
-            
-
-            // res.status(200).json({group: _serializeGroup(group)});
+          .then(group => {
+            res.status(200).json({group: _serializeGroup(group)});
           })
           .catch(err => {
             res.status(err.status).json(err);

@@ -52,40 +52,6 @@ class _GroupService {
   }
 
 
-  // fetch(toFetch) {
-
-  //   return new Promise((res, rej) => {
-
-  //     let collection = [];
-
-  //     if (Array.isArray(toFetch)) {
-  //       toFetch.forEach(groupId => {
-  //         this
-  //           ._getGroupInfo(groupId)
-  //           .then(groupInfo => {
-  //             collection.push(groupInfo)
-  //             if (collection.length === toFetch.length) res(collection.sort(this._sortTodosAlpha));
-  //           })
-  //           .catch(err => {
-  //             rej(err);
-  //           });
-  //       });
-  //     } else if (typeof toFetch === 'string') {
-  //       this
-  //         ._getGroupInfo(toFetch)
-  //         .then(groupInfo => {
-  //           // collection[toFetch] = groupInfo
-  //           res(groupInfo);
-  //         })
-  //         .catch(err => {
-  //           rej(err);
-  //         })
-  //     }
-      
-  //   })
-
-  // }
-
   _getGroupInfo(groupId) {
     return new Promise((res, rej) => {
 

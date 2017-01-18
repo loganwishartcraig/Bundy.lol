@@ -68,7 +68,7 @@ router.get('/getUser',
   UserService
     .getByToken(req.get('Authorization'))
     .then((user) => {
-      console.log(user);
+      console.log(`\t|- User Routes --> /getUser --> Found User '${user.fName}', responding to client`);
       res.status(200).json({user: _serializeUser(user)});
     })
     .catch(err => {
