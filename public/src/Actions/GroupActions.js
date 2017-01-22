@@ -6,14 +6,31 @@ import { GroupService } from '../Services/GroupService';
 import { DisplayActions } from './DisplayActions';
 import { UserActions } from './UserActions';
 
-const initGroups = (groupIds = []) => {
+const init = (groups) => {
 
+  GroupService
+    .getLastActive()
+    .then(lastActive => {
+
+      console.log('GroupActions.js -> init() | Setting last active', lastActive)
+
+      for (let i = 0; i < groups.length; i++) 
+        if (groups[i].name === lastActive) setActive(groups[i]);    
+
+      setAll(groups);
+
+    })
+    .catch(err => {
+      console.error('GroupActions.js -> init() |', err)
+      setAll(groups);
+      if (groups.length > 0) setActive(groups[0]);
+    });
 
 };
 
-const resetActive = (groupIds) => {
+// const resetActive = (groupIds) => {
 
-}
+// }
 
 const setAll = (groups) => {
   AppDispatcher.dispatch({
@@ -37,7 +54,10 @@ const addGroup = group => {
   AppDispatcher.dispatch({
     type: GroupConstants.ADD_GROUP,
     group: group
-  })
+  });
+
+  setActive(group);
+
 
 };
 
@@ -47,15 +67,13 @@ const unsetGroup = () => {
   });
 };
 
-
-
 const setActive = (group) => {
-  console.log('setting active', group)
-  GroupService.saveLastActive(group); 
+  console.log('GroupActions.js -> setActive() | Setting active:', group)
   AppDispatcher.dispatch({
     type: GroupConstants.SET_ACTIVE,
     group: group
   });
+  GroupService.saveLastActive(group.name); 
 };
 
 const leaveGroup = (groupId) => {
@@ -99,6 +117,8 @@ const createGroup = (groupReq) => {
 
 export const GroupActions = {
 
+  init,
+  setAll,
   setGroup,
   unsetGroup,
   addGroup,

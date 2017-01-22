@@ -11,7 +11,7 @@ class _GroupStore extends EventEmitter {
 
   constructor() {
     super();
-    this._activeGroup = {};
+    this._activeGroup = undefined;
     this._groups = [];
     this._isAdding = false;
 
@@ -31,15 +31,31 @@ class _GroupStore extends EventEmitter {
     return this._groups;
   }
 
+  refreshActive() {
+    for (let i = 0; i < this._groups.length; i++)
+      if (this._groups[i].name === this._activeGroup.name) {
+        console.log('GroupStore -> refreshActive() | Refreshing Active', this._groups[i].name)
+        this._setActive(this._groups[i]);
+      }
+  }
+
   setGroups(groups) {
     console.log('GroupStore -> setGroups() | groups: ', groups, 'Setting groups');
-    this._groups = groups
+    this._groups = groups;
+
+    if (this.hasActive()) this.refreshActive();
   }
 
   setGroup(id, group) {
 
     console.log('GroupStore -> setGroup() | groups: ", groups, "Setting groups', id, group, this._groups);
     this._groups[id] = group;
+
+  }
+
+  _setActive(group) {
+    console.log('GroupStore -> _setActive() | Setting active', group);
+    this._activeGroup = group;
   }
 
   setActive(group) {
@@ -48,6 +64,10 @@ class _GroupStore extends EventEmitter {
 
   getActive() {
     return this._activeGroup;
+  }
+
+  hasActive() {
+    return (this._activeGroup !== undefined)
   }
 
   addGroup(group) {
@@ -86,13 +106,11 @@ AppDispatcher.register(function(action) {
 
   switch(action.type) {
     
-    case UserConstants.SET_USER:
-      if (action.user) GroupStore.setGroups(action.user.memberOf);
-      else GroupStore.clearGroups();
-      GroupStore.emitChange();
-      break;
-
-
+    // case UserConstants.SET_USER:
+    //   if (action.user) GroupStore.setGroups(action.user.memberOf);
+    //   else GroupStore.clearGroups();
+    //   GroupStore.emitChange();
+    //   break;
     case GroupConstants.SET_GROUP:
       GroupStore.setGroup(action.group.id, action.group);
       GroupStore.emitChange();

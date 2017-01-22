@@ -8,7 +8,7 @@ import { AuthService } from '../Services/AuthService';
 import { UserActions } from '../Actions/UserActions';
 
 
-const initAuth = () => {
+const init = () => {
 
   // needs to update user if cached version found.
   return new Promise((res, rej) => {
@@ -17,6 +17,7 @@ const initAuth = () => {
       .init()
       .then(() => {
         flagAuth(true);
+        UserActions.init();
         res();
       })
       .catch(() => {
@@ -99,7 +100,7 @@ const setToken = (token) => {
 
 export const AuthActions = {
 
-  initAuth,
+  init,
   login,
   logout,
   flagAuth,

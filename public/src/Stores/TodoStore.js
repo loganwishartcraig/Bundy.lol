@@ -68,11 +68,11 @@ AppDispatcher.register(function(action) {
 
   switch(action.type) {
 
-    case GroupConstants.SET_ACTIVE:
-      TodoStore.setTodos(action.group.todos);
-      TodoStore.resetFilter();
-      TodoStore.emitChange();
-      break;
+    // case GroupConstants.SET_ACTIVE:
+    //   TodoStore.setTodos(action.group.todos);
+    //   TodoStore.resetFilter();
+    //   TodoStore.emitChange();
+    //   break;
     case TodoConstants.SET_FILTER:
       TodoStore.setFilter(action.filterFunc);
       TodoStore.emitChange();

@@ -3,23 +3,44 @@ import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 import { UserConstants } from '../Constants/UserConstants';
 import { UserService } from '../Services/UserService';
 
-// import { GroupActions } from './GroupActions';
+import { GroupActions } from './GroupActions';
 import { AuthActions } from './AuthActions';
 
 
 import { sameSets } from '../Utility/Array';
 
-const initUser = () => {
+
+// might need to adjust actions
+// -- INIT_USER
+// -- uPDATE_USER
+// -- SET_USER
+
+const init = () => {
   UserService
     .fromCache()
     .then(user => {
       setUser(user);
+      GroupActions.init(user.memberOf);
       updateUser();
     })
     .catch(err => {
       console.error(err);
       updateUser();
     });
+
+};
+
+const updateUser = () => {
+
+  UserService
+    .getUser()
+    .then(updated => {
+      setUser(updated);
+      GroupActions.setAll(updated.memberOf);
+    })
+    .catch(err => {
+      console.error(err);
+    })
 
 };
 
@@ -38,39 +59,17 @@ const createUser = (userReq) => {
 
 const setUser = (user) => {
 
-  AppDispatcher.dispatch({
-    type: UserConstants.SET_USER,
-    user: user
-  });
-
-  UserService.cacheUser(user);
-};
-
-
-// const unsetUser = () => {
-//   AppDispatcher.dispatch({
-//     type: UserConstants.UNSET_USER
-//   });
-// };
-
-const updateUser = () => {
-
-  UserService
-    .getUser()
-    .then(updated => {
-      setUser(updated)
-    })
-    .catch(err => {
-      console.log(err);
-    })
+  if (user) {
+    AppDispatcher.dispatch({
+      type: UserConstants.SET_USER,
+      user: user
+    });
+    
+    UserService.cacheUser(user);
+  }
 
 };
-  // AppDispatcher.dispatch({
-  //   type: UserConstants.UPDATE_USER,
-  //   user: user
-  // });
 
-  
 
 const deleteUser = (userId) => {
   AppDispatcher.dispatch({
@@ -78,9 +77,6 @@ const deleteUser = (userId) => {
     userId: userId
   });
 };
-
-
-
 
 const addFavorite = (message) => {
   AppDispatcher.dispatch({
@@ -107,9 +103,8 @@ const editFavorite = (id, message) => {
 
 export const UserActions = {
 
-  initUser,
+  init,
   setUser,
-  // unsetUser,
   updateUser,
   deleteUser,
   createUser,

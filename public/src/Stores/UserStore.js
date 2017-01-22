@@ -85,6 +85,9 @@ AppDispatcher.register(function(action) {
   console.log('ACTION:', action);
 
   switch(action.type) {
+    case UserConstants.INIT_USER:
+      UserStore.setUser(action.user);
+      UserStore.emitChange();
     case UserConstants.SET_USER:
       UserStore.setUser(action.user);
       UserStore.emitChange();

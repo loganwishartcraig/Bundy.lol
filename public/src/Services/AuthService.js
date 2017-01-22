@@ -1,5 +1,5 @@
-import * as localForage from 'localforage';
 import * as axios from 'axios';
+// import * as localForage from 'localforage';
 
 import { CacheService } from './CacheService';
 

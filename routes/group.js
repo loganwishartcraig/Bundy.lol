@@ -43,7 +43,7 @@ const _serializeGroup = (group) => {
     serializedUser[key] = group[key];
     return serializedUser;
 
-  }, {issued: new Date()});
+  }, {});
 
 };
 

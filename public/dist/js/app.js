@@ -157,19 +157,8 @@
 	  _reactDom2.default.render(_react2.default.createElement(RouteHandler, null), document.getElementById('root'));
 	};
 
-	// should be built to be async?
-	// AuthActions
-	//   .initAuth()
-	//   .then(() => {
-	//     UserActions
-	//       .initUser()
-	//       .then(render)
-	//       .catch(render)
-	//   })
-	//   .catch(render);
 	(function () {
-	  _AuthActions.AuthActions.initAuth().then(render).catch(render);
-	  _UserActions.UserActions.initUser();
+	  _AuthActions.AuthActions.init().then(render).catch(render);
 	})();
 
 /***/ },
@@ -27209,13 +27198,14 @@
 
 	var _UserActions = __webpack_require__(268);
 
-	var initAuth = function initAuth() {
+	var init = function init() {
 
 	  // needs to update user if cached version found.
 	  return new Promise(function (res, rej) {
 
 	    _AuthService.AuthService.init().then(function () {
 	      flagAuth(true);
+	      _UserActions.UserActions.init();
 	      res();
 	    }).catch(function () {
 	      flagAuth(false);
@@ -27290,7 +27280,7 @@
 
 	var AuthActions = exports.AuthActions = {
 
-	  initAuth: initAuth,
+	  init: init,
 	  login: login,
 	  logout: logout,
 	  flagAuth: flagAuth,
@@ -27599,10 +27589,7 @@
 	exports.AuthService = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _localforage = __webpack_require__(241);
-
-	var localForage = _interopRequireWildcard(_localforage);
+	// import * as localForage from 'localforage';
 
 	var _axios = __webpack_require__(242);
 
@@ -31586,18 +31573,35 @@
 
 	var _UserService = __webpack_require__(270);
 
+	var _GroupActions = __webpack_require__(271);
+
 	var _AuthActions = __webpack_require__(235);
 
 	var _Array = __webpack_require__(277);
 
-	// import { GroupActions } from './GroupActions';
-	var initUser = function initUser() {
+	// might need to adjust actions
+	// -- INIT_USER
+	// -- uPDATE_USER
+	// -- SET_USER
+
+	var init = function init() {
 	  _UserService.UserService.fromCache().then(function (user) {
 	    setUser(user);
+	    _GroupActions.GroupActions.init(user.memberOf);
 	    updateUser();
 	  }).catch(function (err) {
 	    console.error(err);
 	    updateUser();
+	  });
+	};
+
+	var updateUser = function updateUser() {
+
+	  _UserService.UserService.getUser().then(function (updated) {
+	    setUser(updated);
+	    _GroupActions.GroupActions.setAll(updated.memberOf);
+	  }).catch(function (err) {
+	    console.error(err);
 	  });
 	};
 
@@ -31613,33 +31617,15 @@
 
 	var setUser = function setUser(user) {
 
-	  _AppDispatcher.AppDispatcher.dispatch({
-	    type: _UserConstants.UserConstants.SET_USER,
-	    user: user
-	  });
+	  if (user) {
+	    _AppDispatcher.AppDispatcher.dispatch({
+	      type: _UserConstants.UserConstants.SET_USER,
+	      user: user
+	    });
 
-	  _UserService.UserService.cacheUser(user);
+	    _UserService.UserService.cacheUser(user);
+	  }
 	};
-
-	// const unsetUser = () => {
-	//   AppDispatcher.dispatch({
-	//     type: UserConstants.UNSET_USER
-	//   });
-	// };
-
-	var updateUser = function updateUser() {
-
-	  _UserService.UserService.getUser().then(function (updated) {
-	    setUser(updated);
-	  }).catch(function (err) {
-	    console.log(err);
-	  });
-	};
-	// AppDispatcher.dispatch({
-	//   type: UserConstants.UPDATE_USER,
-	//   user: user
-	// });
-
 
 	var deleteUser = function deleteUser(userId) {
 	  _AppDispatcher.AppDispatcher.dispatch({
@@ -31672,9 +31658,8 @@
 
 	var UserActions = exports.UserActions = {
 
-	  initUser: initUser,
+	  init: init,
 	  setUser: setUser,
-	  // unsetUser,
 	  updateUser: updateUser,
 	  deleteUser: deleteUser,
 	  createUser: createUser,
@@ -31719,20 +31704,15 @@
 	exports.UserService = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	// import * as localForage from 'localforage';
+
+	// import { UserActions } from '../Actions/UserActions';
+	// import { AuthActions } from '../Actions/AuthActions';
+	// import { GroupActions } from '../Actions/GroupActions';
 
 	var _axios = __webpack_require__(242);
 
 	var axios = _interopRequireWildcard(_axios);
-
-	var _localforage = __webpack_require__(241);
-
-	var localForage = _interopRequireWildcard(_localforage);
-
-	var _UserActions = __webpack_require__(268);
-
-	var _AuthActions = __webpack_require__(235);
-
-	var _GroupActions = __webpack_require__(271);
 
 	var _CacheService = __webpack_require__(267);
 
@@ -31745,35 +31725,7 @@
 	    _classCallCheck(this, _UserService);
 
 	    this._cacheKey = 'bundylol_user';
-
-	    // this._clearCache();
 	  }
-
-	  // should query server for new user if cached.
-
-	  // init() {
-
-	  //   return new Promise((res, rej) => {
-
-	  //     this
-	  //       ._getFromCache()
-	  //       .then(user => {
-	  //         UserActions.setUser(user);
-	  //         // GroupActions.setAll(user.memberOf);
-	  //         this
-	  //           .getUser(user.email)
-	  //           .then(user => {
-	  //             console.log('UserService -> init() -> then() | Recaching user.', user)
-	  //             UserActions.setUser(user);
-	  //           })
-	  //           .catch(err => {
-	  //             console.log('UserService.js -> init() | Error refreshing user')
-	  //           });
-	  //         res();
-	  //       })
-	  //       .catch(() => { res(); });
-	  //   });
-	  // }
 
 	  _createClass(_UserService, [{
 	    key: '_getFromCache',
@@ -31813,35 +31765,6 @@
 	        });
 	      });
 	    }
-
-	    // fetchUser(email) {
-
-	    //   return new Promise(function(res, rej) {
-
-	    //     axios
-	    //       .get(`/user/getUser?email=${email}`)
-	    //       .then(response => {
-	    //         console.log(response.data)
-	    //         res(response.data.user);
-	    //       })
-	    //       .catch(err => {
-	    //         rej(err.response.data);
-	    //       });
-
-	    //   });
-
-	    // }
-
-	    // updateUser(user) {
-
-	    //   // simulated API Call
-	    //   return new Promise(function(res, rej) {
-	    //     // res(user);
-	    //     setTimeout(() => {res(user)}, Math.floor((Math.random() * (2000-500)) + 500))
-	    //   });
-
-	    // }
-
 	  }, {
 	    key: 'createUser',
 	    value: function createUser(userReq) {
@@ -31888,11 +31811,25 @@
 
 	var _UserActions = __webpack_require__(268);
 
-	var initGroups = function initGroups() {
-	  var groupIds = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+	var init = function init(groups) {
+
+	  _GroupService.GroupService.getLastActive().then(function (lastActive) {
+
+	    console.log('GroupActions.js -> init() | Setting last active', lastActive);
+
+	    for (var i = 0; i < groups.length; i++) {
+	      if (groups[i].name === lastActive) setActive(groups[i]);
+	    }setAll(groups);
+	  }).catch(function (err) {
+	    console.error('GroupActions.js -> init() |', err);
+	    setAll(groups);
+	    if (groups.length > 0) setActive(groups[0]);
+	  });
 	};
 
-	var resetActive = function resetActive(groupIds) {};
+	// const resetActive = (groupIds) => {
+
+	// }
 
 	var setAll = function setAll(groups) {
 	  _AppDispatcher.AppDispatcher.dispatch({
@@ -31914,6 +31851,8 @@
 	    type: _GroupConstants.GroupConstants.ADD_GROUP,
 	    group: group
 	  });
+
+	  setActive(group);
 	};
 
 	var unsetGroup = function unsetGroup() {
@@ -31923,12 +31862,12 @@
 	};
 
 	var setActive = function setActive(group) {
-	  console.log('setting active', group);
-	  _GroupService.GroupService.saveLastActive(group);
+	  console.log('GroupActions.js -> setActive() | Setting active:', group);
 	  _AppDispatcher.AppDispatcher.dispatch({
 	    type: _GroupConstants.GroupConstants.SET_ACTIVE,
 	    group: group
 	  });
+	  _GroupService.GroupService.saveLastActive(group.name);
 	};
 
 	var leaveGroup = function leaveGroup(groupId) {
@@ -31964,6 +31903,8 @@
 
 	var GroupActions = exports.GroupActions = {
 
+	  init: init,
+	  setAll: setAll,
 	  setGroup: setGroup,
 	  unsetGroup: unsetGroup,
 	  addGroup: addGroup,
@@ -32006,14 +31947,13 @@
 	exports.GroupService = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	// import * as localForage from 'localforage';
 
 	var _axios = __webpack_require__(242);
 
 	var axios = _interopRequireWildcard(_axios);
 
-	var _localforage = __webpack_require__(241);
-
-	var localForage = _interopRequireWildcard(_localforage);
+	var _CacheService = __webpack_require__(267);
 
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -32032,60 +31972,30 @@
 
 	    this._cacheKey = 'bundylol_lastActive';
 
-	    this.clearLastActive();
+	    // this.clearLastActive();
 	  }
 
 	  _createClass(_GroupService, [{
 	    key: 'clearLastActive',
 	    value: function clearLastActive() {
-	      localForage.removeItem(this._cacheKey);
+	      _CacheService.CacheService.remove(this._cacheKey);
 	    }
 	  }, {
 	    key: 'saveLastActive',
-	    value: function saveLastActive(group) {
+	    value: function saveLastActive(groupName) {
 
-	      console.log('caching last active', group);
-	      localForage.setItem(this._cacheKey, group);
+	      console.log('GroupService.js -> saveLastActive() | caching last active', groupName);
+	      _CacheService.CacheService.cache(this._cacheKey, groupName);
 	    }
 	  }, {
 	    key: 'getLastActive',
 	    value: function getLastActive() {
-	      var _this = this;
 
-	      return new Promise(function (res, rej) {
-
-	        localForage.getItem(_this._cacheKey).then(function (group) {
-	          console.log('found last active', group);
-	          group !== null ? res(group) : rej(undefined);
-	        }).catch(function (err) {
-	          rej(err.response.data);
-	        });
-	      });
-	    }
-	  }, {
-	    key: '_sortTodosAlpha',
-	    value: function _sortTodosAlpha(a, b) {
-	      if (a.id > b.id) return 1;
-	      if (a.id === b.id) return 0;
-	      if (a.id < b.id) return -1;
-	    }
-	  }, {
-	    key: '_getGroupInfo',
-	    value: function _getGroupInfo(groupId) {
-	      return new Promise(function (res, rej) {
-
-	        console.log('trying to get group info for ', groupId, ' -- NOT IMPLEMENTED');
-	        rej();
-	      });
+	      return _CacheService.CacheService.get(this._cacheKey);
 	    }
 	  }, {
 	    key: 'updateGroup',
 	    value: function updateGroup(groupId, newGroup) {}
-	  }, {
-	    key: 'hasGroups',
-	    value: function hasGroups() {
-	      return this._groups !== undefined;
-	    }
 	  }, {
 	    key: 'leaveGroup',
 	    value: function leaveGroup(groupName) {}
@@ -32106,7 +32016,6 @@
 	    key: 'createGroup',
 	    value: function createGroup(groupReq) {
 	      return new Promise(function (res, rej) {
-
 	        axios.post('/group/create', {
 	          groupReq: groupReq
 	        }).then(function (response) {
@@ -33057,6 +32966,9 @@
 	  console.log('ACTION:', action);
 
 	  switch (action.type) {
+	    case _UserConstants.UserConstants.INIT_USER:
+	      UserStore.setUser(action.user);
+	      UserStore.emitChange();
 	    case _UserConstants.UserConstants.SET_USER:
 	      UserStore.setUser(action.user);
 	      UserStore.emitChange();
@@ -33252,7 +33164,7 @@
 
 	    var _this = _possibleConstructorReturn(this, (_GroupStore.__proto__ || Object.getPrototypeOf(_GroupStore)).call(this));
 
-	    _this._activeGroup = {};
+	    _this._activeGroup = undefined;
 	    _this._groups = [];
 	    _this._isAdding = false;
 
@@ -33274,10 +33186,22 @@
 	      return this._groups;
 	    }
 	  }, {
+	    key: 'refreshActive',
+	    value: function refreshActive() {
+	      for (var i = 0; i < this._groups.length; i++) {
+	        if (this._groups[i].name === this._activeGroup.name) {
+	          console.log('GroupStore -> refreshActive() | Refreshing Active', this._groups[i].name);
+	          this._setActive(this._groups[i]);
+	        }
+	      }
+	    }
+	  }, {
 	    key: 'setGroups',
 	    value: function setGroups(groups) {
 	      console.log('GroupStore -> setGroups() | groups: ', groups, 'Setting groups');
 	      this._groups = groups;
+
+	      if (this.hasActive()) this.refreshActive();
 	    }
 	  }, {
 	    key: 'setGroup',
@@ -33285,6 +33209,12 @@
 
 	      console.log('GroupStore -> setGroup() | groups: ", groups, "Setting groups', id, group, this._groups);
 	      this._groups[id] = group;
+	    }
+	  }, {
+	    key: '_setActive',
+	    value: function _setActive(group) {
+	      console.log('GroupStore -> _setActive() | Setting active', group);
+	      this._activeGroup = group;
 	    }
 	  }, {
 	    key: 'setActive',
@@ -33295,6 +33225,11 @@
 	    key: 'getActive',
 	    value: function getActive() {
 	      return this._activeGroup;
+	    }
+	  }, {
+	    key: 'hasActive',
+	    value: function hasActive() {
+	      return this._activeGroup !== undefined;
 	    }
 	  }, {
 	    key: 'addGroup',
@@ -33342,11 +33277,11 @@
 
 	  switch (action.type) {
 
-	    case _UserConstants.UserConstants.SET_USER:
-	      if (action.user) GroupStore.setGroups(action.user.memberOf);else GroupStore.clearGroups();
-	      GroupStore.emitChange();
-	      break;
-
+	    // case UserConstants.SET_USER:
+	    //   if (action.user) GroupStore.setGroups(action.user.memberOf);
+	    //   else GroupStore.clearGroups();
+	    //   GroupStore.emitChange();
+	    //   break;
 	    case _GroupConstants.GroupConstants.SET_GROUP:
 	      GroupStore.setGroup(action.group.id, action.group);
 	      GroupStore.emitChange();
@@ -33900,11 +33835,11 @@
 
 	  switch (action.type) {
 
-	    case _GroupConstants.GroupConstants.SET_ACTIVE:
-	      TodoStore.setTodos(action.group.todos);
-	      TodoStore.resetFilter();
-	      TodoStore.emitChange();
-	      break;
+	    // case GroupConstants.SET_ACTIVE:
+	    //   TodoStore.setTodos(action.group.todos);
+	    //   TodoStore.resetFilter();
+	    //   TodoStore.emitChange();
+	    //   break;
 	    case _TodoConstants.TodoConstants.SET_FILTER:
 	      TodoStore.setFilter(action.filterFunc);
 	      TodoStore.emitChange();

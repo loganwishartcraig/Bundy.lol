@@ -1,6 +1,7 @@
 import * as axios from 'axios';
-import * as localForage from 'localforage';
+// import * as localForage from 'localforage';
 
+import { CacheService } from './CacheService';
 // import { UserActions } from '../Actions/UserActions';
 // import { GroupActions } from '../Actions/GroupActions';
 // import { DisplayActions } from '../Actions/DisplayActions';
@@ -14,61 +15,30 @@ class _GroupService {
 
     this._cacheKey = 'bundylol_lastActive';
 
-    this.clearLastActive();
+    // this.clearLastActive();
   } 
 
   clearLastActive() {
-        localForage.removeItem(this._cacheKey);
+    CacheService.remove(this._cacheKey);
   }
 
-  saveLastActive(group) {
+  saveLastActive(groupName) {
 
-    console.log('caching last active', group)
-    localForage.setItem(this._cacheKey, group);
+    console.log('GroupService.js -> saveLastActive() | caching last active', groupName)
+    CacheService.cache(this._cacheKey, groupName);
 
   }
 
 
   getLastActive() {
 
-    return new Promise((res, rej) => {
-
-      localForage
-        .getItem(this._cacheKey)
-        .then(group => {
-          console.log('found last active', group);
-          (group !== null) ? res(group) : rej(undefined);
-        })
-        .catch(err => { rej(err.response.data) });
-
-    });
+    return CacheService.get(this._cacheKey);
     
-  }
-
-  _sortTodosAlpha(a, b) {
-    if (a.id > b.id) return 1;
-    if (a.id === b.id) return 0;
-    if (a.id < b.id) return -1;
-  }
-
-
-  _getGroupInfo(groupId) {
-    return new Promise((res, rej) => {
-
-        console.log('trying to get group info for ', groupId, ' -- NOT IMPLEMENTED')
-        rej()
-
-    });
   }
 
   updateGroup(groupId, newGroup) {
 
   }
-
-  hasGroups() {
-    return this._groups !== undefined
-  }
-
   
 
   leaveGroup(groupName) {
@@ -92,7 +62,6 @@ class _GroupService {
 
   createGroup(groupReq) {
     return new Promise((res, rej) => {
-
       axios
         .post('/group/create', {
           groupReq: groupReq
