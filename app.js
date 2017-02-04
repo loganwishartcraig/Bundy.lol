@@ -15,6 +15,7 @@ const indexRoutes = require('./routes/index');
 const userRoutes = require('./routes/user');
 const authRoutes = require('./routes/auth');
 const groupRoutes = require('./routes/group');
+const taskRoutes = require('./routes/task');
 
 var app = express();
 
@@ -31,14 +32,12 @@ app.use(cookieParser());
 app.use(require('stylus').middleware(path.join(__dirname, 'public/dist')));
 app.use(express.static(path.join(__dirname, 'public/dist')));
 
-// app.use(passport.initialize());
-// require('./auth/passportLocalConfig')();
-// app.use(verifyAuth());
-
+// Registering routes
 app.use('/', indexRoutes);
 app.use('/user', userRoutes);
 app.use('/auth', authRoutes);
 app.use('/group', groupRoutes);
+app.use('/task', taskRoutes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

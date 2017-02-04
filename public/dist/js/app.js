@@ -6822,10 +6822,19 @@ var viewGroupAdd = function viewGroupAdd() {
   });
 };
 
+var viewTodoAdd = function viewTodoAdd() {
+
+  _AppDispatcher.AppDispatcher.dispatch({
+    type: _DisplayConstants.DisplayConstants.UPDATE_VIEW,
+    view: _ViewConstants.ViewConstants.NEW_TODO_VIEW
+  });
+};
+
 var DisplayActions = exports.DisplayActions = {
 
   viewTodos: viewTodos,
-  viewGroupAdd: viewGroupAdd
+  viewGroupAdd: viewGroupAdd,
+  viewTodoAdd: viewTodoAdd
 
 };
 
@@ -10293,7 +10302,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 var ViewConstants = exports.ViewConstants = {
   TODO_VIEW: 'TODO_VIEW',
-  NEW_GROUP_VIEW: 'NEW_GROUP_VIEW'
+  NEW_GROUP_VIEW: 'NEW_GROUP_VIEW',
+  NEW_TODO_VIEW: 'TODO_NEW_CREATE'
 };
 
 /***/ }),
@@ -15147,6 +15157,8 @@ var _TodoViewReact = __webpack_require__(164);
 
 var _NewGroupViewReact = __webpack_require__(160);
 
+var _NewTodoViewReact = __webpack_require__(302);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -15204,6 +15216,10 @@ var DisplayPane = function (_Component) {
           break;
         case _ViewConstants.ViewConstants.NEW_GROUP_VIEW:
           return _react2.default.createElement(_NewGroupViewReact.NewGroupView, null);
+          break;
+        case _ViewConstants.ViewConstants.NEW_TODO_VIEW:
+          return _react2.default.createElement(_NewTodoViewReact.NewTodoView, null);
+          break;
         default:
           return _react2.default.createElement(
             'span',
@@ -15834,6 +15850,8 @@ var _react2 = _interopRequireDefault(_react);
 
 var _TodoStore = __webpack_require__(173);
 
+var _DisplayActions = __webpack_require__(53);
+
 var _TodoFilters = __webpack_require__(161);
 
 var _TodoList = __webpack_require__(163);
@@ -15891,10 +15909,17 @@ var TodoView = function (_Component) {
         _react2.default.createElement(
           'div',
           null,
-          'Todo Pane'
+          'Todo View'
         ),
         _react2.default.createElement(_TodoFilters.TodoFilters, null),
-        _react2.default.createElement(_TodoList.TodoList, { todos: this.state.todos })
+        _react2.default.createElement(_TodoList.TodoList, { todos: this.state.todos }),
+        _react2.default.createElement(
+          'button',
+          { onClick: function onClick() {
+              _DisplayActions.DisplayActions.viewTodoAdd();
+            } },
+          'Add Todo'
+        )
       );
     }
   }]);
@@ -16604,6 +16629,8 @@ var _GroupStore = __webpack_require__(43);
 
 var _GroupConstants = __webpack_require__(42);
 
+var _ViewConstants = __webpack_require__(95);
+
 var _events = __webpack_require__(33);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -16622,7 +16649,8 @@ var _TodoStore = function (_EventEmitter) {
 
     _this._todos = [];
     _this._isEditing = false;
-    _this._addingFromFavorites = false;
+    _this._showFaves = false;
+
     _this._activeFilter = function (todo) {
       return true;
     };
@@ -16651,6 +16679,16 @@ var _TodoStore = function (_EventEmitter) {
       var todos = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 
       this._todos = todos;
+    }
+  }, {
+    key: 'isAdding',
+    value: function isAdding() {
+      return this._isAdding;
+    }
+  }, {
+    key: 'showFaves',
+    value: function showFaves() {
+      return this._showFaves;
     }
   }, {
     key: 'resetFilter',
@@ -16857,6 +16895,7 @@ _AppDispatcher.AppDispatcher.register(function (action) {
     case _UserConstants.UserConstants.INIT_USER:
       UserStore.setUser(action.user);
       UserStore.emitChange();
+      break;
     case _UserConstants.UserConstants.SET_USER:
       UserStore.setUser(action.user);
       UserStore.emitChange();
@@ -16864,7 +16903,7 @@ _AppDispatcher.AppDispatcher.register(function (action) {
     case _UserConstants.UserConstants.UPDATE_USER:
       UserStore.setUser(action.user);
       UserStore.emitChange();
-
+      break;
     // case GroupConstants.ADD_GROUP:
     //   UserStore.addGroup(action.group);
     //   UserStore.emitChange();
@@ -34065,6 +34104,87 @@ var render = function render() {
 (function () {
   _AuthActions.AuthActions.init().then(render).catch(render);
 })();
+
+/***/ }),
+/* 302 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.NewTodoView = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(3);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _TodoStore = __webpack_require__(173);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var getViewState = function getViewState() {
+  return {
+    showFaves: _TodoStore.TodoStore.showFaves()
+  };
+};
+
+var NewTodoView = function (_Component) {
+  _inherits(NewTodoView, _Component);
+
+  function NewTodoView(props, context) {
+    _classCallCheck(this, NewTodoView);
+
+    var _this = _possibleConstructorReturn(this, (NewTodoView.__proto__ || Object.getPrototypeOf(NewTodoView)).call(this, props, context));
+
+    _this.state = getViewState();
+
+    // this._handleTodoChange = this._handleTodoChange.bind(this);
+    return _this;
+  }
+
+  // _handleTodoChange() {
+  //   this.setState(getViewState());
+  // }
+
+  // componentWillMount() {
+  //   TodoStore.setListener(this._handleTodoChange);
+  // }
+
+  // componentWillUnmount() {
+  //   TodoStore.unsetListener(this._handleTodoChange);
+  // }
+
+  _createClass(NewTodoView, [{
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'div',
+        null,
+        _react2.default.createElement(
+          'span',
+          null,
+          'New Todo View!! Adding: ',
+          this.state.showFaves ? 'FROM_FAVES' : 'FROM_NEW'
+        )
+      );
+    }
+  }]);
+
+  return NewTodoView;
+}(_react.Component);
+
+exports.NewTodoView = NewTodoView;
 
 /***/ })
 /******/ ]);

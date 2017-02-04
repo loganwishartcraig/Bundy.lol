@@ -4,16 +4,6 @@ const mongoose = require('mongoose'),
       // UserService = require('./UserService');
 
 
-const _assignMembership = (group, user) => {
-
-  
-
-};
-
-const _assignOwnership = (group, user) => {
-
-}
-
 const createGroup = (groupReq, user) => {
 
   return new Promise((res, rej) => {

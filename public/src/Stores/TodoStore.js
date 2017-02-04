@@ -5,6 +5,7 @@ import { TodoConstants } from '../Constants/TodoConstants';
 import { GroupStore } from '../Stores/GroupStore';
 import { GroupConstants } from '../Constants/GroupConstants';
 
+import { ViewConstants } from '../Constants/ViewConstants';
 
 import { EventEmitter } from 'events';
 
@@ -14,7 +15,8 @@ class _TodoStore extends EventEmitter {
     super();
     this._todos = [];
     this._isEditing = false;
-    this._addingFromFavorites = false;
+    this._showFaves = false;
+
     this._activeFilter = (todo) => true;
 
     this.events = {
@@ -35,6 +37,15 @@ class _TodoStore extends EventEmitter {
   setTodos(todos = []) {
     this._todos = todos;
   }
+
+  isAdding() {
+    return this._isAdding;
+  }
+
+  showFaves() {
+    return this._showFaves;
+  }
+
 
   resetFilter() {
     this._activeFilter = () => true

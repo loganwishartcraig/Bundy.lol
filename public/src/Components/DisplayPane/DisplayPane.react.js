@@ -5,8 +5,9 @@ import { DisplayActions } from '../../Actions/DisplayActions';
 
 import { ViewConstants } from '../../Constants/ViewConstants';
 
-import { TodoView } from '../TodoView/TodoView.react.js'
-import { NewGroupView } from '../NewGroupView/NewGroupView.react.js'
+import { TodoView } from '../TodoView/TodoView.react.js';
+import { NewGroupView } from '../NewGroupView/NewGroupView.react.js';
+import { NewTodoView } from '../NewTodoView/NewTodoView.react.js';
 
 const getDisplayState = () => ({
   view: DisplayStore.getActiveView()
@@ -46,6 +47,10 @@ class DisplayPane extends Component {
         break;
       case ViewConstants.NEW_GROUP_VIEW:
         return <NewGroupView />
+        break;
+      case ViewConstants.NEW_TODO_VIEW:
+        return <NewTodoView />
+        break;
       default:
         return <span>Uh oh, unknown view :/ (should return todos)</span>;
         break;

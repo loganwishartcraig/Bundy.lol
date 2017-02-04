@@ -21,9 +21,19 @@ const viewGroupAdd = () => {
 
 };
 
+const viewTodoAdd = () => {
+
+  AppDispatcher.dispatch({
+    type: DisplayConstants.UPDATE_VIEW,
+    view: ViewConstants.NEW_TODO_VIEW
+  });
+
+}
+
 export const DisplayActions = {
 
   viewTodos,
-  viewGroupAdd
+  viewGroupAdd,
+  viewTodoAdd
 
 };

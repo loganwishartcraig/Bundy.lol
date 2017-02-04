@@ -2,12 +2,15 @@ import React, { Component } from 'react';
 
 import { TodoStore } from '../../Stores/TodoStore';
 
+import { DisplayActions } from '../../Actions/DisplayActions';
+
 import { TodoFilters } from './TodoFilters.react';
 import { TodoList } from './TodoList.react';
 
 const getTodoState = () => ({
   todos: TodoStore.getFilteredTodos()
 });
+
 
 
 class TodoView extends Component {
@@ -35,9 +38,12 @@ class TodoView extends Component {
   render() {
     return(
       <div>
-        <div>Todo Pane</div>
+        <div>Todo View</div>
         <TodoFilters />
         <TodoList todos={this.state.todos} />
+        <button onClick={() => {
+          DisplayActions.viewTodoAdd();
+        }}>Add Todo</button>
       </div> 
     );
   }

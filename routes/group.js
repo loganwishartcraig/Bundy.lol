@@ -52,19 +52,21 @@ const _serializeGroup = (group) => {
 // }
 
 /* GET home page. */
-router.get('/getInfo', (req, res, next) => {
-  res.sendStatus(200);
+router.get('/getInfo', 
+  AuthOps.verifyAuth,
+  (req, res, next) => {
+    res.sendStatus(200);
   // res.render('index');
 });
 
-router.post('/newTask', (req, res, next) => {
+// router.post('/newTask', (req, res, next) => {
 
-  AuhtOps.verifyAuth,
-  (req, res) => {
-    res(200);
-  };
+//   AuhtOps.verifyAuth,
+//   (req, res) => {
+//     res(200);
+//   };
 
-});
+// });
 
 router.post('/create', 
   AuthOps.verifyAuth,
