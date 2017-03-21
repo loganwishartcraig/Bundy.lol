@@ -77,7 +77,12 @@ const getByToken = token => {
           .findOne({id: userId})
           .populate({
             path: 'memberOf',
-            select: 'id name members tasks createdBy -_id'
+            select: 'id name members tasks createdBy -_id',
+            populate: {
+              path: 'tasks',
+              model: 'Tasks',
+              select: 'id text createdBy dateCreated completed completedBy dateCompleted -_id'
+            }
           })
           .then(user => {
             console.log(`\t|- UserService --> getByToken(${token.split('.')[2].substr(0, 5).concat('...')}) --> Found user: ${user.email}`);

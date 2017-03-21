@@ -2,22 +2,25 @@ import React, { Component } from 'react';
 
 import { GroupActions } from '../../Actions/GroupActions';
 
-const _handleGroupClick = (name) => {
+const _handleGroupClick = (group) => {
   
-  console.log('GroupSelector.js -> _handleGroupClick() | Setting active', name)
-  GroupActions.setActive(name)
+  console.log('GroupSelector.js -> _handleGroupClick() | Setting active', group)
+  GroupActions.setActive(group)
 }
 
 
 export const GroupSelector = ({
-  groupNames,
-  activeId
+  groups,
+  activeName
 }) => (
+  // <span> group selector {JSON.stringify(groups)} </span>
   <div>
-    {groupNames.map((name, i) => <button 
+    {Object.keys(groups).map((key, i) => <button 
       key={i}    
       onClick={e => {
-        _handleGroupClick(name);
+        if (groups[key].name === activeName) return;
+        _handleGroupClick(groups[key]);
       }}
-  >{name}</button>)}</div>
+  >{groups[key].name}</button>)}</div>
+
 );

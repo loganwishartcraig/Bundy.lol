@@ -5,6 +5,7 @@ import { GroupService } from '../Services/GroupService';
 
 import { DisplayActions } from './DisplayActions';
 import { UserActions } from './UserActions';
+import { TodoActions } from './TodoActions';
 
 const init = (groups) => {
 
@@ -12,15 +13,17 @@ const init = (groups) => {
     .getLastActive()
     .then(lastActive => {
 
+      console.warn('initalizing group, found last active', lastActive)
+
       setActive(groups.reduce((toSet, n, i) => {
+        if (toSet === undefined) return n;
+        return (n.name === lastActive.name) ? n : toSet;
 
-        return (n.name === lastActive) ? n.name : toSet;
-
-      }, (groups.length > 0) ? groups[0].name : undefined));
+      }, (groups.length > 0) ? groups[0] : undefined));
 
     })
     .catch(err => {
-      if (groups.length > 0) setActive(groups[0].name);
+      if (groups.length > 0) setActive(groups[0]);
     });
       setAll(groups);
 
@@ -60,11 +63,12 @@ const createGroup = (groupReq) => {
 };
 
 
-const setActive = (name) => {
-  console.log('GroupActions.js -> setActive() | Setting active:', name)
+const setActive = (group) => {
+  console.log('GroupActions.js -> setActive() | Setting active:', group);
+
   AppDispatcher.dispatch({
     type: GroupConstants.SET_ACTIVE,
-    name: name
+    group: group
   });
   
   GroupService.saveLastActive(name); 
@@ -96,7 +100,7 @@ const addGroup = group => {
     group: group
   });
 
-  setActive(group.name);
+  setActive(group);
 
 };
 
@@ -118,6 +122,7 @@ const resetGroups = () => {
   
 };
 
+
 export const GroupActions = {
 
   init,
@@ -129,4 +134,5 @@ export const GroupActions = {
   joinGroup,
   createGroup,
   resetGroups
+  
 };

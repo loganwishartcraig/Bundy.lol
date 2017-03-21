@@ -84,9 +84,28 @@ const joinGroup = (groupReq, user) => {
 
 };
 
-const getGroup = (groupId) => {
+const getGroup = (groupName) => {
+
+
+  return new Promise((res, rej) => {
+
+    console.log(`\t|- GeroupService --> getGroup() --> Getting group '${groupName}'`);
+
+    GroupModel
+      .findOne({name: groupName})
+      .then(existing => {
+        if (!existing) return rej({status: 400, msg: 'Group doesnt exist.'});
+        return res(existing);
+      })
+      .catch(err => {
+        rej({status: 500, msg: 'Error looking up group.'});
+      })
+
+  });
+
 
 };
+
 
 
 module.exports = {

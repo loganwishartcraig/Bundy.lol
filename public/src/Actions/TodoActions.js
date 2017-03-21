@@ -1,70 +1,65 @@
 import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 
 import { TodoConstants } from '../Constants/TodoConstants';
+import { TodoService } from '../Services/TodoService';
+
+const addTodo = (todo) => {
+
+  AppDispatcher.dispatch({
+    type: TodoConstants.ADD_TODO,
+    todo: todo
+  });
+  
+};
+
+const markComplete = (todoId) => {
+
+  AppDispatcher.dispatch({
+    type: TodoConstants.MARK_COMPLETE,
+    todo: todoId
+  })
+
+}
+
+const createTodo = (todo) => {
+
+  TodoService
+    .createTodo(todo)
+    .then(addTodo)
+    .catch((err) => {
+      console.log(err);
+    });
+
+};
+
+const toggleComplete = (todoId, groupId) => {
+
+  TodoService
+    .markCompleted(todoId, groupId)
+    .then(markComplete)
+    .catch(err => {
+      console.log(err);
+    });
+
+};
 
 const setTodos = (todos) => {
   AppDispatcher.dispatch({
     type: TodoConstants.SET_TODOS,
     todos: todos
   });
+}
+
+const resetTodos = () => {
+  TodoService.clearStorage();
+  setTodos([]);
 };
 
-const updateTodos = (todos) => {
-  AppDispatcher.dispatch({
-    type: TodoConstants.UPDATE_TODOS,
-    todos: todos
-  });
-};
 
-const addTodo = (message) => {
-  AppDispatcher.dispatch({
-    type: TodoConstants.ADD_TODO
-  })
-};
-
-const editTodo = (todoId, message) => {
-  AppDispatcher.dispatch({
-    type: TodoConstants.EDIT_TODO,
-    todoId: todoId,
-    message: message
-  });
-};
-
-const toggleAdding = () => {
-  AppDispatcher.dispatch({
-    type: TodoConstants.TOGGLE_ADDING
-  });
-};
-
-const toggleFavorites = () => {
-  AppDispatcher.dispatch({
-    type: TodoConstants.TOGGLE_FAVORITES
-  });
-};
-
-const toggleComplete = (id) => {
-  AppDispatcher.dispatch({
-    type: TodoConstants.TOGGLE_COMPLETE,
-    id: id
-  });
-};
-
-const setFilter = (filterFunc) => {
-  AppDispatcher.dispatch({
-    type: TodoConstants.SET_FILTER,
-    filterFunc: filterFunc
-  })
-};
 
 export const TodoActions = {
-
-  setTodos,
-  updateTodos,
-  toggleAdding,
-  toggleFavorites,
   addTodo,
+  createTodo,
   toggleComplete,
-  editTodo,
-  setFilter
-
-};
+  resetTodos
+}

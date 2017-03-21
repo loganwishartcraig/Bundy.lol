@@ -3,6 +3,7 @@ import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 
 import { UserConstants } from '../Constants/UserConstants';
 import { GroupConstants } from '../Constants/GroupConstants';
+import { TodoConstants } from '../Constants/TodoConstants';
 // import { GroupService } from '../Services/GroupService';
 
 import { EventEmitter } from 'events';
@@ -13,7 +14,6 @@ class _GroupStore extends EventEmitter {
     super();
 
 
-    // change to str 'name' reference
     this._activeGroup = undefined;
 
     // change to {}
@@ -41,6 +41,8 @@ class _GroupStore extends EventEmitter {
     groups.forEach(group => {
       this._groups[group.name] = group;
     });
+
+    if (!this.hasActive() && groups.length > 0) this._activeGroup = groups[0];
   }
 
   setGroup(id, group) {
@@ -55,16 +57,20 @@ class _GroupStore extends EventEmitter {
   //   this._activeGroup = groupName;
   // }
 
-  setActive(groupName) {
-    this._activeGroup = groupName;
+  setActive(group) {
+    this._activeGroup = group;
   }
 
   getActive() {
-    return this._groups[this._activeGroup];
+    return this._activeGroup;
+  }
+
+  getActiveId() {
+    if (this.hasActive()) return this._activeGroup.name;
   }
 
   hasActive() {
-    return (this._activeGroup !== undefined)
+    return this._activeGroup !== undefined
   }
 
   hasGroups() {
@@ -94,9 +100,9 @@ class _GroupStore extends EventEmitter {
     this.removeListener(event, callback);
   }
 
-  isAdding() {
-    return this._isAdding;
-  }
+  // isAdding() {
+  //   return this._isAdding;
+  // }
 
 }
 
@@ -122,7 +128,7 @@ AppDispatcher.register(function(action) {
       GroupStore.emitChange();
       break;
     case GroupConstants.SET_ACTIVE:
-      GroupStore.setActive(action.name);
+      GroupStore.setActive(action.group);
       GroupStore.emitChange();
       break;
     case GroupConstants.ADD_GROUP:
@@ -137,6 +143,10 @@ AppDispatcher.register(function(action) {
       GroupStore.resetGroups()
       GroupStore.emitChange();
       break;
+
+    // case TodoConstants.ADD_TODO:
+    //   GroupStore.updatetodos()
+    //   break;
     default:
       break;
   }

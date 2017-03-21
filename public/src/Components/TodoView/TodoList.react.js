@@ -8,12 +8,13 @@ import { TodoItem } from './TodoItem.react';
 
 const _toggleComplete = (id) => {
 
-  TodoActions.toggleComplete(id);
+  TodoActions.toggleComplete(id, groupId);
 
 };
 
 export const TodoList = ({
-  todos
+  todos,
+  groupId
 }) => (
 
   <ul>

@@ -1,42 +1,39 @@
 import React, { Component } from 'react';
 
-import { TodoStore } from '../../Stores/TodoStore';
+// import { CreateGroup } from './CreateGroup.react.js';
+// import { JoinGroup } from './JoinGroup.react.js';
+import{ GroupStore } from '../../Stores/GroupStore';
+import { TodoActions } from '../../Actions/TodoActions'
 
-const getViewState = () => ({
-  showFaves: TodoStore.showFaves()
-});
 
-
-class NewTodoView extends Component {
+export class NewTodoView extends Component {
 
   constructor(props, context) {
     super(props, context);
-    this.state = getViewState();
-
-    // this._handleTodoChange = this._handleTodoChange.bind(this);
+    this.state = {
+      text: ''
+    };
+    this._handleTodoAdd = this._handleTodoAdd.bind(this);
+    this._handleInputChange = this._handleInputChange.bind(this);
   }
 
-  // _handleTodoChange() {
-  //   this.setState(getViewState());
-  // }
+  _handleTodoAdd(evt) {
+    if (this.state.text.length > 0) TodoActions.createTodo({
+      todo: this.state,
+      groupId: GroupStore.getActiveId()
+    });
+  }
 
-  // componentWillMount() {
-  //   TodoStore.setListener(this._handleTodoChange);
-  // }
-
-  // componentWillUnmount() {
-  //   TodoStore.unsetListener(this._handleTodoChange);
-  // }
+  _handleInputChange(evt) {
+    this.setState({text: evt.target.value});
+  }
 
   render() {
-    return(
+    return (
       <div>
-        <span>New Todo View!! Adding: {(this.state.showFaves) ? 'FROM_FAVES' : 'FROM_NEW'}</span>
-      </div> 
+        <input type="text" value={this.state.text} onChange={this._handleInputChange} />
+        <button onClick={this._handleTodoAdd}>Add Task</button>
+      </div>
     );
   }
-
 }
-
-
-export { NewTodoView };

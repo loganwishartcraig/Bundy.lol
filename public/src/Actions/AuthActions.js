@@ -7,7 +7,7 @@ import { AuthService } from '../Services/AuthService';
 
 import { UserActions } from '../Actions/UserActions';
 import { GroupActions } from '../Actions/GroupActions';
-
+import { TodoActions } from '../Actions/TodoActions';
 
 const init = () => {
 
@@ -38,7 +38,8 @@ const login = credentials => {
     .login(credentials)
     .then((user) => {
       flagAuth(true);
-      UserActions.setUser(user);
+      // UserActions.setUser(user);
+        UserActions.init();
     })
     .catch(err => {
       flagAuth(false);
@@ -53,8 +54,7 @@ const logout = () => {
   flagAuth(false);
   UserActions.resetUser();
   GroupActions.resetGroups();
-
-  // potentially may need a clearTodos()
+  TodoActions.resetTodos();
 
 };
 

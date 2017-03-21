@@ -10,7 +10,6 @@ import { GroupSelector } from './GroupSelector.react';
 const getGroupState = () => ({
   activeGroup: GroupStore.getActive(),
   groups: GroupStore.getGroups(),
-  isAdding: GroupStore.isAdding(),
   hasGroups: GroupStore.hasGroups(),
   hasActive: GroupStore.hasActive()
 });
@@ -60,8 +59,8 @@ class GroupPane extends Component {
             </span>
             <br/>
             <GroupSelector 
-              groupNames={Object.keys(this.state.groups)}
-              activeId={(this.state.hasActive) ? this.state.activeGroup.name : ''}
+              groups={this.state.groups}
+              activeName={(this.state.hasActive) ? this.state.activeGroup.name : ''}
             /><br/>
             <span>Groups: {JSON.stringify(this.state.groups)}</span>
           </div>

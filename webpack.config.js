@@ -1,6 +1,5 @@
 var LiveReloadPlugin = require('webpack-livereload-plugin');
 
-
 module.exports = {
   entry: './public/src/entry.js',
   watch: true,

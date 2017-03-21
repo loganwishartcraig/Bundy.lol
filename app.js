@@ -32,7 +32,10 @@ app.use(cookieParser());
 app.use(require('stylus').middleware(path.join(__dirname, 'public/dist')));
 app.use(express.static(path.join(__dirname, 'public/dist')));
 
-// Registering routes
+// app.use(passport.initialize());
+// require('./auth/passportLocalConfig')();
+// app.use(verifyAuth());
+
 app.use('/', indexRoutes);
 app.use('/user', userRoutes);
 app.use('/auth', authRoutes);

@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
 
 import { TodoStore } from '../../Stores/TodoStore';
+import { GroupStore } from '../../Stores/GroupStore';
 
 import { DisplayActions } from '../../Actions/DisplayActions';
 
 import { TodoFilters } from './TodoFilters.react';
 import { TodoList } from './TodoList.react';
 
-const getTodoState = () => ({
-  todos: TodoStore.getFilteredTodos()
-});
 
+const getTodoState = () => ({
+  todos: TodoStore.getFilteredTodos(),
+  aciveGroup: GroupStore.getActiveId()
+});
 
 
 class TodoView extends Component {
@@ -35,15 +37,17 @@ class TodoView extends Component {
     TodoStore.unsetListener(this._handleTodoChange);
   }
 
+  _handleTodoAdd() {
+    DisplayActions.viewTodoAdd();
+  }
+
   render() {
     return(
       <div>
-        <div>Todo View</div>
+        <div>Todo Pane</div>
         <TodoFilters />
-        <TodoList todos={this.state.todos} />
-        <button onClick={() => {
-          DisplayActions.viewTodoAdd();
-        }}>Add Todo</button>
+        <TodoList todos={this.state.todos} groupId={this.state.aciveGroup} />
+        <button onClick={this._handleTodoAdd}>Add Todo</button>
       </div> 
     );
   }

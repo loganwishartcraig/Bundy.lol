@@ -81,7 +81,6 @@ class _AuthService {
 
     CacheService.remove(this.cacheKey);
     axios.defaults.headers.common['Authorization'] = undefined;
-    console.warn(axios.defaults.headers.common['Authorization']);
 
   }
 

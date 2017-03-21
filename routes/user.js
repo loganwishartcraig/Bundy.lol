@@ -61,7 +61,10 @@ const _serializeUser = (user) => {
 /* GET home page. */
 router.get('/getUser', 
   AuthOps.verifyAuth,
-  (req, res, next) => {
+  function(req, res, next) {
+
+  // console.log('\t', req.query.email)
+
   UserService
     .getByToken(req.get('Authorization'))
     .then((user) => {

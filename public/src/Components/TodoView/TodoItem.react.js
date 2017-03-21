@@ -9,5 +9,5 @@ export const TodoItem = ({
   todo,
   toggleHandler
 }) => (
-  <li><b><button onClick={e => {toggleHandler(todo.id)}}>Got it</button>{todo.dateRequested.toString()}</b> - {todo.text} - <i>{todo.requestedBy}</i></li>
+  <li><b><button onClick={e => {toggleHandler(todo.id)}}>Got it</button>{todo.dateCreated.toString()}</b> - {todo.text} - <i>{todo.createdBy}</i></li>
 )

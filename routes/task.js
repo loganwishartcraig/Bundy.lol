@@ -1,14 +1,16 @@
 const express = require('express');
 const router = express.Router();
 
-const AuthOps = require('../auth/AuthOps');
-
+const UserService = require('../services/UserService');
+const GroupService = require('../services/GroupService');
 const TaskService = require('../services/TaskService');
 
-const _valiidateTaskRequest = (taskReq) => {
+const AuthOps = require('../auth/AuthOps');
 
-  let requiredKeys = [
-   'text'
+const _validateTodoReq = (todoReq) => {
+   let requiredKeys = [
+     'text',
+     'groupId'
   ];
 
   if (Object.keys(userReq).length !== requiredKeys.length) return false;
@@ -20,46 +22,90 @@ const _valiidateTaskRequest = (taskReq) => {
   }
 
   return true;
+}
+
+const _serializeTodo = (group) => {
+
+  
+  let requiredKeys = [
+    'id',
+    'text',
+    'completed',
+    'completedBy',
+    'dateCompleted',
+    'createdBy',
+    'dateCreated'
+  ];
+
+  return requiredKeys.reduce((serializedUser, key) => {
+
+    serializedUser[key] = group[key];
+    return serializedUser;
+
+  }, {});
 
 };
 
 
-router.get('/getTask', 
+router.post('/create', 
   AuthOps.verifyAuth,
-  (req, res, next) => {
+  function(req, res, next) {
+    // console.log(req.body);
 
-    console.log(`\t*NOT IMPLEMENTED* |- TaskRoute --> '/getTask' | getting task id '${req.query.taskId}'`);
+    const token = req.get('Authorization');
+    let taskReq = req.body.task;
+    let groupId = req.body.groupId;
 
-    let taskId = req.query.taskId;
+    console.log(taskReq, groupId)
 
-    TaskService
-      .getTask(taskId)
-      .then(task => {
-        res.sendStatus(200);
+    UserService
+      .getByToken(token)
+      .then(user => {
+
+        let group = user.memberOf.filter(group => {
+          console.log(group.name, groupId, (group.name === groupId))
+          return (group.name === groupId) ? true : false
+        })[0];
+        if (group === undefined) {
+          res.status(400).json({status: 400, msg: 'User is not a member of that group...'});
+          return;
+        }
+
+        GroupService
+          .getGroup(group.name)
+          .then(group => {
+            console.log(group);
+            
+            TaskService
+              .createTask(user, group, taskReq)
+              .then(task => {
+                res.json(_serializeTodo(task));  
+              })
+              .catch(err => {
+                res.status(err.status).json(err);
+              })
+
+          })
+          .catch(err => {
+            console.log(group);
+            res.status(err.status).json(err);
+          })
+
       })
       .catch(err => {
+        console.log(err);
         res.status(err.status).json(err);
-      });
-
-});
-
-router.post('/newTask', 
-  AuthOps.verifyAuth,
-  (req, res, next) => {
-
-    console.log(`\t*NOT IMPLEMENTED* |- TaskRoute --> '/newTask' | creating new task`);
-
-    let taskRequest = Object.assign({}, req.body.task);
-
-    TaskService
-      .createTask(taskRequest)
-      .then(task => {
-        res.sendStatus(200);
       })
-      .catch(err => {
-        res.status(err.status).json(err);
-      });
 
+  // console.log('\t', req.query.email)
 });
+
+
+
+router.put('/complete',
+  AuthOps.verifyAuth,
+  function(res, req, next) {
+    res.sendStatus(200);
+  })
 
 module.exports = router;

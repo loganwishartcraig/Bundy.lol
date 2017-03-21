@@ -8,8 +8,15 @@ const viewTodos = () => {
   AppDispatcher.dispatch({
     type: DisplayConstants.UPDATE_VIEW,
     view: ViewConstants.TODO_VIEW
-  })
+  });
 
+};
+
+const viewTodoAdd = () => {
+  AppDispatcher.dispatch({
+    type: DisplayConstants.UPDATE_VIEW,
+    view: ViewConstants.NEW_TODO_VIEW
+  });
 };
 
 const viewGroupAdd = () => {
@@ -21,14 +28,6 @@ const viewGroupAdd = () => {
 
 };
 
-const viewTodoAdd = () => {
-
-  AppDispatcher.dispatch({
-    type: DisplayConstants.UPDATE_VIEW,
-    view: ViewConstants.NEW_TODO_VIEW
-  });
-
-}
 
 export const DisplayActions = {
 

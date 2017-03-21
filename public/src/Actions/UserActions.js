@@ -36,7 +36,7 @@ const updateUser = () => {
     .getUser()
     .then(updated => {
       setUser(updated);
-      GroupActions.setAll(updated.memberOf);
+      GroupActions.init(updated.memberOf);
     })
     .catch(err => {
       console.error(err);

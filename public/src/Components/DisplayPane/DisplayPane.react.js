@@ -5,7 +5,7 @@ import { DisplayActions } from '../../Actions/DisplayActions';
 
 import { ViewConstants } from '../../Constants/ViewConstants';
 
-import { TodoView } from '../TodoView/TodoView.react.js';
+import { TodoView } from '../TodoView/TodoView.react.js'
 import { NewGroupView } from '../NewGroupView/NewGroupView.react.js';
 import { NewTodoView } from '../NewTodoView/NewTodoView.react.js';
 

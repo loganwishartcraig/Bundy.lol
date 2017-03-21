@@ -88,7 +88,6 @@ AppDispatcher.register(function(action) {
     case UserConstants.INIT_USER:
       UserStore.setUser(action.user);
       UserStore.emitChange();
-      break;
     case UserConstants.SET_USER:
       UserStore.setUser(action.user);
       UserStore.emitChange();
@@ -96,7 +95,8 @@ AppDispatcher.register(function(action) {
     case UserConstants.UPDATE_USER:
       UserStore.setUser(action.user);
       UserStore.emitChange();
-      break;
+
+
     // case GroupConstants.ADD_GROUP:
     //   UserStore.addGroup(action.group);
     //   UserStore.emitChange();

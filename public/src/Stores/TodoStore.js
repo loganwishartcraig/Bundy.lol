@@ -2,10 +2,9 @@ import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 
 import { TodoConstants } from '../Constants/TodoConstants';
 
-import { GroupStore } from '../Stores/GroupStore';
+// import { GroupStore } from '../Stores/GroupStore';
 import { GroupConstants } from '../Constants/GroupConstants';
 
-import { ViewConstants } from '../Constants/ViewConstants';
 
 import { EventEmitter } from 'events';
 
@@ -14,10 +13,9 @@ class _TodoStore extends EventEmitter {
   constructor(){
     super();
     this._todos = [];
-    this._isEditing = false;
-    this._showFaves = false;
-
     this._activeFilter = (todo) => true;
+    // this._isEditing = false;
+    // this._addingFromFavorites = false;
 
     this.events = {
       change: 'CHANGE'
@@ -38,15 +36,6 @@ class _TodoStore extends EventEmitter {
     this._todos = todos;
   }
 
-  isAdding() {
-    return this._isAdding;
-  }
-
-  showFaves() {
-    return this._showFaves;
-  }
-
-
   resetFilter() {
     this._activeFilter = () => true
   }
@@ -54,6 +43,11 @@ class _TodoStore extends EventEmitter {
   setFilter(filterFunc = (todo) => true) {
     if (filterFunc instanceof Function) this._activeFilter = filterFunc;
   }
+
+  addTodo(todo) {
+    console.log('todo store adding todo', todo);
+    // MISSING IMPLEMENTATION
+  } 
 
   emitChange() {
     this.emit(this.events.change);
@@ -79,17 +73,26 @@ AppDispatcher.register(function(action) {
 
   switch(action.type) {
 
-    // case GroupConstants.SET_ACTIVE:
-    //   TodoStore.setTodos(action.group.todos);
-    //   TodoStore.resetFilter();
-    //   TodoStore.emitChange();
-    //   break;
+    case GroupConstants.SET_ACTIVE:
+      // console.warn(action.group.tasks);
+      TodoStore.setTodos(action.group.tasks);
+      TodoStore.emitChange();
+      break;
+
+    case TodoConstants.SET_TODOS:
+      TodoStore.setTodos(action.todos);
+      TodoStore.emitChange();
+      break;
     case TodoConstants.SET_FILTER:
       TodoStore.setFilter(action.filterFunc);
       TodoStore.emitChange();
       break;
     case TodoConstants.TOGGLE_COMPLETE:
       TodoStore.toggleComplete(action.id);
+      TodoStore.emitChange();
+      break;
+    case TodoConstants.ADD_TODO:
+      TodoStore.addTodo(action.todo);
       TodoStore.emitChange();
       break;
     default:
@@ -99,4 +102,4 @@ AppDispatcher.register(function(action) {
 
 })
 
-export { TodoStore }
+export { TodoStore };

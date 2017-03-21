@@ -1,5 +1,5 @@
 export const ViewConstants = {
   TODO_VIEW: 'TODO_VIEW',
   NEW_GROUP_VIEW: 'NEW_GROUP_VIEW',
-  NEW_TODO_VIEW: 'TODO_NEW_CREATE'
+  NEW_TODO_VIEW: 'NEW_TODO_VIEW'
 }

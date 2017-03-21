@@ -4,7 +4,6 @@
   "watch": [
     "auth/*",
     "bin/*",
-    "models/*",
     "services/*",
     "routes/*",
     "views/*",

@@ -8,7 +8,7 @@ const GroupModel = mongoose.model('Group', new Schema({
   name: { type: String },
   password: { type: String },
   members: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  tasks: { type: Array, default: [] },
+  tasks: [{ type: Schema.Types.ObjectId, ref: 'Task' }],
   createdBy: String,
   groupCreated: { type: Date, default: Date.now },
   tasksCompleted: { type: Number, default: 0 },
