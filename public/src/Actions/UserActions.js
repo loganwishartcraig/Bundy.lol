@@ -3,31 +3,18 @@ import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 import { UserConstants } from '../Constants/UserConstants';
 import { UserService } from '../Services/UserService';
 
-import { GroupActions } from './GroupActions';
-import { AuthActions } from './AuthActions';
-
-
-import { sameSets } from '../Utility/Array';
-
-
-// might need to adjust actions
-// -- INIT_USER
-// -- uPDATE_USER
-// -- SET_USER
 
 const init = () => {
   UserService
-    .fromStorage()
+    .getCached()
     .then(user => {
       setUser(user);
-      GroupActions.init(user.memberOf);
       updateUser();
     })
     .catch(err => {
       console.error(err);
       updateUser();
     });
-
 };
 
 const updateUser = () => {
@@ -36,7 +23,6 @@ const updateUser = () => {
     .getUser()
     .then(updated => {
       setUser(updated);
-      GroupActions.init(updated.memberOf);
     })
     .catch(err => {
       console.error(err);
@@ -44,25 +30,24 @@ const updateUser = () => {
 
 };
 
-const createUser = (userReq) => {
+// const createUser = (userReq) => {
 
-  UserService
-    .createUser(userReq)
-    .then(payload => {
-      setUser(payload.user);
-      AuthActions.setToken(payload.token);
-    })
-    .catch(err => {
-      console.log(err);
-    })
-};
+//   UserService
+//     .createUser(userReq)
+//     .then(payload => {
+//       setUser(payload.user);
+//     })
+//     .catch(err => {
+//       console.log(err);
+//     })
+// };
 
 const setUser = (user) => {
 
   if (user) {
     AppDispatcher.dispatch({
       type: UserConstants.SET_USER,
-      user: user
+      user: user,
     });
     
     UserService.storeUser(user);
@@ -112,7 +97,7 @@ export const UserActions = {
   setUser,
   updateUser,
   deleteUser,
-  createUser,
+  // createUser,
   addFavorite,
   removeFavorite,
   editFavorite,

@@ -3,11 +3,9 @@ import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 import { AuthConstants } from '../Constants/AuthConstants';
 import { AuthService } from '../Services/AuthService';
 
-// import { CacheService } from '../Services/CacheService';
-
-import { UserActions } from '../Actions/UserActions';
-import { GroupActions } from '../Actions/GroupActions';
-import { TodoActions } from '../Actions/TodoActions';
+// import { UserActions } from '../Actions/UserActions';
+// import { GroupActions } from '../Actions/GroupActions';
+// import { TodoActions } from '../Actions/TodoActions';
 
 const init = () => {
 
@@ -17,18 +15,18 @@ const init = () => {
     AuthService
       .init()
       .then(() => {
-        flagAuth(true);
-        UserActions.init();
+        dispatchSet();
         res();
       })
       .catch(() => {
-        flagAuth(false);
+        // dispatchRemoved();
         rej();
       });
 
   });
 
-}
+};
+
 
 const login = credentials => {
 
@@ -37,52 +35,50 @@ const login = credentials => {
   AuthService
     .login(credentials)
     .then((user) => {
-      flagAuth(true);
-      // UserActions.setUser(user);
-        UserActions.init();
+      dispatchSet(user);
     })
     .catch(err => {
-      flagAuth(false);
-      UserActions.setUser(undefined);
+      dispatchRemoved();
     });
 
+};
+
+const register = (userReq) => {
+
+  AuthService
+    .register(userReq)
+    .then(user => {
+      dispatchSet(user);
+    })
+    .catch(err => {
+      console.warn(err);
+      dispatchRemoved()
+    })
 };
 
 const logout = () => {
 
   AuthService.logout();
-  flagAuth(false);
-  UserActions.resetUser();
-  GroupActions.resetGroups();
-  TodoActions.resetTodos();
+  dispatchRemoved();
 
 };
 
-const flagAuth = (authenticated) => {
+const dispatchSet = (user) => {
 
   AppDispatcher.dispatch({
-    type: AuthConstants.SET_AUTH,
-    authenticated: authenticated
+    type: AuthConstants.TOKEN_SET,
+    authenticated: true,
+    user: user
   });
 
 };
 
-// const clearToken = () => {
+const dispatchRemoved  = () => {
 
-//   AppDispatcher.dispatch({
-//     type: AuthConstants.SET_AUTH
-//   });
-
-// };
-
-const setToken = (token) => {
-
-  if (token && token.length) {
-    AuthService.setSession(token);
-    flagAuth(true);
-  } else {
-    flagAuth(false);
-  }
+  AppDispatcher.dispatch({
+    type: AuthConstants.TOKEN_REMOVED,
+    authenticated: false
+  });
 
 };
 
@@ -91,9 +87,6 @@ export const AuthActions = {
   init,
   login,
   logout,
-  flagAuth,
-  setToken,
-  // clearToken
-  // setCredentials
+  register
 
 };

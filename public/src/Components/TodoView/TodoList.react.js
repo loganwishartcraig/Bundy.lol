@@ -18,7 +18,6 @@ export const TodoList = ({
 }) => (
 
   <ul>
-
     {todos.map(todo => (
         <TodoItem 
           toggleHandler={_toggleComplete} 
@@ -26,7 +25,6 @@ export const TodoList = ({
           todo={todo} 
         />
     ))}
-
   </ul>
 
 )

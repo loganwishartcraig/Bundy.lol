@@ -64,6 +64,11 @@ const render = () => {
 (() => {
   AuthActions
     .init()
-    .then(render)
+    .then(() => {
+
+      UserActions.init()
+      render()
+      
+    })
     .catch(render);
 })();

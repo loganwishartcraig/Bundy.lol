@@ -1,6 +1,7 @@
 import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 import { DisplayConstants } from '../Constants/DisplayConstants';
-
+import { ViewConstants } from '../Constants/ViewConstants';
+import { GroupConstants } from '../Constants/GroupConstants';
 // import { PaneConstants } from '../Constants/PaneConstants';
 
 import { EventEmitter } from 'events';
@@ -47,6 +48,12 @@ AppDispatcher.register((action) => {
       DisplayStore.setView(action.view)
       DisplayStore.emitChange();
       break;
+
+    case GroupConstants.ADD_GROUP:
+      DisplayStore.setView(ViewConstants.TODO_VIEW);
+      DisplayStore.emitChange();
+      break;
+
     default:
       break;
 

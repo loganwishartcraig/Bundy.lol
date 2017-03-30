@@ -5,6 +5,9 @@ export const AuthConstants = {
   // 'REQUEST_TOKEN': 'REQUEST_TOKEN',
   // 'CLEAR_TOKEN': 'CLEAR_TOKEN'
   LOGIN: 'LOGIN',
-  LOGOUT: 'LOGOUT'
+  LOGOUT: 'LOGOUT',
+
+  TOKEN_SET: 'TOKEN_SET',
+  TOKEN_REMOVED: 'TOKEN_REMOVED'
 
 };

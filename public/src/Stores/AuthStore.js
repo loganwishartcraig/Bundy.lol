@@ -17,20 +17,13 @@ class _AuthStore extends EventEmitter {
 
   }
 
-
-  setAuth(authenticated) {
+  setAuth(authenticated = false) {
 
     if (!(typeof authenticated === 'boolean')) throw new Error('Tried to set invalid token')
 
     this.authenticated = authenticated
 
   }
-
-  // removeAuth() {
-
-  //   this.authenticated = false;
-
-  // }
 
   hasAuth() {
     return this.authenticated
@@ -57,14 +50,15 @@ AppDispatcher.register(function(action) {
 
   switch (action.type) {
 
-    case AuthConstants.SET_AUTH:
+    case AuthConstants.TOKEN_SET:
       AuthStore.setAuth(action.authenticated);
       AuthStore.emitChange();
       break;
-    // case AuthConstants.CLEAR_TOKEN:
-    //   AuthStore.setAuth(action.authenticated);
-    //   AuthStore.emitChange();
-      // break;
+    case AuthConstants.TOKEN_REMOVED:
+      console.warn('removing token', action)
+      AuthStore.setAuth(action.authenticated);
+      AuthStore.emitChange();
+      break;
     default:
       break;
 

@@ -57,14 +57,14 @@ router.get('/getInfo', (req, res, next) => {
   // res.render('index');
 });
 
-router.post('/newTask', (req, res, next) => {
+// router.post('/newTask', (req, res, next) => {
 
-  AuhtOps.verifyAuth,
-  (req, res) => {
-    res(200);
-  };
+//   AuhtOps.verifyAuth,
+//   (req, res) => {
+//     res(200);
+//   };
 
-});
+// });
 
 router.post('/create', 
   AuthOps.verifyAuth,
@@ -118,7 +118,9 @@ router.post('/join',
         GroupService
           .joinGroup(groupReq, user)
           .then(group => {
-            res.status(200).json({group: _serializeGroup(group)});
+            let returnGroup = _serializeGroup(group);
+            console.log(returnGroup);
+            res.status(200).json({group: returnGroup});
           })
           .catch(err => {
             res.status(err.status).json(err);

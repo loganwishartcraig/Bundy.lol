@@ -13,7 +13,7 @@ const createGroup = (groupReq, user) => {
       .findOne({name: groupReq.name})
       .populate({
         path: 'members',
-        select: 'id'
+        select: 'id -_id'
       })
       .then(existing => {
         if (existing) return rej({status: 400, msg: 'Group already exists.'});
@@ -73,8 +73,11 @@ const joinGroup = (groupReq, user) => {
 
         existing.save();
         user.save();
+
+        let clean = Object.assign({}, existing._doc);
+            clean.members = clean.members.map(member => member.id)
               
-        res(existing);
+        res(clean);
       })
       .catch(err => {
         rej({status: 500, msg: 'Error looking up group.'})

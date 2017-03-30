@@ -1,10 +1,6 @@
 import * as axios from 'axios';
-// import * as localForage from 'localforage';
 
 import { CacheService } from './CacheService';
-
-// import { AuthActions } from '../Actions/AuthActions';
-// import { UserActions } from '../Actions/UserActions';
 
 class _AuthService {
 
@@ -13,9 +9,16 @@ class _AuthService {
 
     this.cacheKey = 'access_cred';
 
-    //check cache for existing token and set
-    // this._removeSession();
- 
+  }
+
+  _getFromCache() {
+    return CacheService.get(this.cacheKey);
+  }
+
+  _setSession (token) {
+    console.log('AuthService.js -> setSession() | msg: Setting session', token)
+    CacheService.cache(this.cacheKey, token);
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
   }
 
   init() {
@@ -30,29 +33,12 @@ class _AuthService {
         })
         .catch(err => {
           console.error(err);
+          CacheService.clearAll();
           rej();
         });
 
     })
 
-  }
-
-  _getFromCache() {
-
-    return CacheService.get(this.cacheKey);
-
-  }
-
-
-  _setSession (token) {
-    console.log('AuthService.js -> setSession() | msg: Setting session', token)
-    CacheService.cache(this.cacheKey, token);
-    axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
-  }
-
-
-  _getSession() {
-    return CacheService.get(this.cacheKey);
   }
 
 
@@ -77,6 +63,24 @@ class _AuthService {
       
   }
 
+  register(userReq) {
+    return new Promise((res, rej) => {
+      axios.post('/user/create', {
+        user: userReq
+      })
+      .then(response => {
+        console.log('got user', response.data.user);
+        console.log('got token', response.data.token);
+        this._setSession(response.data.token);
+        res(response.data.user);
+      })
+      .catch(err => {
+        console.error(err.response.data);
+        rej(err.response.data);
+      });
+    });
+  }
+
   logout() {
 
     CacheService.remove(this.cacheKey);
@@ -92,7 +96,7 @@ class _AuthService {
     return new Promise((res, rej) => {
 
       this
-        ._getSession()
+        ._getFromCache()
         .then(sessionToken => {
           console.warn(sessionToken)
           if (sessionToken) res(sessionToken)

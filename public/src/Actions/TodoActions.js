@@ -2,6 +2,7 @@ import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 
 import { TodoConstants } from '../Constants/TodoConstants';
 import { TodoService } from '../Services/TodoService';
+import { DisplayActions } from './DisplayActions';
 
 const addTodo = (todo) => {
 
@@ -25,7 +26,12 @@ const createTodo = (todo) => {
 
   TodoService
     .createTodo(todo)
-    .then(addTodo)
+    .then(todo => {
+    
+      addTodo(todo);
+      DisplayActions.viewTodos();
+
+    })
     .catch((err) => {
       console.log(err);
     });

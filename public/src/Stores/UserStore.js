@@ -1,7 +1,11 @@
 import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 
 import { UserConstants } from '../Constants/UserConstants';
+import { AuthConstants } from '../Constants/AuthConstants';
 import { GroupConstants } from '../Constants/GroupConstants';
+import { TodoConstants } from '../Constants/TodoConstants';
+
+import { UserService } from '../Services/UserService';
 
 import { EventEmitter } from 'events';
 
@@ -15,40 +19,21 @@ class _UserStore extends EventEmitter {
     }   
   }
 
-  // _getProp(prop) {
-  //   return (this.hasUser()) ? this._activeUser[prop] : undefined;
-  // }
-
   hasUser() {
     return this._activeUser !== undefined;
-  }
-
-  hasGroups() {
-    return ((_this.getProp('groups') !== undefined) || (this.getProps('groups').length > 0));
   }
 
   getUser() {
     return this._activeUser;
   }
 
-  // getUsername() {
-  //   return this._getProp('username');
-  // }
+  reset() {
+    this._activeUser = undefined;
+  }
 
-  // getId() {
-  //   return this._getProp('id');
-  // }
-
-  // getFullName() {
-  //   return {
-  //     fName: this._getProp('fName'),
-  //     lName: this._getProp('lName')
-  //   }
-  // }
-
-  // getGroups() {
-  //   return this._getProp('groups');
-  // }
+  _updateCached(user) {
+      UserService.storeUser(user);
+  }
 
   setUser(user) {
     if (user) {
@@ -57,7 +42,16 @@ class _UserStore extends EventEmitter {
   }
 
   addGroup(group) {
-    if (this.hasUser()) this._activeUser.memberOf.push(group);
+    if (this.hasUser()) {
+      this._activeUser.memberOf.push(group);
+      this._updateCached(this._activeUser);
+    };
+  }
+
+  addTodo(todo) {
+    if (this.hasUser()) {
+      if (this._activeUser.memberOf[todo.groupId] !== undefined) this._activeUser.memberOf[todo.groupId].push(todo)
+    }
   }
 
   clearUser() {
@@ -85,9 +79,20 @@ AppDispatcher.register(function(action) {
   console.log('ACTION:', action);
 
   switch(action.type) {
+    
+    case AuthConstants.TOKEN_SET:
+      UserStore.setUser(action.user);
+      UserStore.emitChange();
+      break;
+    case AuthConstants.TOKEN_REMOVE:
+      UserStore.reset();
+      UserStore.emitChange();
+      break;
+
     case UserConstants.INIT_USER:
       UserStore.setUser(action.user);
       UserStore.emitChange();
+      break;
     case UserConstants.SET_USER:
       UserStore.setUser(action.user);
       UserStore.emitChange();
@@ -95,12 +100,17 @@ AppDispatcher.register(function(action) {
     case UserConstants.UPDATE_USER:
       UserStore.setUser(action.user);
       UserStore.emitChange();
+      break;
 
+    case GroupConstants.ADD_GROUP:
+      UserStore.addGroup(action.group);
+      UserStore.emitChange();
+      break;
 
-    // case GroupConstants.ADD_GROUP:
-    //   UserStore.addGroup(action.group);
-    //   UserStore.emitChange();
-
+    case TodoConstants.ADD_TODO:
+      UserStore.addTodo(action.todo);
+      UserStore.emitChange();
+      break;
 
     default:
       break;

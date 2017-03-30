@@ -25,14 +25,15 @@ class _TodoService {
         groupId: todoReq.groupId
       })
       .then(response => {
-        console.log('got res', response);
-        // res(response.data);
+        // console.log('got res', response);
+        res(response.data);
       })
       .catch(err => {
         console.error(err.response.data);
+        rej(err.response.data);
         // rej(err.response.data);
       });
-      res({text: 'API RETURNED TODO'});
+      // res({text: 'API RETURNED TODO'});
       
     });
 

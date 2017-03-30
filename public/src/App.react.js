@@ -1,41 +1,37 @@
 import React, { Component } from 'react';
 import { browserHistory } from 'react-router';
 
-
-// import { AuthActions } from './Actions/AuthActions';
 import { AuthStore } from './Stores/AuthStore';
+import { UserStore } from './Stores/UserStore';
 
 import { Dashboard } from './Pages/Dashboard.react';
 import { Landing } from './Pages/Landing.react';
 
-// import { UserActions } from './Actions/UserActions';
 
-
-
-const getAuthState = () => ({
-  hasAuth: AuthStore.hasAuth()
+const getAppState = () => ({
+  hasAuth: AuthStore.hasAuth(),
+  // hasUser: UserStore.hasUser(),
+  user: UserStore.getUser()
 });
 
 
-// bind to authentication changes.
 export class App extends Component {
 
   constructor(props, context) {
     super(props, context);
-    this.state = {
-      hasAuth: AuthStore.hasAuth()
-    };
-
+    this.state = getAppState();
   }
 
   componentWillMount() {
     console.log('app mounting', this.state)
     AuthStore.setListener(() => {
-      this.setState(getAuthState());
-      // browserHistory.push('/');
+      this.setState(getAppState());
       if (this.state.hasAuth) {
         browserHistory.push('/');
       };
+    });
+    UserStore.setListener(() => {
+      this.setState(getAppState())
     });
   }
 
@@ -48,7 +44,7 @@ export class App extends Component {
     return (
       <div>
         {this.state.hasAuth ? (
-          <Dashboard />
+          <Dashboard user={this.state.user}/>
         ) : (
           <Landing>
             {this.props.children}

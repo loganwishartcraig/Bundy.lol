@@ -12,7 +12,7 @@ class _TodoStore extends EventEmitter {
 
   constructor(){
     super();
-    this._todos = [];
+
     this._activeFilter = (todo) => true;
     // this._isEditing = false;
     // this._addingFromFavorites = false;
@@ -23,17 +23,8 @@ class _TodoStore extends EventEmitter {
 
   }
 
-  getTodos() {
-    return this._todos;
-  }
-
-  getFilteredTodos() {
-    if (!this._activeFilter instanceof Function) return this._todos;
-    return this._todos.filter(this._activeFilter);
-  }
-
-  setTodos(todos = []) {
-    this._todos = todos;
+  getActiveFilter() {
+    return this._activeFilter;
   }
 
   resetFilter() {
@@ -43,11 +34,6 @@ class _TodoStore extends EventEmitter {
   setFilter(filterFunc = (todo) => true) {
     if (filterFunc instanceof Function) this._activeFilter = filterFunc;
   }
-
-  addTodo(todo) {
-    console.log('todo store adding todo', todo);
-    // MISSING IMPLEMENTATION
-  } 
 
   emitChange() {
     this.emit(this.events.change);
@@ -73,26 +59,8 @@ AppDispatcher.register(function(action) {
 
   switch(action.type) {
 
-    case GroupConstants.SET_ACTIVE:
-      // console.warn(action.group.tasks);
-      TodoStore.setTodos(action.group.tasks);
-      TodoStore.emitChange();
-      break;
-
-    case TodoConstants.SET_TODOS:
-      TodoStore.setTodos(action.todos);
-      TodoStore.emitChange();
-      break;
     case TodoConstants.SET_FILTER:
       TodoStore.setFilter(action.filterFunc);
-      TodoStore.emitChange();
-      break;
-    case TodoConstants.TOGGLE_COMPLETE:
-      TodoStore.toggleComplete(action.id);
-      TodoStore.emitChange();
-      break;
-    case TodoConstants.ADD_TODO:
-      TodoStore.addTodo(action.todo);
       TodoStore.emitChange();
       break;
     default:

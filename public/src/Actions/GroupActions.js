@@ -9,23 +9,23 @@ import { TodoActions } from './TodoActions';
 
 const init = (groups) => {
 
-  GroupService
-    .getLastActive()
-    .then(lastActive => {
+  // GroupService
+  //   .getLastActive()
+  //   .then(lastActive => {
 
-      console.warn('initalizing group, found last active', lastActive)
+  //     console.warn('initalizing group, found last active', lastActive)
 
-      setActive(groups.reduce((toSet, n, i) => {
-        if (toSet === undefined) return n;
-        return (n.name === lastActive.name) ? n : toSet;
+  //     setActive(groups.reduce((toSet, n, i) => {
+  //       if (toSet === undefined) return n;
+  //       return (n.name === lastActive.name) ? n : toSet;
 
-      }, (groups.length > 0) ? groups[0] : undefined));
+  //     }, (groups.length > 0) ? groups[0] : undefined));
 
-    })
-    .catch(err => {
-      if (groups.length > 0) setActive(groups[0]);
-    });
-      setAll(groups);
+  //   })
+  //   .catch(err => {
+  //     if (groups.length > 0) setActive(groups[0]);
+  //   });
+  //     setAll(groups);
 
 };
 
@@ -36,8 +36,8 @@ const joinGroup = (groupReq) => {
     .joinGroup(groupReq)
     .then(group => {
       addGroup(group);
-      DisplayActions.viewTodos();
-      UserActions.updateUser();
+      // DisplayActions.viewTodos();
+      // UserActions.updateUser();
     })
     .catch(err => {
       console.error('GroupActions -> createGroup() | ', err);
@@ -53,8 +53,8 @@ const createGroup = (groupReq) => {
     .createGroup(groupReq)
     .then(group => {
       addGroup(group);
-      DisplayActions.viewTodos();
-      UserActions.updateUser();
+      // DisplayActions.viewTodos();
+      // UserActions.updateUser();
     })
     .catch(err =>{
       console.error('GroupActions -> createGroup() |', err)
@@ -70,8 +70,6 @@ const setActive = (group) => {
     type: GroupConstants.SET_ACTIVE,
     group: group
   });
-  
-  GroupService.saveLastActive(name); 
 
 };
 
@@ -100,7 +98,7 @@ const addGroup = group => {
     group: group
   });
 
-  setActive(group);
+  // setActive(group);
 
 };
 

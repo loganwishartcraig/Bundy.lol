@@ -31,7 +31,7 @@ class _GroupService {
 
 
   getLastActive() {
-    console.log('GroupService.js -> getLastActive() | getting last active...', CacheService.get(this._cacheKey))
+    console.log('GroupService.js -> getLastActive() | getting last active...')
     return CacheService.get(this._cacheKey);
     
   }

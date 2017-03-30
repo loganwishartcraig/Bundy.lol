@@ -34,7 +34,8 @@ const _serializeTodo = (group) => {
     'completedBy',
     'dateCompleted',
     'createdBy',
-    'dateCreated'
+    'dateCreated',
+    'groupId'
   ];
 
   return requiredKeys.reduce((serializedUser, key) => {

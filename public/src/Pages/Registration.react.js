@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 
 import * as axios from 'axios';
 
-import { UserActions } from '../Actions/UserActions';
+import { AuthActions } from '../Actions/AuthActions';
 // import { AuthService } from '../../Services/AuthService';
 
 export class Registration extends Component {
@@ -26,7 +26,7 @@ export class Registration extends Component {
   _handleRegSubmit(e) {
     e.preventDefault();
 
-    UserActions.createUser(this.state);
+    AuthActions.register(this.state);
 
   }
 

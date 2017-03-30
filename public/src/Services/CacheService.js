@@ -23,6 +23,10 @@ class _CacheService {
     localForage.removeItem(key);
   }
 
+  clearAll() {
+    localForage.clear();
+  }
+
 };
 
 

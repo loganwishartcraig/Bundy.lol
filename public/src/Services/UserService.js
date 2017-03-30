@@ -29,7 +29,7 @@ class _UserService {
     CacheService.cache(this._cacheKey, user);
   }
 
-  fromStorage() {
+  getCached() {
     return this._getFromCache();
   }
 

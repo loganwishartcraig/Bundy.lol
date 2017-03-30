@@ -8,10 +8,8 @@ import { DisplayActions } from '../../Actions/DisplayActions';
 import { GroupSelector } from './GroupSelector.react';
 
 const getGroupState = () => ({
-  activeGroup: GroupStore.getActive(),
-  groups: GroupStore.getGroups(),
-  hasGroups: GroupStore.hasGroups(),
-  hasActive: GroupStore.hasActive()
+  hasActive: GroupStore.hasActive(),
+  activeGroup: GroupStore.getActive()
 });
 
 class GroupPane extends Component {
@@ -41,35 +39,26 @@ class GroupPane extends Component {
     DisplayActions.viewGroupAdd();
   }
 
-  // render() {
-
-   
-
-  // }
-
   render() {
-    return(
+    return (
       <div>
         <div>Group Pane</div>
-
-        {(this.state.hasGroups) ? (
-          <div>
-
-            <span>Active: {(this.state.hasActive) ? JSON.stringify(this.state.activeGroup) : 'None :('}
-            </span>
-            <br/>
-            <GroupSelector 
-              groups={this.state.groups}
-              activeName={(this.state.hasActive) ? this.state.activeGroup.name : ''}
-            /><br/>
-            <span>Groups: {JSON.stringify(this.state.groups)}</span>
-          </div>
+        {(this.props.groups !== undefined && this.props.groups.length !== 0) ? (
+            <div>
+              <span>Active: {(this.state.hasActive) ? this.state.activeGroup.name : 'No active group'}</span>
+              <br />
+              <GroupSelector
+                groups={this.props.groups}
+                activeName={(this.state.hasActive) ? this.state.activeGroup.name : undefined}
+              />
+               <span>Groups: {JSON.stringify(this.props.groups)}</span>
+            </div>
           ) : (
-          <span>U have no groups :(<br /></span>
+            <span>U have no groups:( <br /></span>
         )}
-        <button onClick={this._handleGroupAdd} >Add Group</button>
-      </div> 
-    );
+        <br /><button onClick={this._handleGroupAdd} >Add Group</button>
+      </div>
+    )
   }
 
 }

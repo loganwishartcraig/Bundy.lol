@@ -31,7 +31,6 @@ class DisplayPane extends Component {
   }
 
   componentWillMount() {
-    // GroupActions.initGroups(this.props.memberOf);
     DisplayStore.setListener(this._handleDisplayChange);
   }
 
@@ -52,7 +51,7 @@ class DisplayPane extends Component {
         return <NewTodoView />
         break;
       default:
-        return <span>Uh oh, unknown view :/ (should return todos)</span>;
+        return <div>UNKNOWN VIEW :/ (should return todos)<br /><TodoView /></div>;
         break;
 
     }

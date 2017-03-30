@@ -1,10 +1,11 @@
+var path = require('path');
 var LiveReloadPlugin = require('webpack-livereload-plugin');
 
 module.exports = {
-  entry: './public/src/entry.js',
+  entry: path.resolve(__dirname, './public/src/entry.js'),
   watch: true,
   output: {
-    path: './public/dist/js',
+    path: path.resolve(__dirname, './public/dist/js'),
     filename: 'app.js'
   },
   module: {
