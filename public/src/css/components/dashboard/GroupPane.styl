@@ -1,0 +1,80 @@
+@import '../../variables/color.styl'
+
+
+.group--container {
+  height: 47.5%
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem;
+}
+
+.group--header {
+  font-weight: bold
+  display: block
+  padding: .25em
+  margin: .5rem 1rem
+  text-align: center
+  border-bottom: 1px solid $primary-pink
+}
+
+.group--actions {
+  height: 100%
+}
+
+.group--selector {
+  overflow-y: auto
+}
+
+.group--item:last-of-type > .group--btn {
+  // border-bottom: 1px solid transparent
+}
+
+.group--btn {
+  width: 100%
+  padding: .5em 0
+  padding-left: 1.25em
+  margin-bottom: 3px
+  border-left: 3px solid $medium-grey
+  // border-bottom: 1px solid $dark-grey
+  transition: all 150ms ease-in-out
+  text-align: left  
+  white-space: nowrap;
+  text-overflow: ellipsis
+  overflow: hidden
+  color: $medium-grey
+  &.active {
+    border-left-color: $primary-pink
+    // border-left-width: 6px
+    color: $primary-pink
+  }
+  
+  &:not(.active):hover {
+    border-color: $primary-blue
+    // border-left-width: 6px
+    color: $primary-blue
+  }
+}
+
+.group--add--btn {
+  display: block
+  margin: 0 auto  
+  margin-top 1em
+}
+
+.group--join--container {
+  margin-top: .5em
+}
+
+.group--join--actions {
+  text-align: center
+  margin-top: 1.25em
+
+  > button:first-of-type {
+    margin-right: .5em
+  }
+}
+
+.group--container .text--btn--grey {
+  display: block
+  margin: 0 auto
+}

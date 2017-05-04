@@ -1,0 +1,25 @@
+@import '../../variables/color.styl'
+
+.user--container {
+  height: 47.5%
+  position: relative
+  background: lightblue
+}
+
+.user--name {
+  font-weight: bold
+  position: absolute
+  display: block
+  bottom: 0
+  left: 0
+  width: 100%
+  padding: .5em
+  font-size: 1rem
+  text-align: center
+  background: rgba(0,0,0,.75)
+  
+  &.loading {
+    font-style: italic
+    color: $medium-grey
+  }
+}

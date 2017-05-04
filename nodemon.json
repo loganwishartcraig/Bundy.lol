@@ -6,10 +6,14 @@
     "bin/*",
     "services/*",
     "routes/*",
+    "mixins/*",
     "views/*",
+    "facades/*",
     "app.js"
   ],
   "env": {
     "NODE_ENV": "development"
-  }
+  },
+  "exec": 
+    "node {{pwd}}/bin/www"
 }

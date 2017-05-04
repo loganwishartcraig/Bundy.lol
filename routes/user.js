@@ -1,75 +1,26 @@
-// import { UserService } from '../services/UserService';
-// var serviceErrHandler = require('./serviceErrHandler');
-
-var AuthService = require('../services/AuthService');
-var UserService = require('../services/UserService');
-
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
 const AuthOps = require('../auth/AuthOps');
+const RequestFilter = require('../mixins/RequestFilter')
 
-const _validateUserRequest = (userReq) => {
+const AuthService = require('../services/AuthService');
+const UserService = require('../services/UserService');
 
-  let requiredKeys = [
-   'email',
-   'password',
-   'fName',
-   'lName'
-  ];
-
-  if (Object.keys(userReq).length !== requiredKeys.length) return false;
-
-  for (let i = 0; i < requiredKeys.length; i++) {
-    let key = requiredKeys[i]
-    if (!userReq.hasOwnProperty(key)) return false;
-    if (userReq[key] === '') return false;
-  }
-
-  return true;
-
-};
-
-const _serializeUser = (user) => {
-
-  
-  let requiredKeys = [
-    'id',
-    'email',
-    'fName',
-    'lName',
-    'createdGroups',
-    'memberOf',
-    'favorites',
-    'accountCreated',
-    'lastLogin',
-    'lastLogout',
-    'tasksCompleted',
-    'tasksStarted'
-  ];
-
-  return requiredKeys.reduce((serializedUser, key) => {
-
-    serializedUser[key] = user[key];
-    return serializedUser;
-
-  }, {issued: new Date()});
-
-};
+const validateUserReq = new RequestFilter(['email', 'password', 'fName', 'lName', 'rememberMe']);
+// const serializeUserReq = new RequestFilter(['_id', 'email', 'fName', 'lName', 'createdGroups', 'memberOf', 'favorites', 'accountCreated', 'lastLogin', 'lastLogout', 'tasksCompleted', 'tasksStarted'])
 
 
 /* GET home page. */
-router.get('/getUser', 
+router.get('/', 
   AuthOps.verifyAuth,
   function(req, res, next) {
-
-  // console.log('\t', req.query.email)
 
   UserService
     .getByToken(req.get('Authorization'))
     .then((user) => {
-      console.log(`\t|- User Routes --> get('/getUser') --> Found User '${user.fName}', responding to client`);
-      res.status(200).json({user: _serializeUser(user)});
+      console.log(`\t|- User Routes --> get('/') --> Found User '${user.fName}', responding to client`);
+      res.status(200).json({user: user});
     })
     .catch(err => {
       console.log(err);
@@ -85,17 +36,17 @@ router.post('/create', (req, res) => {
   console.log(`\t|- Auth Route --> post('/create') --> Creating account: ${JSON.stringify(userRequest)}`);
   console.log('token:', req.get('Authorization'));
   // abstract out to 'user validation?'
-  if (!_validateUserRequest(userRequest))
+  if (!validateUserReq.validate(userRequest))
     return res.status(400).json({status: 400, msg: 'Invalid user request'});
 
   UserService
     .createUser(userRequest)
     .then(user => {
       AuthService
-        .setCredentials(user.id, userRequest.password)
+        .setCredentials(user._id, userRequest.password)
         .then(token => {
           res.status(200).json({
-            user: _serializeUser(user),
+            // user: serializeUserReq.serialize(user),
             token: token
           })
         })

@@ -4,28 +4,15 @@ const router = express.Router();
 const UserService = require('../services/UserService');
 const AuthService = require('../services/AuthService');
 
+const ProfileFacade = require('../facades/ProfileFacade');
+
+const RequestFilter = require('../mixins/RequestFilter');
+
 // var passport = require('passport');
 
 const AuthOps = require('../auth/AuthOps.js');
 
-
-// --> new ReqValidator(['email', 'password'])
-const _validateLoginRequest = (loginRequest) => {
-
-  let requiredKeys = [
-    'email',
-    'password'
-  ];
-
-  for (let i = 0; i < requiredKeys.length; i++) {
-    let key = requiredKeys[i];
-    if (!loginRequest.hasOwnProperty(key)) return false;
-    if (loginRequest[key] === '') return false;
-  }
-
-  return true;
-
-};
+const validateLoginRequest = new RequestFilter(['email', 'password']);
 
 router.get('/check', 
   AuthOps.verifyAuth,
@@ -41,20 +28,19 @@ router.post('/login',
     let credentials = Object.assign({}, req.body.credentials);
 
     console.log(`\t|- Auth Route --> post('/login') --> Processing credentials: ${JSON.stringify(credentials)}`);
-    console.log('token:', req.get('Authorization'));
-    if (!_validateLoginRequest(credentials)) 
+
+    if (!validateLoginRequest.validate(credentials)) 
       return res.status(400).json({status: 500, msg: 'Invalid login request'});
     
-
     UserService
-      .getUser(credentials.email)
+      .getByEmail(credentials.email)
       .then(user => {
         console.log(`\t|- Auth Route --> post('/login') --> UserService() --> Got user: ${user.email}`);
         AuthService
-          .verifyPassword(user.id, credentials.password)
+          .getToken(user._id, credentials.password)
           .then(token => {
             console.log(`\t|- Auth Route --> post('/login') --> AuthService() --> Got token: ${token.split('.')[2].substr(0, 5).concat('...')}`);
-            res.status(200).json({user: user, token: token});
+            res.status(200).json({token: token});
           })
           .catch(err => {
             console.log(`\t|- Auth Route --> post('/login') --> Error processing password`);

@@ -5,11 +5,11 @@ const mongoose = require('mongoose'),
     // ObjectId = Schema.ObjectId;
  
 const UserModel = mongoose.model('User', new Schema({
-  id: { type: String },
+  // id: { type: String },
   email: String,
   fName: String,
   lName: String,
-  createdGroups: { type: Array, default: [] },
+  // createdGroups: { type: Array, default: [] },
   memberOf: [{ type: Schema.Types.ObjectId, ref: 'Group' }],
   favorites: { type: Array, default: [] },
   accountCreated: { type: Date, default: Date.now },

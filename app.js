@@ -12,6 +12,7 @@ var mongoose = require('mongoose');
 // var verifyAuth = require('./auth/verifyAuth');
 
 const indexRoutes = require('./routes/index');
+const profileRoutes = require('./routes/profile');
 const userRoutes = require('./routes/user');
 const authRoutes = require('./routes/auth');
 const groupRoutes = require('./routes/group');
@@ -32,11 +33,9 @@ app.use(cookieParser());
 app.use(require('stylus').middleware(path.join(__dirname, 'public/dist')));
 app.use(express.static(path.join(__dirname, 'public/dist')));
 
-// app.use(passport.initialize());
-// require('./auth/passportLocalConfig')();
-// app.use(verifyAuth());
 
 app.use('/', indexRoutes);
+app.use('/profile', profileRoutes);
 app.use('/user', userRoutes);
 app.use('/auth', authRoutes);
 app.use('/group', groupRoutes);

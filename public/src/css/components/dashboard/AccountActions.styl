@@ -1,0 +1,23 @@
+@import '../../variables/color.styl'
+
+.account--actions {
+  height: 5%;
+  position: relative;
+  border-top: 1px solid $dark-grey
+}
+
+.logout--btn {
+  margin: 0 auto;
+  text-align: center;
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%
+  transform: translate(-50%, -50%);
+  color: $medium-grey
+  transition: color 150ms ease-in-out;
+
+  &:hover {
+    color: $light-grey
+  }
+}

@@ -1,0 +1,51 @@
+@import '../variables/color.styl'
+
+* 
+  box-sizing: border-box
+
+
+html, body 
+  padding: 0
+  margin: 0
+  height: 100%
+  overflow: auto
+
+
+body 
+  font-family: 'Dosis', sans-serif
+  color: $flat-white
+  background: $flat-white
+
+#root 
+  display: table
+  width: 100%
+  height: 100%
+  overflow: auto
+
+
+#root > div 
+  
+  display: table-cell
+  vertical-align: middle
+  width: 100%
+  height: 100%
+
+ul, ol {
+  list-style-type: none;
+  margin: 0
+  padding: 0
+
+  > li {
+    display: block
+  }
+}
+
+button
+  color: $flat-white
+  background: none
+  outline: none
+  box-shadow: none
+  box-sizing: border-box
+  border: none
+  cursor: pointer
+  padding: 0

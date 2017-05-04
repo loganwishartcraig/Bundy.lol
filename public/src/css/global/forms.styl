@@ -1,0 +1,153 @@
+@import '../variables/color.styl'
+
+/* Forms */
+
+.form--root 
+  text-align: left
+
+.input--label 
+  display: block
+  margin-bottom: .25em
+
+.input--label--sm
+  display: block
+  margin-bottom: .2em
+
+.input--label--inline 
+  display: inline-block
+
+
+input[class*="form--input"] 
+  background: none
+  outline: none
+  border: none
+  box-shadow: none
+  color: $flat-white
+  box-sizing: border-box
+
+
+input.form--input[type="text"], 
+input.form--input[type="email"], 
+input.form--input[type="password"] 
+  font-size: .8rem
+  background: #141414
+  padding: .65em
+  border-top: 1px solid $dark-grey
+  border-bottom: 1px solid $dark-grey
+  transition: border-color 150ms ease-in-out
+
+  &:focus {
+    border-color: $primary-blue
+  }
+
+input.form--input--sm[type="text"], 
+input.form--input--sm[type="email"], 
+input.form--input--sm[type="password"] 
+  font-size: .75rem
+  background: #141414
+  padding: .5em
+  border-top: 1px solid $dark-grey
+  border-bottom: 1px solid $dark-grey
+  transition: border-color 150ms ease-in-out
+
+  &:focus {
+    border-color: $primary-blue
+  }
+
+
+input.form--input[type="checkbox"] 
+  display: none
+
+input.form--input[type="checkbox"] + span::before 
+  font-family: FontAwesome
+  content: '\f0c8\00a0\00a0'
+  color: $dark-grey
+  transition: color 150ms ease-in-out
+
+
+input.form--input[type="checkbox"]:checked + span::before 
+  font-family: FontAwesome
+  content: '\f14a\00a0\00a0'
+  color: $primary-pink
+
+
+
+button.btn--primary 
+  color: $flat-black
+  background: $primary-pink
+  font-weight: bold
+  border-radius: 3px
+  transition: background 150ms ease-in-out
+
+
+button.btn--primary:hover 
+  background: $light-pink
+
+
+button.btn--md 
+  padding: .65em .25em
+
+button.secondary--btn {
+  padding: .3em 1.25em
+  border: 1px solid $medium-grey
+  color: $medium-grey
+  text-align: center
+  font-weight: bold
+  border-radius: 3px
+  transition: all 150ms ease-in-out
+
+  &:hover {
+    color: $primary-blue
+    border-color: $primary-blue
+  }
+}
+
+button.todo--complete--btn {
+  color: $primary-pink
+  border: 1px solid $primary-pink
+  border-radius: 5px
+  padding: .5em 1.5em
+  // margin-right: 1em
+  transition: all 150ms ease-in-out
+  
+  &:hover {
+    color: $primary-blue
+    border-color: $primary-blue
+  }
+}
+
+.text--btn--grey {
+
+  font-size: .8rem
+  color: $medium-grey
+  
+  &:hover {
+    color: $light-grey
+  }
+}
+
+.form--group 
+  margin: 1.5rem 0 
+  
+.form--group--sm
+  margin: .5rem 0
+  
+
+  /* Autofill styles */
+
+
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus
+input:-webkit-autofill, 
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-text-fill-color: $flat-white;
+  -webkit-box-shadow: 0 0 0px 1000px $flat-black inset;
+  color: $flat-white !important;
+}

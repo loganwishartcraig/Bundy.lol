@@ -1,0 +1,7 @@
+export const AuthConstants = {
+
+  TOKEN_SET: 'TOKEN_SET',
+  TOKEN_REMOVED: 'TOKEN_REMOVED',
+  SET_FROM_CACHE: 'SET_FROM_CACHE'
+
+};

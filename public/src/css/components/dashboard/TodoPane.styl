@@ -1,0 +1,87 @@
+@import '../../variables/color.styl'
+
+.todo--container {
+  display: flex
+  flex-direction: column
+  height: 85%
+  padding: 0 1em
+}
+
+.todo--header {
+  text-align: center
+  border-bottom: 1px solid $primary-pink
+  border-top: 1px solid $primary-pink
+  padding: .25em 0
+}
+
+.todo--filters {
+  padding: .5em 0
+  border-bottom: 1px solid $primary-pink
+  vertical-align: middle
+}
+
+.todo--filters  > li {
+  display: inline-block
+  margin: 0 .5em
+  vertical-align: middle;
+}
+
+.todo--filter > button {
+  padding: .25em 1em
+  // background: $medium-grey
+  border: 1px solid $medium-grey
+  border-radius: 3px
+  font-weight: bold
+  color: $medium-grey
+  transition: all 150ms ease-in-out
+  
+  &.active {
+    background: $primary-pink
+    color: $flat-black
+  }
+  
+  &:not(.active):hover {
+    border-color: $primary-blue
+    color: $primary-blue
+  }
+}
+
+
+.todo--list {
+  height: 100%
+  border-bottom: 1px solid $primary-pink
+  overflow-y: auto
+}
+
+
+.todo--add {
+  text-align: right
+}
+
+.todo--add--btn {
+  // width: 100%
+  background: $primary-pink
+  padding: .75em 3em
+  color: $flat-black
+  margin: 1em
+  border-radius: 3px
+  font-size: .9rem
+  font-weight: bold
+  transition: all 150ms ease-in-out
+  vertical-align: middle
+  
+  &::before {
+    font-family: FontAwesome
+    content: '\f196\00a0'
+    font-weight: 400
+  }
+  
+  &:hover {
+    background: $light-pink
+  }
+}
+
+.todo--list {
+  height: 100%
+  overflow-y: auto
+}

@@ -1,4 +1,3 @@
-// const passport = require('passport');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -9,7 +8,6 @@ const HashService = require('./HashService');
 
 const _generateToken = (userId) => {
 
-
   let payload = {
       sub: userId
     };
@@ -17,6 +15,7 @@ const _generateToken = (userId) => {
   let token = jwt.sign(payload, authConfig.secret);
   console.log(`\t|- AuthService --> _generateToken(${userId}) --> Generated token: ${token.split('.')[2].substr(0, 5).concat('...')}`);
   return token;
+
 };
 
 const setCredentials = (userId, password) => {
@@ -40,17 +39,17 @@ const setCredentials = (userId, password) => {
 
 };
 
-const verifyPassword = (userId, password) => {
+const getToken = (userId, password) => {
 
   return new Promise((res, rej) => {
 
-    console.log(`\t|- AuthService --> verifyPassword(${userId}, ${password}) --> Verifying password`);
+    console.log(`\t|- AuthService --> getToken(${userId}, ${password}) --> Verifying password`);
 
     HashService
       .getHash(userId)
       .then(hash => {
         bcrypt.compare(password, hash, (err, valid) => {
-          console.log(`\t|- AuthService --> verifyPassword(${userId}, ${password}) --> Password valid: ${valid}`);
+          console.log(`\t|- AuthService --> getToken(${userId}, ${password}) --> Password valid: ${valid}`);
           if (valid) res(_generateToken(userId));
           else rej({status: 400, msg: 'Password incorrect'}); 
         });
@@ -65,18 +64,11 @@ const verifyPassword = (userId, password) => {
 
 
 
-const updateCredentials = (email, password) => {
-
-
-};
-
-
 
 
 
 module.exports = {
-  updateCredentials: updateCredentials,
   setCredentials: setCredentials,
-  verifyPassword: verifyPassword
+  getToken: getToken
   // generateToken: generateToken
 }
