@@ -53,7 +53,7 @@ router.post('/create',
         }
 
         TaskService
-          .createTask(user._id, group, taskReq)
+          .createTask(user, group, taskReq)
           .then(task => {
             console.log('TASK: ', task)
             res.status(200).json({task: task})
@@ -138,6 +138,8 @@ router.post('/remove',
       const token = req.get('Authorization');
       const taskId = req.body.taskId;
       const taskTitle = req.body.taskTitle;
+
+      if (typeof taskTitle !== 'strng' || taskTitle.length === 0) return res.status(400).json({status: 400, msg: 'Task must have a non-empty title'})
 
       AuthOps
         .decryptToken(token)

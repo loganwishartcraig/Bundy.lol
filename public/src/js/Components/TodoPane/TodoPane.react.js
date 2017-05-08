@@ -43,9 +43,7 @@ export default class TodoPane extends Component {
     TodoActions.startCreate();
   }
 
-  _handleTodoEnd(e) {
-    TodoActions.endCreate();
-  }
+  
 
   componentWillMount() {
     Logger.log('<TodoPane /> mounting', this.state)
@@ -78,9 +76,9 @@ export default class TodoPane extends Component {
             editingId={this.state.editingId}
           />
         }
-        {(this.state.ownerId !== undefined) ? 
+        {(this.state.ownerId !== undefined && !this.state.isCreating) ? 
           <div className="todo--add">
-            <button className="todo--add--btn" onClick={(this.state.isCreating) ? this._handleTodoEnd : this._handleTodoStart}>{(this.state.isCreating) ? 'Cancel' : 'Add Task'}</button>
+            <button className="todo--add--btn add--btn bold--btn--pink" onClick={this._handleTodoStart}>Add Task</button>
           </div>
             : 
           null

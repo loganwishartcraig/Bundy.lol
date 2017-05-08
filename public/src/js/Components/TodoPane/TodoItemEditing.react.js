@@ -30,7 +30,11 @@ export default class TodoItemEditing extends Component {
 
   render() {
     return(
-      <li className="todo--item editing"><input type="text" value={this.state.text} onChange={this._handleInputChange}/> <button onClick={this._handleEditComit}>Save</button> <button onClick={this._handleEditCancel}>Cancel</button></li>
+      <li className="todo--item editing">
+        <input autoFocus className="form--input full todo--input--edit" type="text" value={this.state.text} onChange={this._handleInputChange}/> 
+        <button className="text--btn--grey todo--btn--save" onClick={this._handleEditComit}>Save</button> 
+        <button className="text--btn--grey btn--cancel" onClick={this._handleEditCancel}>Cancel</button>
+      </li>
     )
   }
 }

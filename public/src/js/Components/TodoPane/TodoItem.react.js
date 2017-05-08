@@ -37,6 +37,11 @@ export default class TodoItem extends Component {
     if (this.state.showMenu) this.setState({showMenu: false})
   }
 
+  formatRequestDate(date) {
+    date = new Date(date);
+    return date.getMonth().toString() + "/" + date.getDay().toString();
+  }
+
   render() {
 
     return(
@@ -45,10 +50,14 @@ export default class TodoItem extends Component {
         {(!this.props.completed) ? 
           <button className="todo--complete--btn" onClick={this._handleTodoComplete}>I've Got It</button> 
         : 
-          <strong>Complete</strong>
-        } {this.props.title} 
-        &nbsp;
-        {(this.state.showMenu && this.props.userId === this.props.createdBy) ? <TodoItemOptions {...this.props} /> : null}
+          <span className="todo--complete">Gotten</span>
+        } 
+        <span className="todo--meta">
+          <span className="todo--title" title={this.props.title}>{this.props.title}</span>
+          <em className="todo--request">Requested {this.formatRequestDate(this.props.dateCreated)} by {(this.props.createdBy._id === this.props.userId) ? 'you' : this.props.createdBy.name}</em>
+        </span>
+
+        {(this.state.showMenu && this.props.userId === this.props.createdBy._id) ? <TodoItemOptions {...this.props} /> : null}
       </li>
 
     )

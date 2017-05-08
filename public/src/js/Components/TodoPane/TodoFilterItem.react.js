@@ -16,7 +16,7 @@ export default class TodoFilterItem extends Component {
 
   render() {
     return(
-      <li className="todo--filter"><button className={(this.props.id === this.props.active) ? 'active' : null} onClick={this._handleFilterClick}>{this.props.children}</button></li>
+      <li className="todo--filter"><button className={(this.props.id === this.props.active) ? 'wire--btn--blue active' : 'wire--btn--blue'} onClick={this._handleFilterClick}>{this.props.children}</button></li>
     );
   }
 }

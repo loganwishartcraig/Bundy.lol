@@ -37,9 +37,11 @@ export default class DatePane extends Component {
 
     formatted += ' '.concat(this.months[date.getMonth()]);
 
-    let day = 20;
+    let day = date.getDate();
 
-    formatted += ' '.concat((day < 10) ? '0'.concat(day) : day);
+    formatted += ' '.concat(day)
+
+    // formatted += ' '.concat((day < 10) ? '0'.concat(day) : day);
 
     let postfix = '';
     if (day !== 11 && day % 10 === 1) postfix = 'st';

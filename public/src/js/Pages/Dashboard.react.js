@@ -31,7 +31,7 @@ export class Dashboard extends Component {
             <UserPane />
             <GroupPane />
             <div className="account--actions">
-              <button className="logout--btn" onClick={AuthActions.logout}>Logout</button>
+              <button className="logout--btn text--btn--grey" onClick={AuthActions.logout}>Logout</button>
             </div>
           </div>
           <div className="dash--right">

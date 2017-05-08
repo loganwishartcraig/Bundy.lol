@@ -65,7 +65,7 @@ export default class GroupPane extends Component {
               
           }
 
-          {(!this.state.isAdding) ? <button className="group--add--btn secondary--btn" onClick={this._handleGroupAdd}>+ Add Group</button> : null}
+          {(!this.state.isAdding) ? <button className="group--add--btn wire--btn--blue" onClick={this._handleGroupAdd}>+ Add Group</button> : null}
 
          
       

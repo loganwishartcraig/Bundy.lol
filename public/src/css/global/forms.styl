@@ -17,7 +17,8 @@
   display: inline-block
 
 
-input[class*="form--input"] 
+input[class*="form--input"],
+textarea[class*="form--input"]
   background: none
   outline: none
   border: none
@@ -28,8 +29,8 @@ input[class*="form--input"]
 
 input.form--input[type="text"], 
 input.form--input[type="email"], 
-input.form--input[type="password"] 
-  font-size: .8rem
+input.form--input[type="password"],
+textarea.form--input 
   background: #141414
   padding: .65em
   border-top: 1px solid $dark-grey
@@ -42,8 +43,8 @@ input.form--input[type="password"]
 
 input.form--input--sm[type="text"], 
 input.form--input--sm[type="email"], 
-input.form--input--sm[type="password"] 
-  font-size: .75rem
+input.form--input--sm[type="password"],
+textarea.form--input--sm
   background: #141414
   padding: .5em
   border-top: 1px solid $dark-grey
@@ -106,7 +107,7 @@ button.todo--complete--btn {
   color: $primary-pink
   border: 1px solid $primary-pink
   border-radius: 5px
-  padding: .5em 1.5em
+  padding: .75em 1.5em
   // margin-right: 1em
   transition: all 150ms ease-in-out
   
@@ -116,11 +117,34 @@ button.todo--complete--btn {
   }
 }
 
-.text--btn--grey {
-
-  font-size: .8rem
-  color: $medium-grey
+button.bold--btn--pink {
+  background: $primary-pink
+  color: $flat-black
+  border-radius: 3px
+  font-weight: bold
+  transition: background 150ms ease-in-out
+  vertical-align: middle
   
+  &:hover {
+    background: $light-pink
+  }
+}
+
+button.wire--btn--blue {
+  color: $medium-grey
+  border: 1px solid $medium-grey
+  border-radius: 3px
+  transition: color 150ms ease-in-out, border-color 150ms ease-in-out;
+  
+  &:hover {
+    color: $primary-blue
+    border-color: $primary-blue
+  }
+}
+
+button.text--btn--grey {
+  color: $medium-grey
+  transition: color 150ms ease-in-out
   &:hover {
     color: $light-grey
   }

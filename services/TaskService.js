@@ -1,18 +1,17 @@
 const mongoose = require('mongoose'),
-      TaskModel = require('../models/TaskModel'),
-      crypto = require('crypto');
+      TaskModel = require('../models/TaskModel');
 
-const getTask = function getTask(taskId) {
 
-};
 
-const createTask = function createTask(userId, group, taskReq) {
+
+const createTask = function createTask(user, group, taskReq) {
 
 
   return new Promise((res, rej) => {
 
     let task = new TaskModel(taskReq);
-        task.createdBy = userId;
+        task.createdBy._id = user._id;
+        task.createdBy.name = user.fName;
         task.groupId = group._id;
 
     group.tasks.push(task);
@@ -42,7 +41,8 @@ const completeTask = function completeTask(taskId, user) {
         if (task.completed) return rej({status: 400, msg: "Task already complete"});
 
         task.completed = true;
-        task.completedBy = user._id;
+        task.completedBy._id = user._id;
+        task.completedBy.name = user.fName;
         task.dateCompleted = Date.now();
 
         task.save();
@@ -68,9 +68,13 @@ const removeTask = function removeTask(taskId, userId) {
       .findOne({_id: taskId})
       .then(task => {
 
+
         if (task === null) return rej({status: 400, msg: "Task not found"});
 
-        if (task.createdBy !== userId) return rej({status: 400, msg: "Task isn't owned by user"});
+        console.log('REMOVING TASK: ', task, task.createdBy._id.toString() !== userId.toString())
+        
+        if (task.createdBy._id.toString() !== userId.toString()) return rej({status: 400, msg: "Task isn't owned by user"});
+
 
         task.remove();
 
@@ -98,7 +102,7 @@ const editTask = function editTask(taskId, taskTitle, userId) {
       .then(task => {
         if (task === null) return rej({status: 400, msg: "Task not found"});
 
-        if (task.createdBy !== userId) return rej({status: 400, msg: "Task isn't owned by user"});
+        if (task.createdBy._id !== userId) return rej({status: 400, msg: "Task isn't owned by user"});
 
         console.log(task);
 
@@ -115,7 +119,6 @@ const editTask = function editTask(taskId, taskTitle, userId) {
 }
 
 module.exports = {
-  getTask,
   createTask,
   removeTask,
   completeTask,

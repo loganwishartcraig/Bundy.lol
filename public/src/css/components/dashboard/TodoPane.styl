@@ -28,22 +28,15 @@
 
 .todo--filter > button {
   padding: .25em 1em
-  // background: $medium-grey
-  border: 1px solid $medium-grey
-  border-radius: 3px
   font-weight: bold
-  color: $medium-grey
   transition: all 150ms ease-in-out
   
-  &.active {
+  &.active, &.active:hover {
     background: $primary-pink
     color: $flat-black
+    border-color: $primary-pink
   }
   
-  &:not(.active):hover {
-    border-color: $primary-blue
-    color: $primary-blue
-  }
 }
 
 
@@ -58,30 +51,120 @@
   text-align: right
 }
 
-.todo--add--btn {
-  // width: 100%
-  background: $primary-pink
+
+
+
+.todo--add--btn, 
+.todo--cancel--btn {
   padding: .75em 3em
-  color: $flat-black
   margin: 1em
-  border-radius: 3px
   font-size: .9rem
-  font-weight: bold
-  transition: all 150ms ease-in-out
-  vertical-align: middle
   
   &::before {
-    font-family: FontAwesome
-    content: '\f196\00a0'
     font-weight: 400
   }
   
-  &:hover {
-    background: $light-pink
-  }
 }
 
 .todo--list {
   height: 100%
   overflow-y: auto
+}
+
+.todo--item {
+  padding: 1em 
+  border-bottom: 1px solid $dark-grey
+  position: relative
+  overflow: hidden;
+}
+
+.todo--complete--btn {
+  display: inline-block
+  vertical-align: middle
+}
+
+.todo--meta {
+  display: inline-block
+  vertical-align: middle
+  padding-left: 1em
+  width: 60%;
+  // white-space: nowrap
+  // text-overflow: ellipsis
+  // overflow: hidden
+}
+
+// .todo--title {
+//   white-space: nowrap;
+//   text-overflow: ellipsis;
+//   overflow: hidden;
+// }
+
+.todo--request {
+  display: block
+}
+
+.todo--options {
+  position: absolute
+  right: 1em
+  top: 50%
+  transform: translateY(-50%)
+}
+
+.todo--btn--edit, .todo--btn--save {
+  margin-right: .75em
+}
+
+.todo--btn--save {
+  margin-left: .75em
+}
+
+.todo--btn--edit::before {
+  font-family: FontAwesome
+  content: '\f040\00a0'
+}
+
+.todo--btn--delete::before {
+  font-family: FontAwesome
+  content: '\f00d\00a0'
+}
+
+.todo--btn--save::before{
+  font-family: FontAwesome
+  content: '\f0c7\00a0'
+}
+
+.add--btn::before {
+  font-family: FontAwesome
+  content: '\f196\00a0'
+}
+
+.btn--cancel::before {
+  font-family: FontAwesome
+  content: '\f05e\00a0'
+}
+
+.todo--input--edit {
+  margin-bottom: .5em
+  font-style: italic
+}
+
+.todo--create--actions {
+  text-align: right
+  width: 100%
+  position: relative
+  bottom: -1px
+  right: 0
+}
+
+.todo--form {
+  position: relative
+  height: 100%
+  padding-top: 1em;
+  display: flex;
+  flex-direction: column;
+  // padding-bottom: 68px;
+}
+
+.todo--create--input {
+  flex-grow: 2
 }

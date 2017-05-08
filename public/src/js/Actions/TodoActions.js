@@ -117,10 +117,6 @@ const comitEdit = (newText, todoId, userId) => {
       console.warn(err)
     })  
 
-  // AppDispatcher.dispatch({
-  //   type: TodoConstants.  COMIT_EDIT
-  //   todo: todo
-  // });
 }
 
 export const TodoActions = {

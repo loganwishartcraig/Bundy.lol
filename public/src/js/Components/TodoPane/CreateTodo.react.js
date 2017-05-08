@@ -21,6 +21,10 @@ export default class CreateTodo extends Component {
     TodoActions.createTodo(this.props.addTo, this.state);
   }
 
+  _handleTodoEnd(e) {
+    TodoActions.endCreate();
+  }
+
   _handleInputChange(e) {
     let inputName = e.target.getAttribute('name');
     let type = e.target.getAttribute('type');
@@ -33,15 +37,12 @@ export default class CreateTodo extends Component {
 
   render() {
     return (
-      <form onSubmit={this._handleTodoCreate} method="POST" action="/groups/join">
-        <div className="form-group">
-          <label htmlFor="title">
-            <span>New Task for {this.props.addTo}</span>
-            <input onChange={this._handleInputChange} type="text" name="title" id="title" value={this.state.title} />
-          </label>
-        </div>
-        <div className="form-group">
-          <button type="submit">Add Task</button>
+      <form className="todo--form" onSubmit={this._handleTodoCreate} method="POST" action="/groups/join">
+        <span>New Task</span>
+        <textarea autoFocus className="todo--create--input form--input full" onChange={this._handleInputChange} type="text" name="title" id="title" value={this.state.title} placeholder="What do you need..."></textarea>
+        <div className="todo--create--actions">
+          <button className="todo--cancel--btn btn--cancel wire--btn--blue" onClick={this._handleTodoEnd}>Cancel</button>
+          <button className="todo--add--btn add--btn bold--btn--pink" type="submit">Request</button>
         </div>
       </form>
     )

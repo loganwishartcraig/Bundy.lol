@@ -2913,11 +2913,6 @@ var comitEdit = function comitEdit(newText, todoId, userId) {
   }).catch(function (err) {
     console.warn(err);
   });
-
-  // AppDispatcher.dispatch({
-  //   type: TodoConstants.  COMIT_EDIT
-  //   todo: todo
-  // });
 };
 
 var TodoActions = exports.TodoActions = {
@@ -16509,7 +16504,7 @@ var ProfileActions = exports.ProfileActions = {
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -16527,57 +16522,59 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var DatePane = function (_Component) {
-  _inherits(DatePane, _Component);
+    _inherits(DatePane, _Component);
 
-  function DatePane(context, props) {
-    _classCallCheck(this, DatePane);
+    function DatePane(context, props) {
+        _classCallCheck(this, DatePane);
 
-    var _this = _possibleConstructorReturn(this, (DatePane.__proto__ || Object.getPrototypeOf(DatePane)).call(this, context, props));
+        var _this = _possibleConstructorReturn(this, (DatePane.__proto__ || Object.getPrototypeOf(DatePane)).call(this, context, props));
 
-    _this.days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        _this.days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-    _this.months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        _this.months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-    return _this;
-  }
-
-  _createClass(DatePane, [{
-    key: 'formatDate',
-    value: function formatDate(date) {
-
-      var formatted = this.days[date.getDay() - 1];
-
-      formatted += ' '.concat(this.months[date.getMonth()]);
-
-      var day = 20;
-
-      formatted += ' '.concat(day < 10 ? '0'.concat(day) : day);
-
-      var postfix = '';
-      if (day !== 11 && day % 10 === 1) postfix = 'st';else if (day !== 12 && day % 10 === 2) postfix = 'nd';else if (day !== 13 && day % 10 === 3) postfix = 'rd';else postfix = 'th';
-
-      formatted += postfix;
-
-      formatted += ' '.concat(date.getFullYear());
-
-      return formatted;
+        return _this;
     }
-  }, {
-    key: 'render',
-    value: function render() {
-      return _react2.default.createElement(
-        'div',
-        { className: 'date--container' },
-        _react2.default.createElement(
-          'span',
-          { className: 'date--banner' },
-          this.formatDate(new Date())
-        )
-      );
-    }
-  }]);
 
-  return DatePane;
+    _createClass(DatePane, [{
+        key: 'formatDate',
+        value: function formatDate(date) {
+
+            var formatted = this.days[date.getDay() - 1];
+
+            formatted += ' '.concat(this.months[date.getMonth()]);
+
+            var day = date.getDate();
+
+            formatted += ' '.concat(day);
+
+            // formatted += ' '.concat((day < 10) ? '0'.concat(day) : day);
+
+            var postfix = '';
+            if (day !== 11 && day % 10 === 1) postfix = 'st';else if (day !== 12 && day % 10 === 2) postfix = 'nd';else if (day !== 13 && day % 10 === 3) postfix = 'rd';else postfix = 'th';
+
+            formatted += postfix;
+
+            formatted += ' '.concat(date.getFullYear());
+
+            return formatted;
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                'div',
+                { className: 'date--container' },
+                _react2.default.createElement(
+                    'span',
+                    { className: 'date--banner' },
+                    this.formatDate(new Date())
+                )
+            );
+        }
+    }]);
+
+    return DatePane;
 }(_react.Component);
 
 exports.default = DatePane;
@@ -16895,7 +16892,7 @@ var GroupPane = function (_Component) {
         this.state.isAdding ? _react2.default.createElement(_AddGroup2.default, { isCreating: this.state.isCreating }) : _react2.default.createElement(_GroupSelector2.default, { hasGroups: this.state.hasGroups, groups: this.state.groups, activeGroup: this.state.activeGroup }),
         !this.state.isAdding ? _react2.default.createElement(
           'button',
-          { className: 'group--add--btn secondary--btn', onClick: this._handleGroupAdd },
+          { className: 'group--add--btn wire--btn--blue', onClick: this._handleGroupAdd },
           '+ Add Group'
         ) : null
       );
@@ -17172,6 +17169,11 @@ var CreateTodo = function (_Component) {
       _TodoActions.TodoActions.createTodo(this.props.addTo, this.state);
     }
   }, {
+    key: '_handleTodoEnd',
+    value: function _handleTodoEnd(e) {
+      _TodoActions.TodoActions.endCreate();
+    }
+  }, {
     key: '_handleInputChange',
     value: function _handleInputChange(e) {
       var inputName = e.target.getAttribute('name');
@@ -17185,29 +17187,25 @@ var CreateTodo = function (_Component) {
     value: function render() {
       return _react2.default.createElement(
         'form',
-        { onSubmit: this._handleTodoCreate, method: 'POST', action: '/groups/join' },
+        { className: 'todo--form', onSubmit: this._handleTodoCreate, method: 'POST', action: '/groups/join' },
         _react2.default.createElement(
-          'div',
-          { className: 'form-group' },
-          _react2.default.createElement(
-            'label',
-            { htmlFor: 'title' },
-            _react2.default.createElement(
-              'span',
-              null,
-              'New Task for ',
-              this.props.addTo
-            ),
-            _react2.default.createElement('input', { onChange: this._handleInputChange, type: 'text', name: 'title', id: 'title', value: this.state.title })
-          )
+          'span',
+          null,
+          'New Task'
         ),
+        _react2.default.createElement('textarea', { autoFocus: true, className: 'todo--create--input form--input full', onChange: this._handleInputChange, type: 'text', name: 'title', id: 'title', value: this.state.title, placeholder: 'What do you need...' }),
         _react2.default.createElement(
           'div',
-          { className: 'form-group' },
+          { className: 'todo--create--actions' },
           _react2.default.createElement(
             'button',
-            { type: 'submit' },
-            'Add Task'
+            { className: 'todo--cancel--btn btn--cancel wire--btn--blue', onClick: this._handleTodoEnd },
+            'Cancel'
+          ),
+          _react2.default.createElement(
+            'button',
+            { className: 'todo--add--btn add--btn bold--btn--pink', type: 'submit' },
+            'Request'
           )
         )
       );
@@ -17271,7 +17269,7 @@ var TodoFilterItem = function (_Component) {
         { className: 'todo--filter' },
         _react2.default.createElement(
           'button',
-          { className: this.props.id === this.props.active ? 'active' : null, onClick: this._handleFilterClick },
+          { className: this.props.id === this.props.active ? 'wire--btn--blue active' : 'wire--btn--blue', onClick: this._handleFilterClick },
           this.props.children
         )
       );
@@ -17353,6 +17351,12 @@ var TodoItem = function (_Component) {
       if (this.state.showMenu) this.setState({ showMenu: false });
     }
   }, {
+    key: 'formatRequestDate',
+    value: function formatRequestDate(date) {
+      date = new Date(date);
+      return date.getMonth().toString() + "/" + date.getDay().toString();
+    }
+  }, {
     key: 'render',
     value: function render() {
 
@@ -17364,14 +17368,28 @@ var TodoItem = function (_Component) {
           { className: 'todo--complete--btn', onClick: this._handleTodoComplete },
           'I\'ve Got It'
         ) : _react2.default.createElement(
-          'strong',
-          null,
-          'Complete'
+          'span',
+          { className: 'todo--complete' },
+          'Gotten'
         ),
-        ' ',
-        this.props.title,
-        '\xA0',
-        this.state.showMenu && this.props.userId === this.props.createdBy ? _react2.default.createElement(_TodoItemOptions2.default, this.props) : null
+        _react2.default.createElement(
+          'span',
+          { className: 'todo--meta' },
+          _react2.default.createElement(
+            'span',
+            { className: 'todo--title', title: this.props.title },
+            this.props.title
+          ),
+          _react2.default.createElement(
+            'em',
+            { className: 'todo--request' },
+            'Requested ',
+            this.formatRequestDate(this.props.dateCreated),
+            ' by ',
+            this.props.createdBy._id === this.props.userId ? 'you' : this.props.createdBy.name
+          )
+        ),
+        this.state.showMenu && this.props.userId === this.props.createdBy._id ? _react2.default.createElement(_TodoItemOptions2.default, this.props) : null
       );
     }
   }]);
@@ -17447,17 +17465,15 @@ var TodoItemEditing = function (_Component) {
       return _react2.default.createElement(
         'li',
         { className: 'todo--item editing' },
-        _react2.default.createElement('input', { type: 'text', value: this.state.text, onChange: this._handleInputChange }),
-        ' ',
+        _react2.default.createElement('input', { autoFocus: true, className: 'form--input full todo--input--edit', type: 'text', value: this.state.text, onChange: this._handleInputChange }),
         _react2.default.createElement(
           'button',
-          { onClick: this._handleEditComit },
+          { className: 'text--btn--grey todo--btn--save', onClick: this._handleEditComit },
           'Save'
         ),
-        ' ',
         _react2.default.createElement(
           'button',
-          { onClick: this._handleEditCancel },
+          { className: 'text--btn--grey btn--cancel', onClick: this._handleEditCancel },
           'Cancel'
         )
       );
@@ -17511,15 +17527,15 @@ var TodoItemOptions = function TodoItemOptions(_ref) {
       completed = _ref.completed;
   return _react2.default.createElement(
     'span',
-    null,
+    { className: 'todo--options' },
     !completed ? _react2.default.createElement(
       'button',
-      { onClick: _handleTodoEdit(_id) },
+      { className: 'text--btn--grey todo--btn--edit', onClick: _handleTodoEdit(_id) },
       'Edit'
     ) : null,
     _react2.default.createElement(
       'button',
-      { onClick: _handleTodoDelete(_id) },
+      { className: 'text--btn--grey todo--btn--delete', onClick: _handleTodoDelete(_id) },
       'Delete'
     )
   );
@@ -17681,11 +17697,6 @@ var TodoPane = function (_Component) {
       _TodoActions.TodoActions.startCreate();
     }
   }, {
-    key: '_handleTodoEnd',
-    value: function _handleTodoEnd(e) {
-      _TodoActions.TodoActions.endCreate();
-    }
-  }, {
     key: 'componentWillMount',
     value: function componentWillMount() {
       _Logging2.default.log('<TodoPane /> mounting', this.state);
@@ -17723,13 +17734,13 @@ var TodoPane = function (_Component) {
           isEditing: this.state.isEditing,
           editingId: this.state.editingId
         }),
-        this.state.ownerId !== undefined ? _react2.default.createElement(
+        this.state.ownerId !== undefined && !this.state.isCreating ? _react2.default.createElement(
           'div',
           { className: 'todo--add' },
           _react2.default.createElement(
             'button',
-            { className: 'todo--add--btn', onClick: this.state.isCreating ? this._handleTodoEnd : this._handleTodoStart },
-            this.state.isCreating ? 'Cancel' : 'Add Task'
+            { className: 'todo--add--btn add--btn bold--btn--pink', onClick: this._handleTodoStart },
+            'Add Task'
           )
         ) : null
       );
@@ -17923,7 +17934,7 @@ var Dashboard = exports.Dashboard = function (_Component) {
             { className: 'account--actions' },
             _react2.default.createElement(
               'button',
-              { className: 'logout--btn', onClick: _AuthActions.AuthActions.logout },
+              { className: 'logout--btn text--btn--grey', onClick: _AuthActions.AuthActions.logout },
               'Logout'
             )
           )
