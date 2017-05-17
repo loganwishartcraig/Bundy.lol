@@ -29,14 +29,14 @@ export class App extends Component {
   _handleAuthChange() {
     this.setState(getAppState());
     Logger.log('handling auth change...', this.state);
-    console.warn(this.props.match)
+    if (this.state.hasAuth && this.props.location.pathname !== '/') {
+      browserHistory.push('/');
+    }
+
   }
 
   componentWillMount() {
     Logger.log('<App /> mounting', this.state)
-    if (!this.state.hasAuth) {
-      browserHistory.push('/login');
-    };
     AuthStore.setListener(this._handleAuthChange);
   }
 

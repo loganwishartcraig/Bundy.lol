@@ -10,7 +10,7 @@ export class Landing extends Component {
 
   componentWillMount() {
     Logger.log('<Landing /> mounting', AuthStore.hasAuth());
-    if (AuthStore.hasAuth()) browserHistory.push('/')
+    // if (AuthStore.hasAuth()) browserHistory.push('/')
   }
 
   render() {
