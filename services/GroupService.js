@@ -8,13 +8,13 @@ const _getBy = (query) => {
   return new Promise((res, rej) => {
     GroupModel
       .findOne(query)
-      .populate({
+      .populate([{
         path: 'members',
-        select: '_id'
-      })
-      .populate({
+        select: '_id fName lName'
+      },{
         path: 'tasks'
-      })
+      }])
+      .populate()
       .then(group => {
         console.log(`\t|- GroupService --> _getBy() --> result of query`, JSON.stringify(query), group)
         if (group === null) return rej({status: 400, msg: 'Group not found'});
@@ -41,11 +41,6 @@ const createGroup = (groupReq, user) => {
 
         console.log(`\t|- GroupService --> createGorup() --> No existing found, creating....`)
 
-        // let group = new GroupModel(Object.assign(groupReq, {
-        //   members: [user],
-        //   createdBy: user._id
-        // }));
-
       let group = new GroupModel(groupReq)
           group.members.push(user)
           group.createdBy = user._id        
@@ -57,9 +52,18 @@ const createGroup = (groupReq, user) => {
         console.log(`\t|- GroupService --> createGorup() --> Associated! Saving....`)
 
         user.save();
-        group.save();
+        group.save(err => {
+          if (err) return rej({status: 500, msg: "Failed to save group info"})
+          GroupModel.populate(group, {
+            path: 'members',
+            select: '_id fName lName'
+          }).then(populated => {
+            res(populated);
+          }).catch(err => {
+            rej({status: 500, msg: "Error populating group members"});
+          });
+        });
 
-          res(group)
       });
 
   });
@@ -83,16 +87,21 @@ const joinGroup = (groupReq, user) => {
 
         console.log(`\t|- GroupService --> joinGorup() --> Adding user to group`);
 
-        existing.members.push(user);
         user.memberOf.push(existing);
+        existing.members.push(user);
 
-        existing.save();
         user.save();
-
-        // let clean = Object.assign({}, existing._doc);
-            // clean.members = clean.members.map(member => member.id)
-              
-        res(existing);
+        existing.save(err => {
+          if (err) return rej({status: 500, msg: "Failed to save group info"})
+          GroupModel.populate(group, {
+            path: 'members',
+            select: '_id fName lName'
+          }).then(populated => {
+            res(populated);
+          }).catch(err => {
+            rej({status: 500, msg: "Error populating group members"});
+          });
+        });
 
       })
       .catch((err) => {
@@ -109,14 +118,15 @@ const leaveGroup = (name, user) => {
     _getBy({name: name})
       .then(existing => {
 
-        console.log(existing.members.length, user.memberOf.length);
-
-        console.log(existing.members[0]._id.toString() === user._id.toString())
+        console.log(`\t|- GroupService --> leaveGroup() --> Removing user "${user.email}" from group "${name}"`);
 
         existing.members = existing.members.filter(member => (member._id.toString() !== user._id.toString()))
+        existing.tasks.forEach(task => { 
+          if (task.createdBy._id.toString() === user._id.toString()) task.remove();
+        })
         user.memberOf = user.memberOf.filter(group => (group.name !== name))
 
-        console.log(existing.members.length, user.memberOf.length);
+        console.log(`\t|- GroupService --> leaveGroup() --> Removing!"`);
 
         existing.save();
         user.save();

@@ -38,6 +38,8 @@ router.post('/create',
 
     console.log(taskReq, groupId)
 
+    if (typeof taskReq.title !== 'string' || taskReq.title.length === 0) return res.status(400).json({status: 400, msg: 'Task request not valid'})
+
     UserService
       .getByToken(token)
       .then(user => {
@@ -56,7 +58,19 @@ router.post('/create',
           .createTask(user, group, taskReq)
           .then(task => {
             console.log('TASK: ', task)
-            res.status(200).json({task: task})
+
+            var favorite = undefined;
+
+            if (taskReq.favorite) {
+              favorite = {
+                id: task._id.toString(),
+                title: task.title
+              };
+              user.favorites.push(favorite)
+              user.save()
+            }
+
+            res.status(200).json({task: task, toFave: favorite})
           })
           .catch(err => {
             console.log(err);
@@ -70,13 +84,6 @@ router.post('/create',
       })
 
 });
-
-// router.post('/complete',
-//   AuthOps.verifyAuth,
-//   function(req, res, next) {
-//     console.log('completing ', req.body.id)
-//     res.sendStatus(200);
-//   });
 
 
 router.put('/complete',
@@ -138,8 +145,8 @@ router.post('/remove',
       const token = req.get('Authorization');
       const taskId = req.body.taskId;
       const taskTitle = req.body.taskTitle;
-
-      if (typeof taskTitle !== 'strng' || taskTitle.length === 0) return res.status(400).json({status: 400, msg: 'Task must have a non-empty title'})
+      
+      if (typeof taskTitle !== 'string' || taskTitle.length === 0) return res.status(400).json({status: 400, msg: 'Task must have a non-empty title'})
 
       AuthOps
         .decryptToken(token)

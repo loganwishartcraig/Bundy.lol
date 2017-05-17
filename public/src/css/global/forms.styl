@@ -16,6 +16,29 @@
 .input--label--inline 
   display: inline-block
 
+.page--tab {
+    padding: 1.5em 0 1em 1em;
+    width: 50%;
+    text-align: center;
+    transition: all 150ms ease-in-out;
+
+  &:not(.active) {
+    color: $medium-grey
+    border-bottom: 1px solid $medium-grey
+  
+    &:hover {
+      color: $primary-blue
+      border-color: $primary-blue
+    }
+  }
+  
+  &.active {
+    color: $primary-pink
+    font-weight: bold
+    border-bottom: 1px solid $primary-pink
+  }
+  
+}
 
 input[class*="form--input"],
 textarea[class*="form--input"]
@@ -85,9 +108,6 @@ button.btn--primary:hover
   background: $light-pink
 
 
-button.btn--md 
-  padding: .65em .25em
-
 button.secondary--btn {
   padding: .3em 1.25em
   border: 1px solid $medium-grey
@@ -103,19 +123,7 @@ button.secondary--btn {
   }
 }
 
-button.todo--complete--btn {
-  color: $primary-pink
-  border: 1px solid $primary-pink
-  border-radius: 5px
-  padding: .75em 1.5em
-  // margin-right: 1em
-  transition: all 150ms ease-in-out
-  
-  &:hover {
-    color: $primary-blue
-    border-color: $primary-blue
-  }
-}
+
 
 button.bold--btn--pink {
   background: $primary-pink
@@ -130,7 +138,7 @@ button.bold--btn--pink {
   }
 }
 
-button.wire--btn--blue {
+.wire--btn--blue {
   color: $medium-grey
   border: 1px solid $medium-grey
   border-radius: 3px
@@ -142,7 +150,38 @@ button.wire--btn--blue {
   }
 }
 
-button.text--btn--grey {
+.wire--btn--red {
+  color: $medium-grey
+  border: 1px solid $medium-grey
+  border-radius: 3px
+  transition: color 150ms ease-in-out, border-color 150ms ease-in-out;
+  
+  &:hover {
+    color: red
+    border-color: red
+  }
+}
+
+.wire--btn--pink {
+  color: $primary-pink
+  border: 1px solid $primary-pink
+  border-radius: 5px
+  transition: all 150ms ease-in-out
+  
+  &:hover {
+    color: $primary-blue
+    border-color: $primary-blue
+  }
+  
+  &:disabled {
+    color: $medium-grey
+    border-color: $medium-grey
+    // font-style: italic
+  }
+
+}
+
+.text--btn--grey {
   color: $medium-grey
   transition: color 150ms ease-in-out
   &:hover {
@@ -150,12 +189,94 @@ button.text--btn--grey {
   }
 }
 
+.light--text--btn {
+  color: $light-grey
+  transition: color 150ms ease-in-out
+  &:hover {
+    color: $primary-blue
+  }
+}
+
+.btn--lg {
+  padding: .75em 3em
+}
+
+.btn--md {
+  padding: .75em 1.5em
+}
+
+.btn--sm 
+  padding: .65em .25em
+
 .form--group 
-  margin: 1.5rem 0 
+  margin-bottom: 1.5rem 
   
 .form--group--sm
-  margin: .5rem 0
+  margin-bottom: .5rem
   
+.err--msg {
+  color: red
+  font-style: italic
+}
+
+
+
+
+.add--btn::before {
+  font-family: FontAwesome
+  content: '\f055\00a0'
+  font-weight: 400
+  vertical-align: text-top
+}
+
+.btn--cancel::before {
+  font-family: FontAwesome
+  content: '\f05e\00a0'
+  font-weight: 400
+}
+
+.btn--edit::before {
+  font-family: FontAwesome
+  content: '\f040\00a0'
+  font-weight: 400
+}
+
+.btn--delete::before {
+  font-family: FontAwesome
+  content: '\f00d\00a0'
+  font-weight: 400
+}
+
+.btn--save::before {
+  font-family: FontAwesome
+  content: '\f0c7\00a0'
+  font-weight: 400
+}
+
+.btn--group::before {
+  font-family: FontAwesome
+  content: '\f0c0\00a0'
+  font-weight: 400
+  vertical-align: text-top
+}
+
+.btn--file::before {
+  font-family: FontAwesome
+  content: '\f016\00a0'
+  font-weight: 400
+}
+
+.btn--back::before {
+  font-family: FontAwesome
+  content: '\f112\00a0'
+  font-weight: 400
+}
+
+.btn--warn::before {
+  font-family: FontAwesome
+  content: '\f071\00a0'
+  font-weight: 400
+}
 
   /* Autofill styles */
 

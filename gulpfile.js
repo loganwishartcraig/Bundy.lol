@@ -16,10 +16,16 @@ gulp.task('compress-css', () => {
     .pipe(stylus({
       compress: true
     }))
+    .on('error', (err) => {
+      console.log(err)
+    })
     .pipe(autoprefixer({
       browsers: ['last 2 versions'],
       cascade: false
     }))
+    .on('error', (err) => {
+      console.log(err)
+    })
     .pipe(gulp.dest('./public/dist/css'))
     .pipe(livereload());
 });

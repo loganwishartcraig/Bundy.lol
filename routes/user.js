@@ -64,4 +64,30 @@ router.post('/create', (req, res) => {
 
 });
 
+router.post('/delFave', 
+  AuthOps.verifyAuth,
+  (req, res, next) => {
+
+    let faveId = req.body.faveId;
+    if (typeof faveId !== 'string' || faveId.length === 0) 
+      return res.status(400).json({status: 400, msg: 'Invalid delete request'});
+
+    AuthOps
+      .decryptToken(req.get('Authorization'))
+      .then(userId => {
+         UserService
+          .removeFavorite(userId, faveId)
+          .then(() => {
+            res.sendStatus(200)
+          })
+          .catch(err => {
+            res.status(err.status).json(err)
+          })
+      })
+      .catch(err => {
+        res.status(err.status).json(err);
+      })
+   
+});
+
 module.exports = router;

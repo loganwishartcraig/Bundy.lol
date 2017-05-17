@@ -36,10 +36,29 @@ class _UserService {
         })
         .catch(err => {
           Logger.log('Error getting user', err.response)
-          rej(err.response.data);
+          rej(err);
         });
     });
   }
+
+  delFave(faveId) {
+    return new Promise((res, rej) => {
+
+      console.warn('requesting ', faveId, 'removal')
+
+      axios
+        .post('user/delFave', {
+          faveId: faveId
+        })
+        .then(response => {
+          res();
+        })
+        .catch(err => {
+          rej(err);
+        })
+
+    });
+  } 
 
 }
 

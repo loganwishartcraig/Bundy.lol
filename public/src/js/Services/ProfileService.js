@@ -10,16 +10,24 @@ class _ProfileService {
 
   constructor() {
   
+    this._cacheRegister = {};
+
   } 
 
 
 
-  getCached() {
+  getCached(key) {
 
   }
 
   clearStorage() {
 
+  }
+
+  syncCache() {
+    for (let key in this._cacheRegister) {
+      
+    }
   }
 
   getProfile() {
@@ -32,7 +40,7 @@ class _ProfileService {
           res(response.data);
         })
         .catch(err => {
-          rej(err.response.data);
+          rej(err);
         })
       }, 3000)
 

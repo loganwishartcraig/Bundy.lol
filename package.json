@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "gulp": "gulp"
+    "dev": "concurrently --prefix \"[{command}] -\" --prefix--colors \"red, green, blue, yellow\" --kill-others \"mongod\" \"nodemon\" \"webpack\" \"gulp\""
   },
   "dependencies": {
     "axios": "^0.15.2",
@@ -37,6 +37,7 @@
     "babel-plugin-transform-object-rest-spread": "^6.22.0",
     "babel-preset-es2015": "^6.22.0",
     "babel-preset-react": "^6.22.0",
+    "concurrently": "^3.4.0",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^3.1.1",
     "gulp-cli": "^1.3.0",

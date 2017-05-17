@@ -4,15 +4,12 @@ const mongoose = require('mongoose'),
     // ObjectId = Schema.ObjectId;
  
 const GroupModel = mongoose.model('Group', new Schema({
-  // id: { type: String },
   name: { type: String },
   password: { type: String },
   members: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   tasks: [{ type: Schema.Types.ObjectId, ref: 'Task' }],
   createdBy: String,
   groupCreated: { type: Date, default: Date.now }
-  // tasksCompleted: { type: Number, default: 0 },
-  // tasksStarted: { type: Number, default: 0}
 }));
 
 

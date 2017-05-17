@@ -3,7 +3,7 @@ const mongoose = require('mongoose'),
 
 const bcrypt = require('bcryptjs');
 
-const _genrateHash = (password, salt) => {
+const _genrateHash = (password) => {
 
   return new Promise((res, rej) => {
 

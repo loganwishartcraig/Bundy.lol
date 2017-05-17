@@ -20,8 +20,8 @@ const TodoItemOptions = ({
   completed
 }) => (
   <span className="todo--options">
-    {(!completed) ? <button className="text--btn--grey todo--btn--edit" onClick={_handleTodoEdit(_id)}>Edit</button> : null} 
-    <button className="text--btn--grey todo--btn--delete" onClick={_handleTodoDelete(_id)}>Delete</button>
+    {(!completed) ? <button className="text--btn--grey btn--edit" onClick={_handleTodoEdit(_id)}>Edit</button> : null} 
+    <button className="text--btn--grey btn--delete" onClick={_handleTodoDelete(_id)}>Delete</button>
   </span>
 );
 

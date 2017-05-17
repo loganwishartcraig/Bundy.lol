@@ -5,7 +5,6 @@ import Logger from '../Utility/Logging'
 
 import { CacheService } from '../Services/CacheService';
 
-import { AuthActions } from '../Actions/AuthActions'
 import { AuthConstants } from '../Constants/AuthConstants';
 
 class _AuthStore extends EventEmitter {
@@ -41,9 +40,7 @@ class _AuthStore extends EventEmitter {
 
 const AuthStore = new _AuthStore();
 
-AppDispatcher.register(action => {
-
-  Logger.log('Action recieved!', action)
+const AuthDispatchToken = AppDispatcher.register(action => {
 
   switch(action.type) {
 
@@ -61,5 +58,7 @@ AppDispatcher.register(action => {
   }
 
 }); 
+
+export { AuthDispatchToken }
 
 export default AuthStore;

@@ -2,11 +2,17 @@ import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 
 import Logger from '../Utility/Logging';
 
+import { ErrorActions } from '../Actions/ErrorActions';
+
 import { CacheService } from '../Services/CacheService';
 import { GroupService } from '../Services/GroupService';
 
 import { GroupConstants } from '../Constants/GroupConstants';
 
+
+const handleReqFail = err => {
+  if (err.msg) ErrorActions.setError(err.msg);  
+}
 
 const setFromCache = () => {
 
@@ -27,9 +33,7 @@ const joinGroup = (groupReq) => {
       Logger.log('Group joined!', group);
       addGroup(group)
     })
-    .catch(err => {
-      Logger.log('Join failed...', err);
-    });
+    .catch(handleReqFail);
 
 };
 
@@ -43,9 +47,7 @@ const createGroup = (groupReq) => {
       Logger.log('Group created!', group);
       addGroup(group);
     })
-    .catch(err =>{
-      Logger.log('Create failed...', err);
-    })
+    .catch(handleReqFail)
 
 };
 
@@ -101,6 +103,19 @@ const startCreate = () => {
 
 };
 
+const startManage = () => {
+  AppDispatcher.dispatch({
+    type: GroupConstants.START_MANAGE
+  });
+};
+
+const endManage = () => {
+  AppDispatcher.dispatch({
+    type: GroupConstants.END_MANAGE
+  })
+}
+
+
 const removeGroup = (groupId) => {
 
   AppDispatcher.dispatch({
@@ -133,6 +148,8 @@ export const GroupActions = {
   cancelAdd,
   startJoin,
   startCreate,
-  leaveGroup
+  leaveGroup,
+  startManage,
+  endManage
   
 };

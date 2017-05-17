@@ -66,7 +66,7 @@ router.post('/join',
 
         for (let i = 0; i < user.memberOf.length; i++) {
           // console.log(groupReq.name, user.memberOf[i].name)
-          if (groupReq.name === user.memberOf[i].name.toString()) return res.status(400).json({status: 400, msg: "User is already a member"});
+          if (groupReq.name === user.memberOf[i].name.toString()) return res.status(400).json({status: 400, msg: "Already a member"});
         }
 
         GroupService

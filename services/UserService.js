@@ -11,16 +11,20 @@ const _getBy = (query) => {
       .findOne(query)
       .populate({
         path: 'memberOf',
-        select: 'name members tasks createdBy',
-        populate: {
+        select: '_id name members tasks createdBy',
+        populate: [{
           path: 'tasks',
           model: 'Task',
-          select: 'title createdBy dateCreated completed completedBy dateCompleted'
-        }
+          select: '_id title createdBy dateCreated completed completedBy dateCompleted'
+        }, {
+          path: 'members',
+          model: 'User',
+          select: '_id fName lName'
+        }]
       })
       .then(user => {
         if (user === null) return rej({status: 400, msg: 'User not found'});
-        res(user);
+        res(user.toObject());
       })
       .catch(err => {
         rej({status: 500, msg: `Error looking user up`});
@@ -48,7 +52,7 @@ const createUser = userObject => {
       .findOne({email: userObject.email})
       .then(existing => {
 
-        if (existing) return rej({status: 400, msg: `Email "${userObject.email}" already used.`});
+        if (existing) return rej({status: 400, msg: `Email already in use.`});
 
         let user = new UserModel(userObject);
 
@@ -85,9 +89,27 @@ const getByToken = token => {
   });
 };
 
+const removeFavorite = (userId, faveId) => {
+  return new Promise((res, rej) => {
+      
+    _getBy({_id: userId})
+      .then(user => {
+
+        user.favorites = user.favorites.filter(favorite => favorite.id !== faveId)
+        user.save();
+        res();
+      })
+      .catch(err => {
+        rej(err);
+      })
+
+  })
+}
+
 module.exports = {
   getByEmail,
   getById,
   getByToken,
-  createUser
+  createUser,
+  removeFavorite
 };

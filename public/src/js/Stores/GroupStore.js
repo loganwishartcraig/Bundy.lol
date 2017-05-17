@@ -21,6 +21,7 @@ class _GroupStore extends EventEmitter {
     this._activeGroup = undefined;
     this._isAdding = false;
     this._isCreating = false;
+    this._managing = false;
     this._groups = undefined;
 
   }
@@ -63,12 +64,24 @@ class _GroupStore extends EventEmitter {
     if (this.hasActive()) return this._groups.filter(group => group.name === this._activeGroup)[0];
   }
 
-  getIsAdding() {
+  getActiveMembers() {
+    if (this.hasActive()) return this._groups.filter(group => group.name === this._activeGroup)[0].members;
+  }
+
+  isAdding() {
     return this._isAdding;
   }
 
-  getIsCreating() {
+  isCreating() {
     return this._isCreating;
+  }
+
+  isManaging() {
+    return this._managing;
+  }
+
+  getmanagingInfo() {
+    if (this.isManaging()) return this._groups.filter(group => group.name === this._managing)[0];
   }
 
   setDefaultActive() {
@@ -87,16 +100,7 @@ class _GroupStore extends EventEmitter {
     this.syncCache();
   } 
 
-  setIsAdding(isAdding) {
-    if (typeof isAdding !== 'boolean') return Logger.error('Tried to set invalid "isAdding"', isAdding)
-    this._isAdding = isAdding;
-  }
-
-  setIsCreating(isCreating) {
-    if (typeof isCreating !== 'boolean') return Logger.error('Tried to set invalid "showFavs"', isAdding)
-    this._isCreating = isCreating
-  }
-
+  
   addGroup(group) {
 
     this._groups.push(group);
@@ -129,10 +133,20 @@ class _GroupStore extends EventEmitter {
     this._isCreating = creating;
   }
 
+  setManaging(managing) {
+    if (typeof managing !== 'boolean') return Logger.error('Tried to set non boolean "managing"', managing);
+    this._managing = managing; 
+  }
+
+  clearManaging() {
+    this._managing = undefined;
+  }
+
   reset() {
     this._activeGroup = undefined;
     this._isAdding = false;
     this._isCreating = false;
+    this._managing = false;
     this._groups = undefined;
     this.clearCache();
   }
@@ -154,6 +168,12 @@ class _GroupStore extends EventEmitter {
     this._activeGroup = (this.hasGroups()) ? this._groups[0].name : undefined;
     console.warn('reset active', this._activeGroup, this._groups)
     this.syncCache();
+  }
+
+  resetView() {
+    this.setAdding(false);
+    this.setCreating(false);
+    this.setManaging(false);
   }
 
   removeGroup(name) {
@@ -198,6 +218,9 @@ const GroupDispatchToken = AppDispatcher.register(action => {
     case TodoConstants.ADD_TODO:
       handleTodoChange();
       break;
+    case TodoConstants.ADD_AND_FAVE_TODO:
+      handleTodoChange();
+      break;
     case TodoConstants.UPDATE_TODO:
       handleTodoChange();
       break;
@@ -210,12 +233,12 @@ const GroupDispatchToken = AppDispatcher.register(action => {
 
     case GroupConstants.ADD_GROUP:
       GroupStore.addGroup(action.group);
-      GroupStore.setAdding(false);
-      GroupStore.setCreating(false);
+      GroupStore.resetView();
       GroupStore.emitChange();
       break;
     case GroupConstants.SET_ACTIVE:
       GroupStore.setActive(action.groupName);
+      GroupStore.resetView();
       GroupStore.emitChange();
       break;
     case GroupConstants.START_ADD:
@@ -223,8 +246,7 @@ const GroupDispatchToken = AppDispatcher.register(action => {
       GroupStore.emitChange();
       break;
     case GroupConstants.CANCEL_ADD:
-      GroupStore.setAdding(false);
-      GroupStore.setCreating(false);
+      GroupStore.resetView();
       GroupStore.emitChange();
       break;
     case GroupConstants.START_JOIN:
@@ -235,12 +257,17 @@ const GroupDispatchToken = AppDispatcher.register(action => {
       GroupStore.setCreating(true);
       GroupStore.emitChange();
       break;
+    case GroupConstants.START_MANAGE:
+      GroupStore.setManaging(true);
+      GroupStore.emitChange()
+      break;
+    case GroupConstants.END_MANAGE:
+      GroupStore.clearManaging();
+      GroupStore.emitChange();
+      break;
     case GroupConstants.REMOVE_GROUP:
-      // to implement
-      // -- User must update(?)
-      // -- Tasks must update ++
-      // -- Active may need to update ++
       GroupStore.removeGroup(action.id);
+      GroupStore.resetView();
       GroupStore.emitChange();
       break;
     default:

@@ -40,12 +40,20 @@ const completeTask = function completeTask(taskId, user) {
 
         if (task.completed) return rej({status: 400, msg: "Task already complete"});
 
+        console.log('task before', task, user._id.toString(), user.fName.toString())
+
         task.completed = true;
-        task.completedBy._id = user._id;
-        task.completedBy.name = user.fName;
+        task.completedBy = {
+          _id: user._id.toString(),
+          name: user.fName.toString()
+        };
         task.dateCompleted = Date.now();
 
-        task.save();
+        console.log('task after', task, user._id.toString(), user.fName.toString())
+
+        task.save(err => {
+          console.log('save error', err)
+        });
 
         res(task);
 
@@ -102,7 +110,7 @@ const editTask = function editTask(taskId, taskTitle, userId) {
       .then(task => {
         if (task === null) return rej({status: 400, msg: "Task not found"});
 
-        if (task.createdBy._id !== userId) return rej({status: 400, msg: "Task isn't owned by user"});
+        if (task.createdBy._id.toString() !== userId.toString()) return rej({status: 400, msg: "Task isn't owned by user"});
 
         console.log(task);
 

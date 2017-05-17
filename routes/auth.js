@@ -44,12 +44,12 @@ router.post('/login',
           })
           .catch(err => {
             console.log(`\t|- Auth Route --> post('/login') --> Error processing password`);
-            res.status(err.status).json(err);
+            res.status(400).json({status: 400, msg: "Incorrect email or password"});
           })
       })
       .catch(err => {
         console.log(`\t|- Auth Route --> post('/login') --> Error looking up user`);
-        res.status(err.status).json(err);
+        res.status(400).json({status: 400, msg: "Incorrect email or password"});
       });
 
 });

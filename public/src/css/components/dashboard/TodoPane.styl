@@ -1,17 +1,14 @@
 @import '../../variables/color.styl'
 
 .todo--container {
-  display: flex
-  flex-direction: column
   height: 85%
-  padding: 0 1em
 }
 
-.todo--header {
+.todo--create--desc {
+  width: 100%
   text-align: center
-  border-bottom: 1px solid $primary-pink
-  border-top: 1px solid $primary-pink
-  padding: .25em 0
+  display: inline-block
+  padding: 2em 0
 }
 
 .todo--filters {
@@ -39,43 +36,67 @@
   
 }
 
+.todo--owner {
+  font-weight: 400
+}
 
 .todo--list {
-  height: 100%
+  flex-grow: 2
   border-bottom: 1px solid $primary-pink
   overflow-y: auto
+  position: relative
+
+  &.empty > li {
+    text-align: center
+    position: absolute
+    bottom: 50%
+    left: 0
+    transform: translateY(-50%)
+    width: 100%
+    font-style: italic
+    color: $light-grey
+  }
+
 }
 
+.empty--req--add {
+  font-style: italic
+  text-decoration: underline
+  display: inline-block
+}
 
 .todo--add {
+  position: relative
   text-align: right
+  padding: 1em
 }
 
-
-
-
-.todo--add--btn, 
-.todo--cancel--btn {
-  padding: .75em 3em
-  margin: 1em
-  font-size: .9rem
-  
-  &::before {
-    font-weight: 400
-  }
-  
+.manage--group--btn {
+  position: absolute
+  left: 1em
 }
 
-.todo--list {
-  height: 100%
-  overflow-y: auto
-}
 
 .todo--item {
   padding: 1em 
   border-bottom: 1px solid $dark-grey
   position: relative
   overflow: hidden;
+  
+  &:not(:hover) .todo--options {
+    display: none 
+  }
+  
+  &:hover .todo--options {
+    display: inline-block 
+  }
+
+  &.complete .todo--meta {
+    color: $medium-grey
+    & .todo--request {
+      color: $medium-grey
+    }
+  }
 }
 
 .todo--complete--btn {
@@ -88,19 +109,11 @@
   vertical-align: middle
   padding-left: 1em
   width: 60%;
-  // white-space: nowrap
-  // text-overflow: ellipsis
-  // overflow: hidden
 }
-
-// .todo--title {
-//   white-space: nowrap;
-//   text-overflow: ellipsis;
-//   overflow: hidden;
-// }
 
 .todo--request {
   display: block
+  color: $light-grey
 }
 
 .todo--options {
@@ -108,39 +121,16 @@
   right: 1em
   top: 50%
   transform: translateY(-50%)
+  
+  & > button {
+    margin-right: .75em
+  }
+
 }
 
-.todo--btn--edit, .todo--btn--save {
-  margin-right: .75em
-}
 
 .todo--btn--save {
   margin-left: .75em
-}
-
-.todo--btn--edit::before {
-  font-family: FontAwesome
-  content: '\f040\00a0'
-}
-
-.todo--btn--delete::before {
-  font-family: FontAwesome
-  content: '\f00d\00a0'
-}
-
-.todo--btn--save::before{
-  font-family: FontAwesome
-  content: '\f0c7\00a0'
-}
-
-.add--btn::before {
-  font-family: FontAwesome
-  content: '\f196\00a0'
-}
-
-.btn--cancel::before {
-  font-family: FontAwesome
-  content: '\f05e\00a0'
 }
 
 .todo--input--edit {
@@ -149,22 +139,94 @@
 }
 
 .todo--create--actions {
-  text-align: right
+  text-align: left
   width: 100%
-  position: relative
-  bottom: -1px
-  right: 0
+  margin-top: 1rem
+  
+  > button:first-child {
+    margin-right: 1rem
+  }
+}
+
+.todo--edit--actions > button:first-child {
+  margin: 0 1em
 }
 
 .todo--form {
   position: relative
   height: 100%
-  padding-top: 1em;
-  display: flex;
-  flex-direction: column;
-  // padding-bottom: 68px;
 }
 
 .todo--create--input {
   flex-grow: 2
+  // text-align: center
+  max-width: 450px
+  width: 100%
+  margin: 0 auto
+  
+  & label[for="favorite"] {
+    margin-left: .5rem
+  }
+
+}
+
+.no--group--msg {
+
+  position: relative
+  height: 100%
+
+  & > span {
+
+    color: $light-grey
+    font-style: italic
+    display: inline-block
+    width: 100%
+    text-align: center
+    position: absolute
+    bottom: 50%
+    left: 0px
+    transform: translateY(-50%)
+
+  }
+
+}
+
+
+.add--todo--container {
+  flex-grow: 2
+}
+
+.todo--fave--container {
+  flex-grow: 2
+}
+
+.todo--fave--header {
+  margin-top: .5em
+}
+
+.todo--fave--list {
+  position: relative
+  flex-grow: 2
+  border-top: 1px solid $medium-grey
+}
+.todo--fave {
+
+  &:not(:hover) .fave--del--btn {
+    display: none  
+  }
+  
+  &:hover .fave--del--btn {
+    display: inline-block
+  }
+  
+}
+
+.fave--del--btn  {
+  position: absolute
+  right: 1em
+}
+
+.todo--fave--actions {
+  padding: 1em
+  text-align: right
 }

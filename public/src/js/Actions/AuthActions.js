@@ -1,56 +1,35 @@
 import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 import Logger from '../Utility/Logging'
 
+import { ErrorActions } from '../Actions/ErrorActions';
+
 import { CacheService } from '../Services/CacheService';
 import { AuthConstants } from '../Constants/AuthConstants';
 import { AuthService } from '../Services/AuthService';
 
+
 import { UserActions } from './UserActions';
 
-// const init = () => {
-
-//   return new Promise((res, rej) => {
-
-//     AuthService
-//       .init()
-//       .then(() => {
-//         dispatchSet();
-//         res();
-//       })
-//       .catch(() => {
-//         rej();
-//       });
-
-//   });
-
-// };
 
 const setFromCache = () => {
   AuthService.setFromCache()
 }
 
-const _handleAuthSuccess = () => {
-  dispatchSet();
-  // UserActions.setUser(user)
-}
-
-const _handleAuthFail = err => {
-  Logger.error('Handling auth failure', err);
-  dispatchRemoved();
+const handleReqFail = err => {
+  if (err.msg) ErrorActions.setError(err.msg);  
 }
 
 
 const login = credentials => {
 
   Logger.log('Attempting login...', credentials);
+
   (credentials.rememberMe) ? CacheService.enable() : CacheService.disable();
 
   AuthService
     .login(credentials)
-    .then(_handleAuthSuccess)
-    .catch(err => {
-      console.warn(err)
-    });
+    .then(dispatchSet)
+    .catch(handleReqFail);
 
 };
 
@@ -60,13 +39,11 @@ const register = (userReq) => {
 
   (userReq.rememberMe) ? CacheService.enable() : CacheService.disable();
 
-
   AuthService
     .register(userReq)
-    .then(_handleAuthSuccess)
-    .catch(err => {
-      console.warn(err)
-    })
+    .then(dispatchSet)
+    .catch(handleReqFail);
+    
 };
 
 const logout = () => {

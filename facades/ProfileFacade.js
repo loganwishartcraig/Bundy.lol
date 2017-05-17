@@ -16,7 +16,8 @@ const getProfileByToken = (token) => {
         UserService
           .getById(userId)
           .then(user => {
-            let payload = {user: user.toObject()}
+
+            let payload = {user: user}
 
             payload.groups = user.memberOf.slice(0)
 

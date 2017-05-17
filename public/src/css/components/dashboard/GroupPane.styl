@@ -13,6 +13,7 @@
   display: block
   padding: .25em
   margin: .5rem 1rem
+  margin-bottom: 1rem
   text-align: center
   border-bottom: 1px solid $primary-pink
 }
@@ -23,10 +24,6 @@
 
 .group--selector {
   overflow-y: auto
-}
-
-.group--item:last-of-type > .group--btn {
-  // border-bottom: 1px solid transparent
 }
 
 .group--btn {
@@ -57,14 +54,12 @@
 
 .group--add--btn {
   display: block
-  margin: 0 auto  
-  margin-top 1em
+  margin: 1em auto  
   padding: .5em 1em
+  font-weight: bold
 }
 
-.group--join--container {
-  margin-top: .5em
-}
+
 
 .group--join--actions {
   text-align: center
@@ -79,3 +74,38 @@
   display: block
   margin: 0 auto
 }
+
+
+
+
+
+
+
+
+.group--manage--container {
+  height: 85%
+}
+
+.group--member--list {
+  flex-grow: 2;
+  overflow-y: auto;
+  border-bottom: 1px solid $primary-pink
+  
+  & > li:last-of-type {
+    border-bottom: none
+  }
+}
+
+.group--member {
+  padding: 1em
+  border-bottom: 1px solid $medium-grey
+}
+
+.group--member--actions {
+  padding: 1em
+
+ > button:not(:last-of-type) {
+  margin-right: 1em
+ }
+}
+

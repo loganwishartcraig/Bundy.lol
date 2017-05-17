@@ -27,8 +27,8 @@ export class App extends Component {
   }
 
   _handleAuthChange() {
-    Logger.log('handling auth change...')
     this.setState(getAppState());
+    Logger.log('handling auth change...', this.state)
     // if (this.state.hasAuth) {
     //   browserHistory.push('/');
     // };

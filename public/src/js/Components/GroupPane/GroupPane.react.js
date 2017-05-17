@@ -6,15 +6,12 @@ import { GroupActions } from '../../Actions/GroupActions';
 import GroupStore from '../../Stores/GroupStore';
 
 import GroupSelector from './GroupSelector.react';
-import AddGroup from './AddGroup.react';
 
 const getGroupState = () => ({
   groups: GroupStore.getGroups(),
   activeGroup: GroupStore.getActiveName(),
   hasGroups: GroupStore.hasGroups(),
-  hasActive: GroupStore.hasActive(),
-  isAdding: GroupStore.getIsAdding(),
-  isCreating: GroupStore.getIsCreating()
+  hasActive: GroupStore.hasActive()
 });
 
 export default class GroupPane extends Component {
@@ -56,18 +53,9 @@ export default class GroupPane extends Component {
 
     return(
       <section className="group--container">
-        <header className="group--header">Groups</header>  
-         
-          {(this.state.isAdding) ?
-              <AddGroup isCreating={this.state.isCreating} />
-           : 
-              <GroupSelector hasGroups={this.state.hasGroups} groups={this.state.groups} activeGroup={this.state.activeGroup} />
-              
-          }
-
-          {(!this.state.isAdding) ? <button className="group--add--btn wire--btn--blue" onClick={this._handleGroupAdd}>+ Add Group</button> : null}
-
-         
+        <h4 className="group--header">Groups</h4>     
+        <GroupSelector hasGroups={this.state.hasGroups} groups={this.state.groups} activeGroup={this.state.activeGroup} />
+        <button className="group--add--btn wire--btn--blue add--btn" onClick={this._handleGroupAdd}>Add Group</button>         
       
       </section>
     )

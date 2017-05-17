@@ -11,8 +11,10 @@ import { AuthConstants } from '../Constants/AuthConstants';
 import { ProfileConstants } from '../Constants/ProfileConstants';
 import { UserConstants } from '../Constants/UserConstants';
 import { GroupConstants } from '../Constants/GroupConstants';
+import { TodoConstants } from '../Constants/TodoConstants'
 
-// import GroupStore, { GroupDispatchToken } from '../Stores/GroupStore';
+import { AuthDispatchToken } from './AuthStore';
+import { TodoDispatchToken } from './TodoStore';
 
 class _UserStore extends EventEmitter {
 
@@ -31,6 +33,11 @@ class _UserStore extends EventEmitter {
   getUserId() {
     if (!this.hasUser()) return undefined;
     return this._user._id;
+  }
+
+  getFaves() {
+    if (!this.hasUser()) return [];
+    return this._user.favorites
   }
 
   setFromCache() {
@@ -55,19 +62,29 @@ class _UserStore extends EventEmitter {
     this.syncCache();
   }
 
+  addFavorite(fave) {
+    this._user.favorites.push(fave);
+    this.syncCache();
+  }
+
   hasUser() {
-    // console.warn(this._user)
     return this._user !== undefined
+  }
+
+  hasFaves() {
+    if (!this.hasUser()) return false;
+    return this._user.favorites.length > 0
+  }
+
+  removeFave(faveId) {
+    this._user.favorites = this._user.favorites.filter(favorite => console.log(favorite.id !== faveId));
+    this.syncCache();
   }
 
   reset() {
     this._user = undefined;
     this.clearCache();
   }
-
-  // addGroup(group) {
-  //   if (this.hasUser) this._user.memberOf.push(group);
-  // }
 
   emitChange() {
     this.emit('change');
@@ -91,7 +108,8 @@ AppDispatcher.register(action => {
 
 
     case AuthConstants.TOKEN_SET:
-      UserStore.setFromCache()
+      // UserStore.setFromCache();
+      UserStore.setFromCache();
       UserStore.emitChange();
       break;
     case AuthConstants.TOKEN_REMOVED:
@@ -104,20 +122,22 @@ AppDispatcher.register(action => {
       UserStore.emitChange();
       break;
 
-    // case UserConstants.SET_USER_FROM_CACHE:
-    //   UserStore.setFromCache()
-    //   UserStore.emitChange();
-    //   break;
-
     case UserConstants.SET_USER:
       UserStore.setUser(action.user);
       UserStore.emitChange();
       break;    
-    
-    // case GroupConstants.ADD_GROUP:
-    //   UserStore.addGroup(action.group);
-    //   UserStore.emitChange();
-    //   break;
+    case UserConstants.REMOVE_FAVE:
+      UserStore.removeFave(action.faveId);
+      UserStore.emitChange();
+      break;
+
+    case TodoConstants.ADD_AND_FAVE_TODO:
+      AppDispatcher.waitFor([TodoDispatchToken]);
+      UserStore.addFavorite(action.toFave)
+      UserStore.emitChange();
+      break;
+  
+
 
     default:
       break;
@@ -125,5 +145,7 @@ AppDispatcher.register(action => {
   }
 
 });
+
+
 
 export default UserStore;

@@ -43,12 +43,29 @@ const setUser = (user) => {
 
 };
 
+const removeFave = (faveId) => {
+  AppDispatcher.dispatch({
+    type: UserConstants.REMOVE_FAVE,
+    faveId: faveId
+  })
+}
 
+const deleteFave = (faveId) => {
+  UserService
+    .delFave(faveId)
+    .then(() => {
+      removeFave(faveId)
+    })
+    .catch(err => {
+      console.warn('error deleting faveorite...', err)
+    })
+};
 
 export const UserActions = {
 
   setFromCache,
   setUser,
-  updateUser
+  updateUser,
+  deleteFave
   
 }

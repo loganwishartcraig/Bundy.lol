@@ -19,12 +19,13 @@ class _TodoStore extends EventEmitter {
 
     this._todos = undefined;
     this._isCreating = false;
+    this._showFaves = false;
     this._editing = undefined;
 
     this._availableFilters = {
       'ALL': () => (true),
-      'COMPLETE': (todo) => (todo.completed),
-      'INCOMPLETE': (todo) => (!todo.completed)
+      'INCOMPLETE': (todo) => (!todo.completed),
+      'COMPLETE': (todo) => (todo.completed)
     }
     this._activeFilter = 'ALL';
 
@@ -59,6 +60,10 @@ class _TodoStore extends EventEmitter {
     return this._isCreating;
   }
 
+  isShowingFaves() {
+    return this._showFaves;
+  }
+
   isEditing() {
     return this._editing !== undefined;
   }
@@ -73,6 +78,10 @@ class _TodoStore extends EventEmitter {
     this._isCreating = creating;
   }
 
+  setShowFaves(show) {
+    this._showFaves = show;
+  }
+
   setFilter(id) {
     if (this._availableFilters.hasOwnProperty(id)) this._activeFilter = id; 
   }
@@ -85,10 +94,10 @@ class _TodoStore extends EventEmitter {
     this._todos.push(todo)
   }
 
-  
   reset() {
     this._todos = undefined;
     this._isCreating = false;
+    this._showFaves = false;
     this._activeFilter = 'ALL';
     this._editing = undefined;
   }
@@ -97,6 +106,11 @@ class _TodoStore extends EventEmitter {
     this._editing = undefined;
   }
   
+  resetView() {
+    this._isCreating = false;
+    this._showFaves = false;
+  }
+
   emitChange() {
     this.emit('change');
   }
@@ -170,6 +184,7 @@ const TodoDispatchToken = AppDispatcher.register(action => {
       break;
     case GroupConstants.SET_ACTIVE:
       handleGroupChange();
+      TodoStore.resetView();
       TodoStore.emitChange();
       break;
     case GroupConstants.ADD_GROUP:
@@ -183,15 +198,25 @@ const TodoDispatchToken = AppDispatcher.register(action => {
       
     case TodoConstants.ADD_TODO:
       TodoStore.addTodo(action.todo);
-      TodoStore.setCreating(false);
+      TodoStore.resetView();
       TodoStore.emitChange();
+      break;
+    case TodoConstants.ADD_AND_FAVE_TODO:
+      TodoStore.addTodo(action.todo);
+      TodoStore.resetView();
+      // change to be emitted by user store
       break;
     case TodoConstants.START_CREATE:
       TodoStore.setCreating(true);
+      TodoStore.setShowFaves(false);
+      TodoStore.emitChange();
+      break;
+    case TodoConstants.SHOW_FAVES:
+      TodoStore.setShowFaves(true);
       TodoStore.emitChange();
       break;
     case TodoConstants.END_CREATE:
-      TodoStore.setCreating(false);
+      TodoStore.resetView();
       TodoStore.emitChange();
       break;
     case TodoConstants.UPDATE_TODO:

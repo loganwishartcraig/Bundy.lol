@@ -3,14 +3,12 @@ import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 import { TodoConstants } from '../Constants/TodoConstants';
 import { TodoService } from '../Services/TodoService';
 
-const createTodo = (groupId, todo) => {
+const createTodo = (groupId, todoReq) => {
 
-  console.warn('Adding', groupId, todo)
   TodoService
-    .createTodo(groupId, todo)
-    .then(todo => {
-      console.warn(todo);
-      addTodo(todo);
+    .createTodo(groupId, todoReq)
+    .then(res => {
+      (todoReq.favorite) ? addAndFaveTodo(res.task, res.toFave) : addTodo(res.task);
     })
     .catch(err => {
       console.error(err)
@@ -24,6 +22,14 @@ const addTodo = (todo) => {
     todo: todo
   });
 };
+
+const addAndFaveTodo = (todo, toFave) => {
+  AppDispatcher.dispatch({
+    type: TodoConstants.ADD_AND_FAVE_TODO,
+    todo: todo,
+    toFave: toFave
+  })
+}
 
 const startCreate = () => {
   AppDispatcher.dispatch({
@@ -105,6 +111,12 @@ const dispatchEdit = (todoId, todo) => {
   });
 };
 
+const showFaves = () => {
+  AppDispatcher.dispatch({
+    type: TodoConstants.SHOW_FAVES
+  });
+};
+
 const comitEdit = (newText, todoId, userId) => {
 
   TodoService
@@ -129,5 +141,6 @@ export const TodoActions = {
   setFilter,
   startEdit,
   endEdit,
-  comitEdit
+  comitEdit,
+  showFaves
 }

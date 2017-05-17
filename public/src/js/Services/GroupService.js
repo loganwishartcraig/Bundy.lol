@@ -37,15 +37,6 @@ class _GroupService {
     CacheService.remove(this._groupKey);
   }
 
-  updateGroup(groupId, newGroup) {
-
-  }
-  
-
-  leaveGroup(groupName) {
-    
-  }
-
   joinGroup(groupReq) {
     return new Promise((res, rej) => {
       axios
@@ -89,7 +80,7 @@ class _GroupService {
         res();
       })
       .catch(err => {
-        rej(err);
+        rej(err.response);
       })
 
     })

@@ -28,8 +28,6 @@ class _TodoService {
     
     return new Promise((res, rej) => {
 
-      // axios.post('todo/')
-
       axios.post('task/create', {
         taskReq: {
           task: todoReq,
@@ -37,17 +35,15 @@ class _TodoService {
         }
       })
       .then(response => {
-        res(response.data.task);
+        res(response.data);
       })
       .catch(err => {
-        rej(err.response.data);
-        // rej(err.response.data);
+        rej(err);
       });
-      // res({text: 'API RETURNED TODO'});
-      
     });
 
-  }
+  };
+
 
   markComplete(todoId) {
 
@@ -58,10 +54,9 @@ class _TodoService {
       })
       .then(response => {
         res(response.data.task);
-        // res(response.data.task)
       })
       .catch(err => {
-        rej(err.response.data);
+        rej(err);
       });
 
     });
@@ -81,7 +76,7 @@ class _TodoService {
         res();
       })
       .catch(err => {
-        rej(err.response.data);
+        rej(err);
       });
 
     });
@@ -99,7 +94,7 @@ class _TodoService {
         res(response.data.task);
       })
       .catch(err => {
-        rej(err.response.data);
+        rej(err);
       });
 
     });

@@ -5,13 +5,13 @@ export default class DatePane extends Component {
     super(context, props)
 
     this.days = [
+      'Sunday',
       'Monday',
       'Tuesday',
       'Wednesday',
       'Thursday',
       'Friday',
-      'Saturday',
-      'Sunday'
+      'Saturday'
     ]
 
     this.months = [
@@ -33,7 +33,7 @@ export default class DatePane extends Component {
 
   formatDate(date) {
    
-    let formatted = this.days[date.getDay() - 1];
+    let formatted = this.days[date.getDay()];
 
     formatted += ' '.concat(this.months[date.getMonth()]);
 

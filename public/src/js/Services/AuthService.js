@@ -49,7 +49,7 @@ class _AuthService {
         res(response.data.user);
       })
       .catch(err => {
-        Logger.error('POST Failed...', err.response.data);
+        Logger.error('POST Failed...', err);
         rej(err.response.data);
       });
 
@@ -73,7 +73,7 @@ class _AuthService {
         res(response.data.user);
       })
       .catch(err => {
-        Logger.error('POST Failed...', err.response.data);
+        Logger.error('POST Failed...', err);
         rej(err.response.data);
       });
       
@@ -93,22 +93,21 @@ class _AuthService {
     this._setSession(sessionToken);
   }
 
-  getFromCache() {
-    return new Promise((res, rej) => {
+  // getFromCache() {
+  //   return new Promise((res, rej) => {
 
-      this
-        ._getFromCache()
-        .then(sessionToken => {
-          console.warn(sessionToken)
-          if (sessionToken) res(sessionToken)
-            else rej({msg: 'No session token found'})
-        })
-        .catch(err => {
-          rej(err);
-        });
+  //     this
+  //       ._getFromCache()
+  //       .then(sessionToken => {
+  //         if (sessionToken) res(sessionToken)
+  //           else rej({msg: 'No session token found'})
+  //       })
+  //       .catch(err => {
+  //         rej(err);
+  //       });
 
-    });
-  }
+  //   });
+  // }
 
 }
 

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Link, browserHistory } from 'react-router';
-
 import * as axios from 'axios';
+
+import ErrorDisplay from '../Components/ErrorDisplay/ErrorDisplay.react';
 
 import { AuthActions } from '../Actions/AuthActions';
 
@@ -40,17 +41,17 @@ export class Login extends Component {
       <section className="section--container">
         <header className="section--header">Log In</header>
 
-        <form className="form--root" onSubmit={this._handleRegSubmit} action="/user/login" method="POST">
+        <form className="form--root landing--form" onSubmit={this._handleRegSubmit} action="/user/login" method="POST">
           <div className="form--group">
             <label htmlFor="email">
               <span className="input--label">Email Address</span>
-              <input className="form--input full" onChange={this._handleInputChange} type="email" name="email" id="email" value={this.state.email} placeholder="you@domain.com" />
+              <input className={"form--input full"} onChange={this._handleInputChange} type="email" name="email" id="email" value={this.state.email} placeholder="you@domain.com" required/>
             </label>
           </div>
           <div className="form--group">
             <label htmlFor="password">
               <span className="input--label">Password</span>
-              <input className="form--input full" onChange={this._handleInputChange} type="password" name="password" id="password" value={this.state.password} placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"/>
+              <input className="form--input full" onChange={this._handleInputChange} type="password" name="password" id="password" value={this.state.password} placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required/>
             </label>
           </div>
           <div className="form--group">
@@ -62,8 +63,9 @@ export class Login extends Component {
           <div className="form--group">
             <button className="btn--md btn--primary full" type="submit">Go</button>
           </div>
+          <ErrorDisplay addClass="login--err" />
         </form>
-        <Link className="login--reg--toggle" to='/register'>Wait, I need to create an accout</Link>  
+        <Link className="login--reg--toggle light--text--btn" to='/register'>Wait, I need to create an accout</Link>  
       </section>
     );
   }

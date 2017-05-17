@@ -12,6 +12,7 @@ export default class TodoItemEditing extends Component {
 
     this._handleInputChange = this._handleInputChange.bind(this);
     this._handleEditComit = this._handleEditComit.bind(this);
+    this._handleKeyUp = this._handleKeyUp.bind(this);
   }
 
   _handleEditComit(evt) {
@@ -28,12 +29,20 @@ export default class TodoItemEditing extends Component {
     this.setState({text: evt.target.value})
   }
 
+  _handleKeyUp(evt) {
+    if (evt.which == 13 || evt.keyCode == 13) {
+      if (this.state.text.length !== 0) this._handleEditComit()
+    }
+  }
+
   render() {
     return(
       <li className="todo--item editing">
-        <input autoFocus className="form--input full todo--input--edit" type="text" value={this.state.text} onChange={this._handleInputChange}/> 
-        <button className="text--btn--grey todo--btn--save" onClick={this._handleEditComit}>Save</button> 
-        <button className="text--btn--grey btn--cancel" onClick={this._handleEditCancel}>Cancel</button>
+        <input autoFocus className="form--input full todo--input--edit" type="text" value={this.state.text} onKeyUp={this._handleKeyUp} onChange={this._handleInputChange} required="required"/> 
+        <div className="todo--edit--actions">
+          <button className="text--btn--grey btn--save" onClick={this._handleEditComit}>Save</button> 
+          <button className="text--btn--grey btn--cancel" onClick={this._handleEditCancel}>Cancel</button>
+        </div>
       </li>
     )
   }

@@ -5,6 +5,7 @@ import Logger from './Utility/Logging'
 
 import AuthStore from './Stores/AuthStore';
 import { AuthActions } from './Actions/AuthActions';
+import { ErrorActions } from './Actions/ErrorActions';
 
 import { App } from './App.react'
 import { Registration } from './Pages/Registration.react';
@@ -25,6 +26,7 @@ class PageNotFound extends Component {
 const dashRedirect = (nextState, replace, callback) => {
 
   Logger.log('Checking auth for auto redirect', {auth: AuthStore.hasAuth()})
+  ErrorActions.clearError()
   if (AuthStore.hasAuth()) replace('/');
   // else replace('/login')
   callback();
@@ -60,7 +62,7 @@ const render = () => {
 
 (function startApp() {
 
-  Logger.setLogLevel(3);
+  Logger.setLogLevel(2);
 
   // render()
   
