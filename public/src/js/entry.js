@@ -28,7 +28,6 @@ const dashRedirect = (nextState, replace, callback) => {
   Logger.log('Checking auth for auto redirect', {auth: AuthStore.hasAuth()})
   ErrorActions.clearError()
   if (AuthStore.hasAuth()) replace('/');
-  // else replace('/login')
   callback();
 
 };
@@ -62,11 +61,8 @@ const render = () => {
 
 (function startApp() {
 
-  Logger.setLogLevel(2);
-
-  // render()
+  Logger.setLogLevel(3);
   
-  // AuthActions.setFromCache()
   AuthActions.setFromCache();
   render();
 

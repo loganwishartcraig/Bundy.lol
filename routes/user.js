@@ -46,7 +46,7 @@ router.post('/create', (req, res) => {
         .setCredentials(user._id, userRequest.password)
         .then(token => {
           res.status(200).json({
-            // user: serializeUserReq.serialize(user),
+            user: user,
             token: token
           })
         })

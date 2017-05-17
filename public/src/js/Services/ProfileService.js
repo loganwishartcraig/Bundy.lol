@@ -10,34 +10,23 @@ class _ProfileService {
 
   constructor() {
   
-    this._cacheRegister = {};
-
   } 
-
-
-
-  getCached(key) {
-
-  }
-
-  clearStorage() {
-
-  }
-
-  syncCache() {
-    for (let key in this._cacheRegister) {
-      
-    }
-  }
 
   getProfile() {
     return new Promise((res, rej) => {
       setTimeout(function() {
 
       axios
-        .get('profile/')
+        .get('user/')
         .then(response => {
-          res(response.data);
+
+          let user = response.data.user,
+              groups = user.memberOf;
+
+              delete user.memberOf;
+
+          res({user: user, groups: groups});
+
         })
         .catch(err => {
           rej(err);

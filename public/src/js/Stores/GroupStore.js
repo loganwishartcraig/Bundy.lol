@@ -200,7 +200,7 @@ const GroupDispatchToken = AppDispatcher.register(action => {
 
 
     case AuthConstants.TOKEN_SET:
-      GroupStore.setFromCache();
+      (action.groups) ? GroupStore.setGroups(action.groups) : GroupStore.setFromCache();
       GroupStore.emitChange();
       break;
     case AuthConstants.TOKEN_REMOVED:

@@ -17,14 +17,21 @@ class _AuthService {
 
   setFromCache() {
     
-    let cached = CacheService.get(this.cacheKey)
+    return new Promise(function(res, rej) {
 
-    if (cached !== undefined) {
-      this._setSession(cached)
-      AuthActions.dispatchSet();
-    } else {
-      AuthActions.dispatchRemoved()
-    }
+      let cached = CacheService.get(this.cacheKey)
+
+      if (cached !== undefined) {
+        this._setSession(cached)
+        res();
+      } else {
+        rej();
+      }
+
+    }.bind(this));
+
+
+    
 
   }
 
@@ -46,7 +53,18 @@ class _AuthService {
       .then(response => {
         Logger.log('POST Successful!', response.data)
         this._setSession(response.data.token);
-        res(response.data.user);
+
+        let user = response.data.user,
+            groups = user.memberOf;
+
+            delete user.memberOf;
+
+            console.warn(user, groups)
+
+          res({user: user, groups: groups});
+
+
+        // res(response.data.user);
       })
       .catch(err => {
         Logger.error('POST Failed...', err);
@@ -70,7 +88,17 @@ class _AuthService {
       .then(response => {
         Logger.log('POST Successful!', response.data);
         this._setSession(response.data.token)
-        res(response.data.user);
+
+        let user = response.data.user,
+            groups = user.memberOf;
+
+            delete user.memberOf;
+
+            // console.warn(user, groups)
+
+        // res(response.data.user);
+          res({user: user, groups: groups});
+
       })
       .catch(err => {
         Logger.error('POST Failed...', err);

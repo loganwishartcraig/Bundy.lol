@@ -109,7 +109,7 @@ AppDispatcher.register(action => {
 
     case AuthConstants.TOKEN_SET:
       // UserStore.setFromCache();
-      UserStore.setFromCache();
+      (action.user) ? UserStore.setUser(action.user) : UserStore.setFromCache();
       UserStore.emitChange();
       break;
     case AuthConstants.TOKEN_REMOVED:

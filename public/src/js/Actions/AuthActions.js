@@ -1,7 +1,8 @@
 import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 import Logger from '../Utility/Logging'
 
-import { ErrorActions } from '../Actions/ErrorActions';
+import { ErrorActions } from './ErrorActions';
+import { ProfileActions } from './ProfileActions'
 
 import { CacheService } from '../Services/CacheService';
 import { AuthConstants } from '../Constants/AuthConstants';
@@ -12,13 +13,20 @@ import { UserActions } from './UserActions';
 
 
 const setFromCache = () => {
-  AuthService.setFromCache()
-}
+  AuthService
+    .setFromCache()
+    .then(() => {
+      AuthActions.dispatchSet();
+      ProfileActions.updateProfile();
+    })
+    .catch(() => {
+      AuthActions.dispatchRemoved();  
+    });
+};
 
 const handleReqFail = err => {
   if (err.msg) ErrorActions.setError(err.msg);  
-}
-
+};
 
 const login = credentials => {
 
@@ -28,7 +36,9 @@ const login = credentials => {
 
   AuthService
     .login(credentials)
-    .then(dispatchSet)
+    .then(payload=> {
+      dispatchSet(payload.user, payload.groups)
+    })
     .catch(handleReqFail);
 
 };
@@ -41,7 +51,9 @@ const register = (userReq) => {
 
   AuthService
     .register(userReq)
-    .then(dispatchSet)
+    .then(payload=> {
+      dispatchSet(payload.user, payload.groups)
+    })
     .catch(handleReqFail);
     
 };
@@ -57,12 +69,14 @@ const logout = () => {
 };
 
 
-const dispatchSet = () => {
+const dispatchSet = (user, groups) => {
 
   Logger.log('Dispatching TOKEN_SET')
 
   AppDispatcher.dispatch({
-    type: AuthConstants.TOKEN_SET
+    type: AuthConstants.TOKEN_SET,
+    user: user,
+    groups: groups
   });
 
 };

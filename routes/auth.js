@@ -40,7 +40,7 @@ router.post('/login',
           .getToken(user._id, credentials.password)
           .then(token => {
             console.log(`\t|- Auth Route --> post('/login') --> AuthService() --> Got token: ${token.split('.')[2].substr(0, 5).concat('...')}`);
-            res.status(200).json({token: token});
+            res.status(200).json({token: token, user: user});
           })
           .catch(err => {
             console.log(`\t|- Auth Route --> post('/login') --> Error processing password`);

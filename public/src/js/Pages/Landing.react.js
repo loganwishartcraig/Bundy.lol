@@ -4,10 +4,13 @@ import Logger from '../Utility/Logging';
 
 import { Login } from './Login.react';
 
+import AuthStore from '../Stores/AuthStore';
+
 export class Landing extends Component {
 
   componentWillMount() {
-    Logger.log('<Landing /> mounting');
+    Logger.log('<Landing /> mounting', AuthStore.hasAuth());
+    if (AuthStore.hasAuth()) browserHistory.push('/')
   }
 
   render() {
