@@ -6,6 +6,13 @@ import { TodoActions } from '../../Actions/TodoActions';
 import CreateTodo from './CreateTodo.react';
 import FaveList from './FaveList.react';
 
+
+/**
+ * Component used to handle adding new todos
+ * Will render either the 'create' page, or a users 'favorites list' depending on props
+ *
+ * @class      AddTodo (name)
+ */
 export default class AddTodo extends Component {
   constructor(props, context) {
     super(props, context); 

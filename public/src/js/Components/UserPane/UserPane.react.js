@@ -9,6 +9,12 @@ const getUserState = () => ({
   hasUser: UserStore.hasUser()
 });
 
+
+/**
+ * Component used to display user information
+ *
+ * @class      UserPane (name)
+ */
 export default class UserPane extends Component {
 
   constructor(props, context) {
@@ -26,7 +32,6 @@ export default class UserPane extends Component {
   componentWillMount() {
     Logger.log('<UserPane /> mounting', this.state)
     UserStore.setListener(this._handleUserChange)
-    // UserActions.setFromCache()
   }
 
   componentWillUnmount() {
@@ -35,9 +40,11 @@ export default class UserPane extends Component {
   }
 
   render() {
+
     return(
       <div className="user--container">
 
+        {/* If no user, display loading until user fetch completec */}
         {(this.state.hasUser) ? (
           <span className="user--name">{this.state.user.fName}</span>
         ) : <span className="user--name loading">Loading...</span>}

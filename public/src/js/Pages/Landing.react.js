@@ -1,16 +1,23 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router';
+// import { Link } from 'react-router';
 import Logger from '../Utility/Logging';
 
 import { Login } from './Login.react';
 
 import AuthStore from '../Stores/AuthStore';
 
+
+/**
+ * Displays the landing page for unauthenticated users. 
+ * Will have either a login or registration page as it's child.
+ * If no children, renders login page.
+ *
+ * @class      Landing (name)
+ */
 export class Landing extends Component {
 
   componentWillMount() {
     Logger.log('<Landing /> mounting', AuthStore.hasAuth());
-    // if (AuthStore.hasAuth()) browserHistory.push('/')
   }
 
   render() {

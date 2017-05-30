@@ -5,14 +5,13 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+// connect to mongo instance
 var mongoose = require('mongoose');
     mongoose.connect('mongodb://localhost/flatm8s')
 
-// var passport = require('passport');
-// var verifyAuth = require('./auth/verifyAuth');
-
+// requireing routes
 const indexRoutes = require('./routes/index');
-const profileRoutes = require('./routes/profile');
+// const profileRoutes = require('./routes/profile');
 const userRoutes = require('./routes/user');
 const authRoutes = require('./routes/auth');
 const groupRoutes = require('./routes/group');
@@ -33,9 +32,9 @@ app.use(cookieParser());
 app.use(require('stylus').middleware(path.join(__dirname, 'public/dist')));
 app.use(express.static(path.join(__dirname, 'public/dist')));
 
-
+// set up routes
 app.use('/', indexRoutes);
-app.use('/profile', profileRoutes);
+// app.use('/profile', profileRoutes);
 app.use('/user', userRoutes);
 app.use('/auth', authRoutes);
 app.use('/group', groupRoutes);

@@ -3,14 +3,6 @@ const stylus = require('gulp-stylus');
 const autoprefixer = require('gulp-autoprefixer');
 const livereload = require('gulp-livereload');
 
-// var minifyCSS = require('gulp-csso');
-
-// gulp.task('html', function(){
-//   return gulp.src('client/templates/*.pug')
-//     .pipe(pug())
-//     .pipe(gulp.dest('build/html'))
-// });
-
 gulp.task('compress-css', () => {
   return gulp.src('./public/src/css/main.styl')
     .pipe(stylus({

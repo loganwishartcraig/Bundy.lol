@@ -10,137 +10,173 @@ import { GroupService } from '../Services/GroupService';
 import { GroupConstants } from '../Constants/GroupConstants';
 
 
-const handleReqFail = err => {
+
+/**
+ * Internal function used to handle AJAX request failures.
+ * Sets the error message if available
+ *
+ * @param      {Object}  err     The server-returned error message {msg: String, status: Integer}
+ */
+const _handleReqFail = err => {
+  console.warn(err);
   if (err.msg) ErrorActions.setError(err.msg);  
-}
-
-const setFromCache = () => {
-
-  AppDispatcher.dispatch({
-    type: GroupConstants.SET_GROUPS_FROM_CACHE
-  });
-
 };
 
 
-const joinGroup = (groupReq) => {
+/**
+ * Action used to join groups
+ * Requests server-side, then adds new group
+ *
+ * @param      {Object}  groupReq  The group request object {name: String, password: String}
+ */
+const joinGroup = groupReq => {
 
   Logger.log('Joining group', groupReq);
 
   GroupService
     .joinGroup(groupReq)
-    .then(group => {
-      Logger.log('Group joined!', group);
-      addGroup(group)
-    })
-    .catch(handleReqFail);
+    .then(group => { addGroup(group); })
+    .catch(_handleReqFail);
 
 };
 
-const createGroup = (groupReq) => {
+
+/**
+ * Action used to create groups
+ * Creates server-side, then adds new group
+ *
+ * @param      {Object}  groupReq  The group request object {name: String, password: String}
+ */
+const createGroup = groupReq => {
 
   Logger.log('Creating Group...', groupReq)
 
   GroupService
     .createGroup(groupReq)
-    .then(group => {
-      Logger.log('Group created!', group);
-      addGroup(group);
-    })
-    .catch(handleReqFail)
+    .then(group => { addGroup(group); })
+    .catch(_handleReqFail)
 
 };
 
 
-const setActive = (groupName) => {
+/**
+ * Action used to leave a group
+ * Leaves group server-side then removes group
+ *
+ * @param      {String}  groupId  ID of the group to remove
+ */
+const leaveGroup = groupId => {
 
+  GroupService
+    .leaveGroup(groupId)
+    .then(() => { removeGroup(groupId); })
+    .catch(_handleReqFail);
+
+};
+
+
+/**
+ * Action used to set the active group
+ *
+ * @param      {String}  groupName  Name of the group to set active
+ */
+const setActive = groupName => {
   AppDispatcher.dispatch({
     type: GroupConstants.SET_ACTIVE,
     groupName: groupName
   });
-
 };
 
 
-const addGroup = group => {
+/**
+ * Action used to start process of adding a group
+ */
+const startAdd = () => {
+  AppDispatcher.dispatch({
+    type: GroupConstants.START_ADD
+  });
+};
 
+/**
+ * Action used to start joining a group
+ */
+const startJoin = () => {
+  AppDispatcher.dispatch({
+    type: GroupConstants.START_JOIN
+  });
+};
+
+
+/**
+ * Action used to start creating a group
+ */
+const startCreate = () => {
+  AppDispatcher.dispatch({
+    type: GroupConstants.START_CREATE
+  });
+};
+
+
+/**
+ * Action used to cancel process of adding a group
+ */
+const cancelAdd = () => {
+  AppDispatcher.dispatch({
+    type: GroupConstants.CANCEL_ADD
+  });
+};
+
+
+/**
+ * Action used to add a group
+ *
+ * @param      {Object}  group   The group object to add
+ */
+const addGroup = group => {
   AppDispatcher.dispatch({
     type: GroupConstants.ADD_GROUP,
     group: group
   });
-
 };
 
-const startAdd = () => {
 
-  AppDispatcher.dispatch({
-    type: GroupConstants.START_ADD
-  })
-
-};
-
-const cancelAdd = () => {
-
-  AppDispatcher.dispatch({
-    type: GroupConstants.CANCEL_ADD
-  });
-
-};
-
-const startJoin = () => {
-
-  AppDispatcher.dispatch({
-    type: GroupConstants.START_JOIN
-  });
-
-};
-
-const startCreate = () => {
-
-  AppDispatcher.dispatch({
-    type: GroupConstants.START_CREATE
-  });
-
-};
-
+/**
+ * Action used to start group management
+ */
 const startManage = () => {
   AppDispatcher.dispatch({
     type: GroupConstants.START_MANAGE
   });
 };
 
+
+/**
+ * Action used to end group management
+ */
 const endManage = () => {
   AppDispatcher.dispatch({
     type: GroupConstants.END_MANAGE
-  })
-}
+  });
+};
 
 
-const removeGroup = (groupId) => {
 
+/**
+ * Action used to remove a group
+ *
+ * @param      {String}  groupId  ID of the group to remove
+ */
+const removeGroup = groupId => {
   AppDispatcher.dispatch({
     type: GroupConstants.REMOVE_GROUP,
     id: groupId
   });
 };
 
-const leaveGroup = (groupId) => {
 
-  GroupService
-    .leaveGroup(groupId)
-    .then(() => {
-      removeGroup(groupId);
-    })
-    .catch(err => {
-      console.warn('got err', err);
-    });
-
-
-};
 
 export const GroupActions = {
 
-  setFromCache,
   setActive,
   joinGroup,
   createGroup,

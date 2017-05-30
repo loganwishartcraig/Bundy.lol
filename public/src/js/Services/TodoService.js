@@ -7,44 +7,82 @@ class _TodoService {
 
   constructor() {
 
+    /**
+     * Cache key for todos
+     */
     this._cacheKey = 'todos';
   
   } 
 
+
+  /**
+   * Caches a list of todos
+   *
+   * !! -- UNUSED?
+   *
+   * @param      { [ Object ] }  todos   Array of todo objects to cache
+   */
   cacheTodos(todos) {
     CacheService.cache(this._cacheKey, todos)
   }
 
+
+  /**
+   * Gets the cached todo list
+   * 
+   * !! -- UNUSED?
+   *
+   * @return     { [ Object ] }  Array of cached todo objects.
+   */
   getTodosFromCache() {
     return CacheService.get(this._cacheKey);
   }
 
+
+  /**
+   * Clears the todo cache
+   * 
+   * !! -- UNUSED?
+   * 
+   */
   clearTodos() {
     CacheService.remove(this._cacheKey);
   }
 
-  createTodo(ownerId, todoReq) {
+
+  /**
+   * Used to make todo creation requests
+   * 
+   * !! -- Rework to just expect a todo object returned & resolve with that explicitly
+   *
+   * @param      {Object}   todoReq  Request object for the todo to create
+   * @return     {Promise}  Resolves with new todo (and fave entry if indicated in request) on success, rejects with error payload otherwise
+   */
+  createTodo(todoReq) {
 
     
     return new Promise((res, rej) => {
 
       axios.post('task/create', {
-        taskReq: {
-          task: todoReq,
-          groupId: ownerId
-        }
+        taskReq: todoReq
       })
       .then(response => {
         res(response.data);
       })
       .catch(err => {
-        rej(err);
+        rej(err.response.data);
       });
     });
 
   };
 
 
+  /**
+   * Used to make a completion request
+   *
+   * @param      {String}   todoId  ID of the todo to complete
+   * @return     {Promise}  Resolves with new todo object on success, rejects with error payload otherwise
+   */
   markComplete(todoId) {
 
     return new Promise((res, rej) => {
@@ -56,14 +94,20 @@ class _TodoService {
         res(response.data.task);
       })
       .catch(err => {
-        rej(err);
+        rej(err.response.data);
       });
 
     });
 
-
   }
 
+
+  /**
+   * Used to make a deletion request
+   *
+   * @param      {String}   todoId  ID of the todo to delete
+   * @return     {Promise}  Resolves on successful delete, rejects with error payload otherwise
+   */
   deleteTodo(todoId) {
 
     return new Promise((res, rej) => {
@@ -76,13 +120,20 @@ class _TodoService {
         res();
       })
       .catch(err => {
-        rej(err);
+        rej(err.response.data);
       });
 
     });
 
   }
 
+  /**
+   * Used to make an edit request to a todo
+   *
+   * @param      {String}   todoTitle  New text for the todo
+   * @param      {String}   todoId     ID of the todo to update
+   * @return     {Promise}  Resolves with new todo object on success, rejects with error payload otherwise
+   */
   comitEdit(todoTitle, todoId) {
     return new Promise((res, rej) => {
       console.warn(todoTitle, todoId);
@@ -94,25 +145,11 @@ class _TodoService {
         res(response.data.task);
       })
       .catch(err => {
-        rej(err);
+        rej(err.response.data);
       });
 
     });
   }
-
-  
-
-  // _getFromCache() {
-  //   return CacheService.get(this._cacheKey);
-  // }
-
-  // storeTodo(todo) {
-  //   CacheService.cache(this._cacheKey, todo);
-  // }
-
-  // fromStorage() {
-  //   return this._getFromCache();
-  // }
 
 }
 

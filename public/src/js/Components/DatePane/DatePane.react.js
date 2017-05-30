@@ -1,9 +1,18 @@
 import React, { Component } from 'react'
 
+
+/**
+ * Componnet used to display the current date
+ *
+ * @class      DatePane (name)
+ */
 export default class DatePane extends Component {
   constructor(context, props) {
     super(context, props)
 
+    /**
+     * Day list ordered for Date object getDay()
+     */
     this.days = [
       'Sunday',
       'Monday',
@@ -14,6 +23,9 @@ export default class DatePane extends Component {
       'Saturday'
     ]
 
+    /**
+     * Month list ordered for Date object getMonth()
+     */
     this.months = [
       'January',
       'February',
@@ -31,18 +43,33 @@ export default class DatePane extends Component {
 
   }
 
+  /**
+   * Transforms a date object to the string "Day Month DD YYYY"
+   *
+   * @param      {Date}  date    The date object to transform
+   * @return     {String} The formatted date
+   */
   formatDate(date) {
    
+    /**
+     * Start with written day
+     */
     let formatted = this.days[date.getDay()];
 
+    /**
+     * Add written month
+     */
     formatted += ' '.concat(this.months[date.getMonth()]);
 
+    /**
+     * Add day
+     */
     let day = date.getDate();
-
     formatted += ' '.concat(day)
 
-    // formatted += ' '.concat((day < 10) ? '0'.concat(day) : day);
-
+    /**
+     * Add day postfix
+     */
     let postfix = '';
     if (day !== 11 && day % 10 === 1) postfix = 'st';
     else if (day !== 12 && day % 10 === 2) postfix = 'nd';
@@ -51,6 +78,9 @@ export default class DatePane extends Component {
 
     formatted += postfix;
 
+    /**
+     * Add full year
+     */
     formatted += ' '.concat(date.getFullYear());
 
     return formatted

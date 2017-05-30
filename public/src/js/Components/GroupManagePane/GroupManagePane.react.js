@@ -2,6 +2,13 @@ import React, { Component } from 'react';
 
 import { GroupActions } from '../../Actions/GroupActions';
 
+
+/**
+ * Component used to manage a group. 
+ * Lists group member and allows a user to leave their group  
+ *
+ * @class      GroupManagePane (name)
+ */
 export default class GroupManagePane extends Component {
   constructor(props, context) {
     super(props, context)
@@ -17,6 +24,7 @@ export default class GroupManagePane extends Component {
     GroupActions.leaveGroup(this.props.ownerId)
   }
 
+  
   render() {
     return (
       <div className="group--manage--container flex-col">

@@ -5,12 +5,22 @@ import { GroupActions } from '../../Actions/GroupActions'
 
 import ErrorDisplay from '../ErrorDisplay/ErrorDisplay.react';
 
+
+/**
+ * Component used to create a new group.
+ * Presents a form for a user to fill out, will request create on submit
+ *
+ * @class      CreateGroup (name)
+ */
 export default class CreateGroup extends Component {
 
   constructor(props, context) {
 
     super(props, context);
 
+    /**
+     * New group info, initial state
+     */
     this.state = {
       name: '',
       password: ''
@@ -27,6 +37,11 @@ export default class CreateGroup extends Component {
   }
 
 
+  /**
+   * On input change, get new value and update state
+   *
+   * @param      {Object}  e       Browser event object
+   */
   _handleInputChange(e) {
     let inputName = e.target.getAttribute('name');
     let type = e.target.getAttribute('type');

@@ -1,12 +1,21 @@
-const mongoose = require('mongoose'),
-      HashModel = require('../models/HashModel');
+const HashModel = require('../models/HashModel');
 
 const bcrypt = require('bcryptjs');
 
-const _genrateHash = (password) => {
+
+/**
+ * Internal implementation of bcrypt hashing for passwords
+ *
+ * @param      {String}   password  The plain-text password
+ * @return     {Promise}  Resolves with hashed password {String} on success, rejects with bcrypt error otherwise.
+ */
+const _genrateHash = password => {
 
   return new Promise((res, rej) => {
 
+    /**
+     * Hash using bcrypt + 12 salt rounds
+     */
     bcrypt.hash(password, 12, (err, hash) => {
       if (err) rej(err);
       else res(hash);  
@@ -16,7 +25,14 @@ const _genrateHash = (password) => {
 
 };
 
-const getHash = (userId) => {
+
+/**
+ * Gets a users stored password hash
+ *
+ * @param      {String}   userId  User ID to look up the hash for
+ * @return     {Promise}  Resolves with users hash {String} on success, client-ready error otherwise
+ */
+const getHash = userId => {
 
   return new Promise((res, rej) => {
 
@@ -36,6 +52,15 @@ const getHash = (userId) => {
 
 };
 
+
+/**
+ * Hashes and stores a given users password
+ * !! -- Currently just overwites existing records if found
+ *
+ * @param      {String}   userId    User ID to store password for
+ * @param      {String}   password  The plain-text password
+ * @return     {Promise}  Resolves on success, rejects with client-ready error otherwise
+ */
 const setHash = (userId, password) => {
 
   return new Promise((res, rej) => {
@@ -45,11 +70,17 @@ const setHash = (userId, password) => {
     HashModel
       .findOne({userId: userId})
       .then(record => {
+
         console.log('\t|- HashService --> setHash() --> Hash query complete');
+
         _genrateHash(password)
           .then(hash => {
+            
             console.log('\t|- HashService --> setHash() --> Generated hash');
 
+            /**
+             * If hash already found, overwrite entry, otherwise create new entry.
+             */
             if (record) {
 
               record.hash = hash;
@@ -61,7 +92,7 @@ const setHash = (userId, password) => {
 
             } else {
 
-              let stagedHash = new HashModel({
+              const stagedHash = new HashModel({
                 userId: userId,
                 hash: hash
               });
@@ -89,14 +120,10 @@ const setHash = (userId, password) => {
 };
 
 
-const clearHash = (email) => {
-
-};
 
 module.exports = {
 
   getHash: getHash,
-  setHash: setHash,
-  clearHash: clearHash
+  setHash: setHash
 
 };

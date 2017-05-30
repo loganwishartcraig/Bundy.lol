@@ -7,6 +7,12 @@ import JoinGroup from './JoinGroup.react';
 import CreateGroup from './CreateGroup.react';
 
 
+/**
+ * Component used to handle addinig new groups
+ * Will display either 'create' component or 'join' component based on props.
+ *
+ * @class      AddGroupPane (name)
+ */
 export default class AddGroupPane extends Component {
   constructor(props, context) {
     super(props, context);

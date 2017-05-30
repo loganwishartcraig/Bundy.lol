@@ -5,6 +5,12 @@ import ErrorDisplay from '../Components/ErrorDisplay/ErrorDisplay.react';
 
 import { AuthActions } from '../Actions/AuthActions';
 
+
+/**
+ * Displays registration form. Handles executing registration action
+ *
+ * @class      Registration (name)
+ */
 export class Registration extends Component {
 
   constructor(props) {
@@ -12,11 +18,11 @@ export class Registration extends Component {
     super(props);
 
     this.state = {
-      email: '',
-      password: '',
-      fName: '',
-      lName: '',
-      rememberMe: true
+      email: '',        // Users email address
+      password: '',     // Users password
+      fName: '',        // Users first name
+      lName: '',        // Users last name
+      rememberMe: true  // Indicates if sesion should be cached
     }
 
     this._handleRegSubmit = this._handleRegSubmit.bind(this);
@@ -28,7 +34,11 @@ export class Registration extends Component {
     AuthActions.register(this.state);
   }
 
-
+  /**
+   * Update input state on change
+   *
+   * @param      {Object}  e       Browser event object
+   */
   _handleInputChange(e) {
     let inputName = e.target.getAttribute('name');
     let type = e.target.getAttribute('type');

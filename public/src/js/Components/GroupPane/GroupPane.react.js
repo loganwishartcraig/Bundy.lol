@@ -7,6 +7,10 @@ import GroupStore from '../../Stores/GroupStore';
 
 import GroupSelector from './GroupSelector.react';
 
+
+/**
+ * Gets component state from store
+ */
 const getGroupState = () => ({
   groups: GroupStore.getGroups(),
   activeGroup: GroupStore.getActiveName(),
@@ -14,6 +18,12 @@ const getGroupState = () => ({
   hasActive: GroupStore.hasActive()
 });
 
+/**
+ * Renders the group pane components and subscribes to store for state changes
+ * Passes relevant state as props to children
+ *
+ * @class      GroupPane (name)
+ */
 export default class GroupPane extends Component {
 
   constructor(props, context) {
@@ -40,12 +50,6 @@ export default class GroupPane extends Component {
 
   _handleGroupAdd(evt) {
     GroupActions.startAdd();
-  }
-
-  _handleGroupLeave(groupId) {
-    return (evt) => {
-      GroupActions.leaveGroup(groupId)
-    }
   }
 
 

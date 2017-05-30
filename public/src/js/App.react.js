@@ -7,19 +7,25 @@ import AuthStore from './Stores/AuthStore';
 import { Dashboard } from './Pages/Dashboard.react';
 import { Landing } from './Pages/Landing.react';
 
-
-//testing
-
 import { TodoService } from './Services/TodoService'
 
 const getAppState = () => ({
-  hasAuth: AuthStore.hasAuth()
+  hasAuth: AuthStore.hasAuth()    // {Boolean} Indicates if user is authenticated
 });
 
+
+  /**
+   * Main component for app. 
+   * Displays dashboard if authenticated, landing page (will depend on route) otherwise
+   * Rerenders on authentication state chagne
+   * 
+   * @class      App (name)
+   */
 export class App extends Component {
 
   constructor(props, context) {
     super(props, context);
+
     this.state = getAppState();
     
     this._handleAuthChange = this._handleAuthChange.bind(this);
@@ -54,6 +60,7 @@ export class App extends Component {
           <Dashboard />
         ) : (
           <Landing>
+            {/* Children determiend by route. If none, 'landing' will display login page */}
             {this.props.children}
           </Landing>
         )}  

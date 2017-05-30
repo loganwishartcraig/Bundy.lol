@@ -1,6 +1,11 @@
 const mongoose = require('mongoose'),
       Schema = mongoose.Schema;
+      
 
+/**
+ * Master data model for Users
+ *
+ */
 const UserModel = mongoose.model('User', new Schema({
   email: String,
   fName: String,

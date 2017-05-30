@@ -1,15 +1,20 @@
 import React, { Component } from 'react';
-import { browserHistory } from 'react-router'
+// import { browserHistory } from 'react-router'
 
 import Logger from '../Utility/Logging';
 
 import { AuthActions } from '../Actions/AuthActions';
-// import { ProfileActions } from '../Actions/ProfileActions';
 
 import UserPane from '../Components/UserPane/UserPane.react';
 import GroupPane from '../Components/GroupPane/GroupPane.react';
 import DisplayArea from '../Components/DisplayArea/DisplayArea.react';
 
+
+/**
+ * Page component handsles display structure for dashboard items.
+ *
+ * @class      Dashboard (name)
+ */
 export class Dashboard extends Component {
 
   constructor(props, context) {
@@ -19,7 +24,6 @@ export class Dashboard extends Component {
 
   componentWillMount() {
     Logger.log('<Dashboard /> mounting');
-    // browserHistory.push('/')
   }
 
   render() {

@@ -17,18 +17,24 @@ class _TodoStore extends EventEmitter {
   constructor() {
     super();
 
-    this._todos = undefined;
-    this._isCreating = false;
-    this._showFaves = false;
-    this._editing = undefined;
+    /**
+     * Initial todo state
+     */
+    this._todos = undefined;    // Array of active todos
+    this._isCreating = false;   // Indicates if a todo is being created
+    this._showFaves = false;    // Indicates if a todo is being created from favorites
+    this._editing = undefined;  // ID of the todo being edited
 
+    /**
+     * List of available todo filters
+     */
     this._availableFilters = {
       'ALL': () => (true),
       'INCOMPLETE': (todo) => (!todo.completed),
       'COMPLETE': (todo) => (todo.completed)
     }
-    this._activeFilter = 'ALL';
 
+    this._activeFilter = 'ALL';  // The ID (key) of the active todo filter
 
   }
 
@@ -36,10 +42,21 @@ class _TodoStore extends EventEmitter {
     return this._todos;
   }
 
+
+  /**
+   * Filters current todos based on active filter
+   *
+   * @return     { [ Object ] }  The filtered list of todos.
+   */
   getFilteredTodos() {
     if (this.hasTodos()) return this._todos.filter(this._availableFilters[this._activeFilter])
   }
 
+  /**
+   * Get list of valid filter keys
+   *
+   * @return     { [ String ] }  The keys of available filters.
+   */
   getAvailableFilters() {
     return Object.keys(this._availableFilters);
   }
@@ -68,6 +85,11 @@ class _TodoStore extends EventEmitter {
     return this._editing !== undefined;
   }
 
+  /**
+   * Sets the active list 
+   *
+   * @param      { [ Object ] }  todos   Array of todo objects
+   */
   setTodos(todos) {
     Logger.log('Setting todos', todos)
     this._todos = todos;
@@ -79,6 +101,7 @@ class _TodoStore extends EventEmitter {
   }
 
   setShowFaves(show) {
+    if (typeof show !== 'boolean') return Logger.error("Cannot set non-boolean showFaves state", show);
     this._showFaves = show;
   }
 
@@ -94,6 +117,59 @@ class _TodoStore extends EventEmitter {
     this._todos.push(todo)
   }
 
+
+  /**
+   * Updates an existing todo with a fresh todo object
+   *
+   * @param      {String}  todoId  ID of todo to update
+   * @param      {Object}  todo    Todo object to update with
+   */
+  updateTodo(todoId, todo) {
+
+    if (!this.hasTodos()) return Logger.error("Cannot update todos when no todos are available.")
+
+    /**
+     * find matching todo, update and break once found
+     */
+    for (let i = 0; i < this._todos.length; i++) {
+      if (this._todos[i]._id === todoId) {
+        this._todos[i] = todo
+        return;
+      }
+    }
+
+    Logger.error(`Couldn't find todo ${todoId} to update.`)
+  }
+
+  /**
+   * Removes a todo
+   *
+   * @param      {String}  todoId  ID of the todo to remove
+   */
+  removeTodo(todoId) {
+    if (!this.hasTodos()) return Logger.error("Cannot update the todos when no todos are available")
+    this._todos = this._todos.filter((todo) => (todo._id !== todoId))
+  }
+
+  /**
+   * Resets editing state
+   */
+  resetEditing() {
+    this._editing = undefined;
+  }
+  
+  /**
+   * Resets view related state
+   */
+  resetView() {
+    this._isCreating = false;
+    this._showFaves = false;
+    this._editing = undefined;
+  }
+
+  /**
+   * Rests full todo state
+   */
   reset() {
     this._todos = undefined;
     this._isCreating = false;
@@ -102,14 +178,7 @@ class _TodoStore extends EventEmitter {
     this._editing = undefined;
   }
 
-  resetEditing() {
-    this._editing = undefined;
-  }
-  
-  resetView() {
-    this._isCreating = false;
-    this._showFaves = false;
-  }
+ 
 
   emitChange() {
     this.emit('change');
@@ -123,34 +192,26 @@ class _TodoStore extends EventEmitter {
     this.removeListener('change', callback);
   }
 
-  updateTodo(todoId, todo) {
-    if (!this.hasTodos()) return Logger.error("Cannot update todos when no todos are available.")
-
-    for (let i = 0; i < this._todos.length; i++) {
-      if (this._todos[i]._id === todoId) {
-        this._todos[i] = todo
-        return;
-      }
-    }
-
-    Logger.error(`Couldn't find todo ${todoId} to update.`)
-  }
-
-  removeTodo(todoId) {
-    if (!this.hasTodos()) return Logger.error("Cannot update the todos when no todos are available")
-
-    this._todos = this._todos.filter((todo) => (todo._id !== todoId))
-  }
+  
 
 }
 
 const TodoStore = new _TodoStore();
 
+
+/**
+ * Handles group changes. Used because the todos are populated from a group object.
+ *
+ */
 const handleGroupChange = () => {
+  
   AppDispatcher.waitFor([GroupDispatchToken]);
 
+  /**
+   * Set todos from active group & set filter if active group availalbe, reset state otherwise
+   */
   if (GroupStore.hasActive()) {
-    let active = GroupStore.getActiveGroup();
+    const active = GroupStore.getActiveGroup();
     if (active) {
       TodoStore.setTodos(active.tasks)
       TodoStore.setFilter('ALL')
@@ -161,7 +222,7 @@ const handleGroupChange = () => {
 }
 
 const TodoDispatchToken = AppDispatcher.register(action => {
-
+// console.warn(action)
   switch(action.type) {
 
     case AuthConstants.TOKEN_SET:
@@ -173,11 +234,15 @@ const TodoDispatchToken = AppDispatcher.register(action => {
       TodoStore.emitChange();
       break;
 
+
+
+    /**
+     * update active todos on relevant group state changes 
+     */
     case ProfileConstants.SET_PROFILE:
       handleGroupChange();
       TodoStore.emitChange();
       break;
-
     case GroupConstants.SET_GROUPS_FROM_CACHE:
       handleGroupChange();
       TodoStore.emitChange();
@@ -196,6 +261,8 @@ const TodoDispatchToken = AppDispatcher.register(action => {
       TodoStore.emitChange();
       break;
       
+
+
     case TodoConstants.ADD_TODO:
       TodoStore.addTodo(action.todo);
       TodoStore.resetView();
@@ -204,7 +271,8 @@ const TodoDispatchToken = AppDispatcher.register(action => {
     case TodoConstants.ADD_AND_FAVE_TODO:
       TodoStore.addTodo(action.todo);
       TodoStore.resetView();
-      // change to be emitted by user store
+      // change is emitted by user store listening for same action
+      // !! -- Should be a better solution
       break;
     case TodoConstants.START_CREATE:
       TodoStore.setCreating(true);
@@ -221,6 +289,7 @@ const TodoDispatchToken = AppDispatcher.register(action => {
       break;
     case TodoConstants.UPDATE_TODO:
       TodoStore.updateTodo(action.id, action.todo);
+      TodoStore.resetEditing();
       TodoStore.emitChange();
       break;
     case TodoConstants.REMOVE_TODO:
@@ -239,18 +308,18 @@ const TodoDispatchToken = AppDispatcher.register(action => {
       TodoStore.resetEditing();
       TodoStore.emitChange();
       break;
-    case TodoConstants.COMIT_EDIT:
-      TodoStore.updateTodo(action.id, action.todo);
-      TodoStore.resetEditing();
-      TodoStore.emitChange();  
-      break;
+    // case TodoConstants.COMIT_EDIT:
+    //   TodoStore.updateTodo(action.id, action.todo);
+    //   TodoStore.resetEditing();
+    //   TodoStore.emitChange();  
+      // break;
 
     default:
       break;
 
   }
 
-})
+});
 
 
 export { TodoDispatchToken }

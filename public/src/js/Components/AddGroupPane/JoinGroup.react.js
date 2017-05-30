@@ -5,12 +5,22 @@ import { GroupActions } from '../../Actions/GroupActions'
 
 import ErrorDisplay from '../ErrorDisplay/ErrorDisplay.react';
 
+
+/**
+ * Componnet used to join an existing group
+ * Presents a form for a user to fill out, will request join on submit
+ *
+ * @class      JoinGroup (name)
+ */
 export default class JoinGroup extends Component {
 
   constructor(props, context) {
 
     super(props, context);
 
+    /**
+     * Existing group info, inital state
+     */
     this.state = {
       name: '',
       password: ''
@@ -26,6 +36,11 @@ export default class JoinGroup extends Component {
     GroupActions.joinGroup(this.state)    
   }
 
+  /**
+   * On input change, get new value and update state
+   *
+   * @param      {Object}  e       Browser event object
+   */
   _handleInputChange(e) {
     let inputName = e.target.getAttribute('name');
     let type = e.target.getAttribute('type');
@@ -33,8 +48,6 @@ export default class JoinGroup extends Component {
     stateChange[inputName] = (type === 'checkbox' || type === 'radio') ? !this.state[inputName] : e.target.value
     this.setState(stateChange);
   }
-
- 
 
   _handleGroupCancel(evt) {
     GroupActions.cancelAdd();

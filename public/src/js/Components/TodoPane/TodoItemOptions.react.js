@@ -4,17 +4,23 @@ import Logger from '../../Utility/Logging';
 import { TodoActions } from '../../Actions/TodoActions';
 
 const _handleTodoDelete = (todoId) => (evt => {
-
   TodoActions.deleteTodo(todoId);
-
 });
 
 const _handleTodoEdit = (todoId) => (evt => {
-
   TodoActions.startEdit(todoId);
-
 });
 
+
+/**
+ * Displays option action buttons for a todo
+ *
+ * @class      TodoItemOptions (name)
+ * @param      {Object}  arg1            Component expected prop
+ * @param      {String}  arg1._id        ID of the todo
+ * @param      {Boolean}  arg1.completed  Complete status
+ * @return     {Object}  Component
+ */
 const TodoItemOptions = ({
   _id,
   completed

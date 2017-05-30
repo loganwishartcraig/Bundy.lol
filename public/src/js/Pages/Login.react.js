@@ -1,11 +1,17 @@
 import React, { Component } from 'react';
-import { Link, browserHistory } from 'react-router';
-import * as axios from 'axios';
+import { Link } from 'react-router';
+// import * as axios from 'axios';
 
 import ErrorDisplay from '../Components/ErrorDisplay/ErrorDisplay.react';
 
 import { AuthActions } from '../Actions/AuthActions';
 
+
+/**
+ * Displays a login form and executes login action. 
+ *
+ * @class      Login (name)
+ */
 export class Login extends Component {
 
   constructor(props) {
@@ -13,9 +19,9 @@ export class Login extends Component {
     super(props);
 
     this.state = {
-      email: '',
-      password: '',
-      rememberMe: true
+      email: '',        // Users email address
+      password: '',     // Users password
+      rememberMe: true  // Indicates if a users session should be saved
     };
 
     this._handleRegSubmit = this._handleRegSubmit.bind(this);
@@ -28,6 +34,11 @@ export class Login extends Component {
     AuthActions.login(this.state);
   }
 
+  /**
+   * Update input state on change.
+   *
+   * @param      {Object}  e       Browser event object
+   */
   _handleInputChange(e) {
     let inputName = e.target.getAttribute('name');
     let type = e.target.getAttribute('type');

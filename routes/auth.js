@@ -4,38 +4,46 @@ const router = express.Router();
 const UserService = require('../services/UserService');
 const AuthService = require('../services/AuthService');
 
-const ProfileFacade = require('../facades/ProfileFacade');
-
 const RequestFilter = require('../mixins/RequestFilter');
-
-// var passport = require('passport');
 
 const AuthOps = require('../auth/AuthOps.js');
 
+
+/**
+ * defines required params for a login request
+ *  'email'      {String}    Email address for user logging in
+ *  'password'   {String}    Password for user logging in
+ */
 const validateLoginRequest = new RequestFilter(['email', 'password']);
 
-router.get('/check', 
-  AuthOps.verifyAuth,
-  (req, res, next) => {
-    res.status(200).json({msg: 'logged in!'})
-});
 
-/* GET home page. */
+/**
+ * route used to process login requests
+ */
 router.post('/login', 
-  // passport.authenticate('local'), 
   (req, res, next) => {
 
-    let credentials = Object.assign({}, req.body.credentials);
+    const credentials = Object.assign({}, req.body.credentials);
 
     console.log(`\t|- Auth Route --> post('/login') --> Processing credentials: ${JSON.stringify(credentials)}`);
 
+    /**
+     * If the request is invalid, respond with error.
+     */
     if (!validateLoginRequest.validate(credentials)) 
       return res.status(400).json({status: 500, msg: 'Invalid login request'});
     
+    /**
+     * Fetch user profile from databse
+     */
     UserService
       .getByEmail(credentials.email)
       .then(user => {
         console.log(`\t|- Auth Route --> post('/login') --> UserService() --> Got user: ${user.email}`);
+
+        /**
+         * Generate token for user. Will reject if login password is invalid
+         */
         AuthService
           .getToken(user._id, credentials.password)
           .then(token => {

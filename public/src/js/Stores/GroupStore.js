@@ -17,32 +17,54 @@ class _GroupStore extends EventEmitter {
   constructor() {
     super();
 
+    /**
+     * Key used for caching purposes
+     */
     this._cacheKey = 'group'
-    this._activeGroup = undefined;
-    this._isAdding = false;
-    this._isCreating = false;
-    this._managing = false;
-    this._groups = undefined;
+
+    /**
+     * Initial group state
+     */
+    this._activeGroup = undefined;    // The name of the currently active group 
+    this._isAdding = false;           // Indicates if a group is being added
+    this._isCreating = false;         // Indicates if the group being added is being created from scratch
+    this._managing = false;           // Indicates if the active group is being managed
+    this._groups = undefined;         // The list of groups
 
   }
 
+
+  /**
+   * Used to initalize the current state from cache
+   * 
+   * !! -- Should be in constructor?
+   * 
+   */
   setFromCache() {
 
     if (this.hasGroups()) return;
 
-    let cached = CacheService.get(this._cacheKey)
+    const cached = CacheService.get(this._cacheKey);
 
     if (cached !== undefined) {
-      this._activeGroup = cached.activeGroup
-      this._groups = cached.groups
+      this._activeGroup = cached.activeGroup;
+      this._groups = cached.groups;
     }
 
   }
 
+
+  /**
+   * Used to cache current state 
+   */
   syncCache() {
     CacheService.cache(this._cacheKey, {groups: this._groups, activeGroup: this._activeGroup})
   }
 
+
+  /**
+   * Used to clear the cached state
+   */
   clearCache() {
     CacheService.remove(this._cacheKey);
   }
@@ -55,17 +77,20 @@ class _GroupStore extends EventEmitter {
     return this._activeGroup;
   }
 
-  // getActiveName() {
-  //   console.warn(this._activeGroup)
-  //   return (this.hasActive()) ? this._activeGroup : undefined;
-  // }
-
+  /**
+   * @return     {Object}  The active group reference in the groups array.
+   */
   getActiveGroup() {
     if (this.hasActive()) return this._groups.filter(group => group.name === this._activeGroup)[0];
   }
 
   getActiveMembers() {
     if (this.hasActive()) return this._groups.filter(group => group.name === this._activeGroup)[0].members;
+  }
+
+  // !! -- DEPRICATED?
+  getmanagingInfo() {
+    if (this.isManaging()) return this._groups.filter(group => group.name === this._managing)[0];
   }
 
   isAdding() {
@@ -80,41 +105,6 @@ class _GroupStore extends EventEmitter {
     return this._managing;
   }
 
-  getmanagingInfo() {
-    if (this.isManaging()) return this._groups.filter(group => group.name === this._managing)[0];
-  }
-
-  setDefaultActive() {
-    if (!this.hasActive() && this._groups.length > 0) this._activeGroup = this._groups[0].name
-  }
-
-  setGroups(groups) {
-    this._groups = groups;
-    if (!this.hasActive()) this.setDefaultActive()
-    this.syncCache();
-  }
-
-  setActive(groupName) {
-    if (typeof groupName !== 'string' || groupName.length === 0) return Logger.error('Tried to set invalid groupname', groupname);
-    this._activeGroup = groupName;
-    this.syncCache();
-  } 
-
-  
-  addGroup(group) {
-
-    this._groups.push(group);
-    this.setActive(group.name);
-    this.syncCache();
-  }
-
-  updateActiveTodos(todos) {
-    if (todos.constructor !== Array) return Logger.error('Tried to set non array todos');
-    if (!this.hasActive()) return;
-    this.getActiveGroup().tasks = todos;
-    this.syncCache();
-  }
-
   hasGroups() {
     return (this._groups !== undefined) ? (this._groups.length > 0) : false; 
   }
@@ -123,25 +113,143 @@ class _GroupStore extends EventEmitter {
     return this._activeGroup !== undefined;
   }
 
+
+  /**
+   * Sets active group to first in list when groups available, udefined otherwise
+   */
+  setDefaultActive() {
+    this._activeGroup = (this.hasGroups()) ? this._groups[0].name : undefined
+  }
+
+
+  /**
+   * Sets the groups list and syncs cache.
+   * If no active is set, sets to default
+   *
+   * @param      { [ Object ] }  groups  Array of group objects
+   */
+  setGroups(groups) {
+    this._groups = groups;
+    if (!this.hasActive()) this.setDefaultActive();
+    this.syncCache();
+  }
+
+
+  /**
+   * Sets the active group and syncs cache.
+   *
+   * @param      {String}  groupName  The active group's name
+   */
+  setActive(groupName) {
+    if (typeof groupName !== 'string' || groupName.length === 0) return Logger.error('Tried to set invalid groupname', groupname);
+    this._activeGroup = groupName;
+    this.syncCache();
+  } 
+
+  /**
+   * Sets adding state
+   *
+   * @param      {Boolean}  adding  The adding state
+   */
   setAdding(adding) {
     if (typeof adding !== 'boolean') return Logger.error('Tried to set non boolean "adding"', adding);
     this._isAdding = adding;
   } 
 
+  /**
+   * Sets creating state
+   *
+   * @param      {Boolean}  creating  The creating state
+   */
   setCreating(creating) {
     if (typeof creating !== 'boolean') return Logger.error('Tried to set non boolean "creating"', creating);
     this._isCreating = creating;
   }
 
+
+  /**
+   * Sets manging state
+   *
+   * @param      {Boolean}  managing  The managing state
+   */
   setManaging(managing) {
     if (typeof managing !== 'boolean') return Logger.error('Tried to set non boolean "managing"', managing);
     this._managing = managing; 
   }
 
-  clearManaging() {
-    this._managing = undefined;
+
+  /**
+   * Adds a group to the group list
+   *
+   * @param      {Object}  group   The group to add
+   */
+  addGroup(group) {
+    this._groups.push(group);
+    this.setActive(group.name);
+    this.syncCache();
   }
 
+
+  /**
+   * Updates the actives group todos and re-caches
+   *
+   * @param      { [ Object ] }  todos   Array of todo objects
+   */
+  updateActiveTodos(todos) {
+    if (todos.constructor !== Array) return Logger.error('Tried to set non array todos');
+    if (!this.hasActive()) return;
+    this.getActiveGroup().tasks = todos;
+    this.syncCache();
+  }
+  
+
+  /**
+   * Removes a group from the group list.
+   * Resets active if active group was removed
+   *
+   * @param      {String}  name    Name of the group to remove
+   */
+  removeGroup(name) {
+
+    // console.warn('removing group', name)
+    this._groups = this._groups.filter(group => (group.name !== name))
+    // console.warn('removed', this._activeGroup, this._groups)
+    if (this._activeGroup === name) this.resetActive();
+
+  }
+
+
+  /**
+   * resets managing state
+   * 
+   * !! -- UNUSED?
+   */
+  clearManaging() {
+    this._managing = false;
+  }
+
+
+  /**
+   * Rests active group
+   */
+  resetActive() {
+    this.setDefaultActive()
+    this.syncCache();
+  }
+
+  /**
+   * Resets all view related state
+   */
+  resetView() {
+    this.setAdding(false);
+    this.setCreating(false);
+    this.setManaging(false);
+  }
+
+
+  /**
+   * Resets store state and clears cache
+   */
   reset() {
     this._activeGroup = undefined;
     this._isAdding = false;
@@ -150,6 +258,8 @@ class _GroupStore extends EventEmitter {
     this._groups = undefined;
     this.clearCache();
   }
+
+
 
   emitChange() {
     this.emit('change');
@@ -163,44 +273,30 @@ class _GroupStore extends EventEmitter {
     this.removeListener('change', callback);
   }
 
-  resetActive() {
-    console.warn('resetting active', this._activeGroup, this._groups)
-    this._activeGroup = (this.hasGroups()) ? this._groups[0].name : undefined;
-    console.warn('reset active', this._activeGroup, this._groups)
-    this.syncCache();
-  }
-
-  resetView() {
-    this.setAdding(false);
-    this.setCreating(false);
-    this.setManaging(false);
-  }
-
-  removeGroup(name) {
-
-    console.warn('removing group', name)
-    this._groups = this._groups.filter(group => (group.name !== name))
-    console.warn('removed', this._activeGroup, this._groups)
-    if (this._activeGroup === name) this.resetActive();
-
-  }
-
 }
 
 const GroupStore = new _GroupStore();
 
+
+/**
+ * Updates todos for active group when todo store changes for caching purposes
+ */
 const handleTodoChange = () => {
   AppDispatcher.waitFor([TodoDispatchToken]);
   GroupStore.updateActiveTodos(TodoStore.getTodos());
-}
+};
+
 
 const GroupDispatchToken = AppDispatcher.register(action => {
-
+// console.warn(action)
   switch(action.type) {
 
 
+    /**
+     * On token set, if groups included, set, otherwise set from cache
+     */
     case AuthConstants.TOKEN_SET:
-      (action.groups) ? GroupStore.setGroups(action.groups) : GroupStore.setFromCache();
+      (action.groups !== undefined) ? GroupStore.setGroups(action.groups) : GroupStore.setFromCache()
       GroupStore.emitChange();
       break;
     case AuthConstants.TOKEN_REMOVED:
@@ -209,12 +305,16 @@ const GroupDispatchToken = AppDispatcher.register(action => {
       break;
 
 
+    // !! -- DEPRICATED?
     case ProfileConstants.SET_PROFILE:
       GroupStore.setGroups(action.groups);
       GroupStore.emitChange();
       break;
 
 
+    /**
+     * Update todos on relevant state changes
+     */
     case TodoConstants.ADD_TODO:
       handleTodoChange();
       break;
@@ -230,6 +330,7 @@ const GroupDispatchToken = AppDispatcher.register(action => {
     case TodoConstants.COMIT_EDIT:
       handleTodoChange();
       break;
+
 
     case GroupConstants.ADD_GROUP:
       GroupStore.addGroup(action.group);

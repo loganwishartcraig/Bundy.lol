@@ -8,29 +8,59 @@ const UserService = require('../services/UserService');
 
 const AuthOps = require('../auth/AuthOps');
 
+/**
+ * defines required params for create/join group requests
+ *  'name'       {String}    Name of the group to add
+ *  'password'   {String}    Password for the group
+ */
 const validateGroupReq = new RequestFilter(['name', 'password']);
-const serializeGroups = new RequestFilter(['_id', 'name', 'members', 'tasks', 'createdBy']);
 
-/* GET home page. */
 
+
+/**
+ * Handles service errors, returning message to client
+ * Closure over req & res
+ *
+ * @param      {Object}  err     The error object {status: {Integer}, msg: {String}}
+ * @param      {Express Request}  req     The request
+ * @param      {Express Response}  res     The response
+ */
+const _handleError = (req, res) => (err => {
+  res.status(err.status).json(err); 
+})
+
+/**
+ * route used to handle group creation
+ * 
+ */
 router.post('/create', 
   AuthOps.verifyAuth,
   (req, res) => {
 
-  let groupReq = Object.assign({}, req.body.groupReq);
+  const groupReq = Object.assign({}, req.body.groupReq);
 
   if (validateGroupReq.validate(groupReq)) {
 
-    let token = req.get('Authorization');
+    const token = req.get('Authorization');
 
+    /**
+     * Get user profile
+     */
     UserService
       .getByToken(token)
       .then(user => {
+
+        /**
+         * Create a new group
+         */
         GroupService
           .createGroup(groupReq, user)
           .then(group => {
-            // console.log('okkkkkkk', group)
-            res.status(200).json({group: serializeGroups.serialize(group)})
+
+            /**
+             * on success, send new group to client
+             */
+            res.status(200).json({group: group.toObject()})
           })
           .catch(err => {
             res.status(err.status).json(err)
@@ -48,6 +78,11 @@ router.post('/create',
 
 });
 
+
+/**
+ * route used to handle group joins
+ * 
+ */
 router.post('/join',
   AuthOps.verifyAuth,
   (req, res) => {
@@ -56,23 +91,34 @@ router.post('/join',
 
   if (validateGroupReq.validate(groupReq)) {
 
-
     let token = req.get('Authorization');
 
+    /**
+     * Get user profile
+     */
     UserService
       .getByToken(token)
       .then(user => {
-        // console.log('FOUND USER', user.email)
 
+        /**
+         * Check if user is already a member
+         */
         for (let i = 0; i < user.memberOf.length; i++) {
-          // console.log(groupReq.name, user.memberOf[i].name)
-          if (groupReq.name === user.memberOf[i].name.toString()) return res.status(400).json({status: 400, msg: "Already a member"});
+          if (groupReq.name === user.memberOf[i].name.toString()) 
+            return res.status(400).json({status: 400, msg: "Already a member"});
         }
 
+        /**
+         * Join the group
+         */
         GroupService
           .joinGroup(groupReq, user)
           .then(group => {
-            res.status(200).json({group: serializeGroups.serialize(group)});
+
+             /**
+             * on success, send new group to client
+             */
+            res.status(200).json({group: group.toObject()});
           })
           .catch(err => {
             res.status(err.status).json(err);
@@ -90,6 +136,11 @@ router.post('/join',
 
 });
 
+
+/**
+ * route used to handle leaving groups
+ * 
+ */
 router.post('/leave', 
   AuthOps.verifyAuth,
   (req, res) => {
@@ -97,24 +148,32 @@ router.post('/leave',
     const token = req.get('Authorization');
     const groupId = req.body.id;
 
+    /**
+     * Get user profile
+     */
     UserService
       .getByToken(token)
       .then(user => {
 
+        /**
+         * Leave grouup
+         */
         GroupService
           .leaveGroup(groupId, user)
           .then(() => {
+
+            /**
+             * on success send OK status
+             */
             res.sendStatus(200)
           })
           .catch(err => {
-            res.sendStatus(500)
-            // res.status(err.status).json(err);
+            res.status(err.status).json(err);
           });
       
       })
       .catch(err => {
-        res.sendStatus(500)
-        // res.status(err.status).json(err);
+        res.status(err.status).json(err);
       });
 
 });

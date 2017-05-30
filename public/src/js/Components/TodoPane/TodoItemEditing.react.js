@@ -2,6 +2,12 @@ import React, { Component } from 'react';
 
 import { TodoActions } from '../../Actions/TodoActions';
 
+
+/**
+ * Holds live text and action buttons for a todo edit
+ *
+ * @class      TodoItemEditing (name)
+ */
 export default class TodoItemEditing extends Component {
   constructor(props, context) {
     super(props, context);
@@ -20,9 +26,7 @@ export default class TodoItemEditing extends Component {
   }
 
   _handleEditCancel(evt) {
-
     TodoActions.endEdit();
-
   }
 
   _handleInputChange(evt) {

@@ -9,7 +9,11 @@ class _ErrorStore extends EventEmitter {
 
   constructor() {
     super();
-    this._activeErr = undefined;
+
+    /**
+     * Initial error state
+     */
+    this._activeErr = undefined;    // Will be set to a string representing the active error message to display
   }
   
   getError() {
@@ -47,7 +51,7 @@ const ErrorStore = new _ErrorStore();
 
 AppDispatcher.register(action => {
 
-  Logger.log('Action recieved!', action)
+  // Logger.log('Action recieved!', action)
 
   switch(action.type) {
 

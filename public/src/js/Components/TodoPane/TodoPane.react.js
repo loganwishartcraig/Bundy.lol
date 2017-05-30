@@ -12,28 +12,40 @@ import AddTodo from './AddTodo.react';
 import TodoList from './TodoList.react';
 import TodoFilterList from './TodoFilterList.react';
 
-
+/**
+ * Gets the todo pane state.
+ */
 const getTodoState = () => ({
 
-  todos: TodoStore.getFilteredTodos(),
-  hasTodos: TodoStore.hasTodos(),
-  isCreating: TodoStore.isCreating(),
-  showFaves: TodoStore.isShowingFaves(),
-  availableFilters: TodoStore.getAvailableFilters(),
-  activeFilter: TodoStore.getActiveFilterId(),
-  isEditing: TodoStore.isEditing(),
-  editingId: TodoStore.getEditing(),
-  activeUser: UserStore.getUserId(),
-  hasFavorites: UserStore.hasFaves(),
-  favorites: UserStore.getFaves()
+  todos: TodoStore.getFilteredTodos(),                    // { [ Object ] } List of todos
+  hasTodos: TodoStore.hasTodos(),                         // {Boolean} Indicates if todos are available
+  isCreating: TodoStore.isCreating(),                     // {Boolean} Indicates if user is creating a new todo
+  showFaves: TodoStore.isShowingFaves(),                  // {Boolean} Inidcates if user is pushing a todo from favroties
+  availableFilters: TodoStore.getAvailableFilters(),      // { [ Object ] } List of available todo filters {id: Function}
+  activeFilter: TodoStore.getActiveFilterId(),            // {String} ID of the active filter
+  isEditing: TodoStore.isEditing(),                       // {Boolean} Indicates if user is editing a todo
+  editingId: TodoStore.getEditing(),                      // {String} ID of the todo being edited
+  activeUser: UserStore.getUserId(),                      // {String} ID of the active user
+  hasFavorites: UserStore.hasFaves(),                     // {Boolean} Indicates if user has favorites available
+  favorites: UserStore.getFaves()                         // { [ Object ] } List of the users favorites {id: String, title: String}
 
 });
 
+
+/**
+ * Component used to display and manage todo-related components
+ * Contains todo state propogated down to sub-componetns via props 
+ *
+ * @class      TodoPane (name)
+ */
 export default class TodoPane extends Component {
 
   constructor(props, context) {
     super(props, context);
 
+    /**
+     * Get initial state
+     */
     this.state = getTodoState();
 
     this._handleTodoChange = this._handleTodoChange.bind(this);
@@ -43,6 +55,17 @@ export default class TodoPane extends Component {
 
   _handleTodoChange(e) {
     this.setState(getTodoState())
+  }
+
+  componentWillMount() {
+    Logger.log('<TodoPane /> mounting', this.state)
+    TodoStore.setListener(this._handleTodoChange)
+    UserStore.setListener(this._handleTodoChange)
+  }
+
+  componentWillUnmount() {
+    TodoStore.unsetListener(this._handleTodoChange)
+    UserStore.unsetListener(this._handleTodoChange)
   }
 
   _handleTodoStart(e) {
@@ -57,19 +80,11 @@ export default class TodoPane extends Component {
     GroupActions.startManage();
   }
 
-  componentWillMount() {
-    Logger.log('<TodoPane /> mounting', this.state)
-    TodoStore.setListener(this._handleTodoChange)
-    UserStore.setListener(this._handleTodoChange)
-  }
-
-  componentWillUnmount() {
-    TodoStore.unsetListener(this._handleTodoChange)
-    UserStore.unsetListener(this._handleTodoChange)
-  }
-
   render() {
 
+    /**
+     * If no active group, display "empty" message. Prompt user to join group. 
+     */
     if (this.props.ownerId === undefined) {
       return (
 
@@ -89,8 +104,10 @@ export default class TodoPane extends Component {
       
         <h3 className="bar--header--pink">Request Log - <span className="todo--owner">{this.props.ownerId}</span></h3>
 
+        {/* If not creating and has todos, show todo list */}
         {(!this.state.isCreating && this.state.hasTodos) ? <TodoFilterList availableFilters={this.state.availableFilters} activeFilter={this.state.activeFilter} /> : null}
 
+        {/* If creating, show new todo pane, otherwise display todo list */}
         {(this.state.isCreating) ? 
           <AddTodo addTo={this.props.ownerId} showFaves={this.state.showFaves} hasFavorites={this.state.hasFavorites} favorites={this.state.favorites} /> 
             : 
@@ -103,6 +120,7 @@ export default class TodoPane extends Component {
           />
         }
 
+        {/* If not creating, show todo actions */}
         {(!this.state.isCreating) ? 
           <div className="todo--add">
             <button className="manage--group--btn wire--btn--blue btn--lg btn--edit" onClick={this._handleManageGroup}>Manage Group</button>

@@ -5,15 +5,11 @@ import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 
 import { CacheService } from '../Services/CacheService';
 
-import { UserActions } from '../Actions/UserActions';
-
 import { AuthConstants } from '../Constants/AuthConstants';
 import { ProfileConstants } from '../Constants/ProfileConstants';
 import { UserConstants } from '../Constants/UserConstants';
-import { GroupConstants } from '../Constants/GroupConstants';
 import { TodoConstants } from '../Constants/TodoConstants'
 
-import { AuthDispatchToken } from './AuthStore';
 import { TodoDispatchToken } from './TodoStore';
 
 class _UserStore extends EventEmitter {
@@ -21,8 +17,16 @@ class _UserStore extends EventEmitter {
   constructor() {
     super();
 
-    this._cacheKey = 'user'
-    this._user = undefined;
+
+    /**
+     * Key used for caching purposes
+     */
+    this._cacheKey = 'user';
+
+    /**
+     * Initial user state
+     */
+    this._user = undefined;   // The active user object
 
   }
 
@@ -40,14 +44,22 @@ class _UserStore extends EventEmitter {
     return this._user.favorites
   }
 
+
+  /**
+   * Sets the user state from cache if not already set
+   */
   setFromCache() {
 
     if (this.hasUser()) return;
 
-    let cached = CacheService.get(this._cacheKey);
+    const cached = CacheService.get(this._cacheKey);
     if (cached !== undefined) this._user = cached;
   }
 
+
+  /**
+   * Used to cache current state.
+   */
   syncCache() {
     CacheService.cache(this._cacheKey, this._user);
   }
@@ -56,12 +68,22 @@ class _UserStore extends EventEmitter {
     CacheService.remove(this._cacheKey);
   }
 
+  /**
+   * Sets the current user
+   *
+   * @param      {Object}  user    The user object to set
+   */
   setUser(user) {
-    Logger.log('Setting user...', user.email);
     this._user = user;
     this.syncCache();
   }
 
+
+  /**
+   * Adds an entry to a users favorite list
+   *
+   * @param      {Object}  fave    Favorite to add
+   */
   addFavorite(fave) {
     this._user.favorites.push(fave);
     this.syncCache();
@@ -76,11 +98,20 @@ class _UserStore extends EventEmitter {
     return this._user.favorites.length > 0
   }
 
+
+  /**
+   * Removes an entry from the users favorite list
+   *
+   * @param      {String}  faveId  ID of the favorite to remove
+   */
   removeFave(faveId) {
-    this._user.favorites = this._user.favorites.filter(favorite => console.log(favorite.id !== faveId));
+    this._user.favorites = this._user.favorites.filter(favorite => favorite.id !== faveId);
     this.syncCache();
   }
 
+  /**
+   * Resets user state and clears cache entry 
+   */
   reset() {
     this._user = undefined;
     this.clearCache();
@@ -102,14 +133,17 @@ class _UserStore extends EventEmitter {
 
 const UserStore = new _UserStore();
 
-AppDispatcher.register(action => {
+const UserDispatchToken = AppDispatcher.register(action => {
+
+  console.warn('ACTION RECIEVED:', action)
 
   switch(action.type) {
 
-
+    /**
+     * On token set, set user from action if available, otherwise set from cache.
+     */
     case AuthConstants.TOKEN_SET:
-      // UserStore.setFromCache();
-      (action.user) ? UserStore.setUser(action.user) : UserStore.setFromCache();
+      (action.user !== undefined) ? UserStore.setUser(action.user) : UserStore.setFromCache()
       UserStore.emitChange();
       break;
     case AuthConstants.TOKEN_REMOVED:
@@ -131,6 +165,11 @@ AppDispatcher.register(action => {
       UserStore.emitChange();
       break;
 
+      /**
+       * On todo favorite add, wait for todo to update then add favorite and emit cahgne
+       * 
+       * !! -- REWORK
+       */
     case TodoConstants.ADD_AND_FAVE_TODO:
       AppDispatcher.waitFor([TodoDispatchToken]);
       UserStore.addFavorite(action.toFave)
@@ -147,5 +186,5 @@ AppDispatcher.register(action => {
 });
 
 
-
+export { UserDispatchToken };
 export default UserStore;

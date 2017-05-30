@@ -1,8 +1,12 @@
 const mongoose = require('mongoose'),
       Schema = mongoose.Schema;
 
+
+/**
+ * Master data model for Tasks
+ *
+ */
 const TaskModel = mongoose.model('Task', new Schema({
-  // id: { type: String },
   groupId: { type: String },
   title: { type: String },
   createdBy: { type: Object, default: {_id: '', name: ''} },

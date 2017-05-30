@@ -15,12 +15,9 @@ const createTask = function createTask(user, group, taskReq) {
         task.groupId = group._id;
 
     group.tasks.push(task);
-    // group.tasksStarted++;
 
     task.save();
     group.save();
-
-    // console.log(task, group)
 
     res(task);
   })
