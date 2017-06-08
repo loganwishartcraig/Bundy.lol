@@ -7,75 +7,71 @@ import { TodoActions } from '../../Actions/TodoActions';
 import TodoItemOptions from './TodoItemOptions.react';
 
 
+/**
+ * Handles formatting the request date
+ *
+ * @param      {String}    date    String representing a date
+ * @return     {String}  String representing 'm/d'
+ */
+const formatRequestDate = date => {
+  date = new Date(date);
+  return (date.getMonth() + 1).toString() + "/" + date.getDate().toString();
+} 
 
 /**
  * Contains an action button, meta info, and an options menu
  * for a given todo
  *
  * @class      TodoItem (name)
+ * @param      {Object}  arg1                Component props
+ * @param      {String}  arg1.userId         User ID
+ * @param      {String}  arg1._id            Todo ID
+ * @param      {Boolean}  arg1.completed      Indicates if todo is complete
+ * @param      {Function}  arg1.onComplete     Called when complete button is clicked
+ * @param      {String}  arg1.title          Todo title text
+ * @param      {String}  arg1.dateCompleted  The date completed
+ * @param      {Object}  arg1.completedBy    The "completed by" user info
+ * @param      {String}  arg1.dateCreated    The date todo was created
+ * @param      {Object}  arg1.createdBy      The "created by" user info
+ * @return     {<type>}  React component
  */
-export default class TodoItem extends Component {
+const TodoItem = ({
+  userId,
+  _id,
+  completed,
+  onComplete,
+  title,
+  dateCompleted,
+  completedBy,
+  dateCreated,
+  createdBy
+}) => (
 
-  constructor(props, context) {
-    super(props, context);
+  <li className={(completed) ? 'todo--item complete' : 'todo--item'} >
 
-    this._handleTodoComplete = this._handleTodoComplete.bind(this);
+    {/* Action button */}
+    {(completed) ? 
+      <button className="todo--complete--btn wire--btn--pink btn--md" type="button" disabled="disabled">Gotten</button> 
+    : 
+      <button className="todo--complete--btn wire--btn--pink btn--md" onClick={onComplete}>I've Got It</button> 
+    } 
 
-  }
+    {/* Todo info */}
+    <span className="todo--meta">
+      <span className="todo--title" title={title}>{title}</span>
 
- 
-  /**
-   * Marks the self as complete
-   * 
-   * !! -- Coule use bubbling
-   */
-  _handleTodoComplete() {
-    TodoActions.markComplete(this.props._id)
-  }
-
-
-  /**
-   * Handles formatting the request date
-   *
-   * @param      {Date}    date    The date
-   * @return     {String}  String representing 'm/d'
-   */
-  formatRequestDate(date) {
-    date = new Date(date);
-    return (date.getMonth() + 1).toString() + "/" + date.getDate().toString();
-  }
-
-  render() {
-
-    return(
-
-      <li className={(this.props.completed) ? 'todo--item complete' : 'todo--item'} >
-
-        {/* Action button */}
-        {(this.props.completed) ? 
-          <button className="todo--complete--btn wire--btn--pink btn--md" type="button" disabled="disabled">Gotten</button> 
+      {(completed) ? 
+        <em className="todo--request">Completed on {formatRequestDate(dateCompleted)} by {(completedBy._id === userId) ? 'you' : completedBy.name}</em>
         : 
-          <button className="todo--complete--btn wire--btn--pink btn--md" onClick={this._handleTodoComplete}>I've Got It</button> 
-        } 
+        <em className="todo--request">Requested on {formatRequestDate(dateCreated)} by {(createdBy._id === userId) ? 'you' : createdBy.name}</em>
+      }
+    </span>
 
-        {/* Todo info */}
-        <span className="todo--meta">
-          <span className="todo--title" title={this.props.title}>{this.props.title}</span>
+    {/* Options menu, only displayed if owned by user */}
+    {(userId === createdBy._id) ? <TodoItemOptions id={_id} completed={completed} /> : null}
+    
+  </li>
 
-          {(this.props.completed) ? 
-            <em className="todo--request">Completed on {this.formatRequestDate(this.props.dateCompleted)} by {(this.props.completedBy._id === this.props.userId) ? 'you' : this.props.completedBy.name}</em>
-            : 
-            <em className="todo--request">Requested on {this.formatRequestDate(this.props.dateCreated)} by {(this.props.createdBy._id === this.props.userId) ? 'you' : this.props.createdBy.name}</em>
-          }
-        </span>
+);
 
-        {/* Options menu, only displayed if owned by user */}
-        {(this.props.userId === this.props.createdBy._id) ? <TodoItemOptions {...this.props} /> : null}
-        
-      </li>
-
-    )
-
-  }
-
-}
+export default TodoItem; 

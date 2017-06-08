@@ -11,20 +11,12 @@ import { ProfileConstants } from '../Constants/ProfileConstants';
  * Requests from server, then sets profile
  */
 const updateProfile = () => {
-  Logger.log('Updating profile...');
-
-  setTimeout(() => {
 
   ProfileService
     .getProfile()
-    .then(profile => {
-      Logger.log("Updated profile recieved.", {user: profile.user.email});
-      setProfile(profile);
-    })
-    .catch(err => {
-      console.warn(err)
-    });
-  }, 3000)
+    .then(profile => { setProfile(profile); })
+    .catch(err => { console.warn(err); });
+
 };
 
 
@@ -34,14 +26,14 @@ const updateProfile = () => {
  * @param      {Object}  profile  The users profile object { user: Object, groups: [ Object ] }
  */
 const setProfile = profile => {
-
   AppDispatcher.dispatch({
     type: ProfileConstants.SET_PROFILE,
     user: profile.user,
     groups: profile.groups
   });
-
 };
+
+
 
 export const ProfileActions = {
   updateProfile,

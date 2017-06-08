@@ -17,17 +17,17 @@ const _handleTodoEdit = (todoId) => (evt => {
  *
  * @class      TodoItemOptions (name)
  * @param      {Object}  arg1            Component expected prop
- * @param      {String}  arg1._id        ID of the todo
+ * @param      {String}  arg1.id        ID of the todo
  * @param      {Boolean}  arg1.completed  Complete status
  * @return     {Object}  Component
  */
 const TodoItemOptions = ({
-  _id,
+  id,
   completed
 }) => (
   <span className="todo--options">
-    {(!completed) ? <button className="text--btn--grey btn--edit" onClick={_handleTodoEdit(_id)}>Edit</button> : null} 
-    <button className="text--btn--grey btn--delete" onClick={_handleTodoDelete(_id)}>Delete</button>
+    {(!completed) ? <button className="text--btn--grey btn--edit" onClick={_handleTodoEdit(id)}>Edit</button> : null} 
+    <button className="text--btn--grey btn--delete" onClick={_handleTodoDelete(id)}>Delete</button>
   </span>
 );
 

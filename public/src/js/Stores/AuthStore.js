@@ -17,15 +17,12 @@ class _AuthStore extends EventEmitter {
   constructor() {
     super();
 
-    // this._cacheKey = 'auth'
-    
+    // !! -- REWORK to own setting AJAX headers + Caching auth token
+
     /**
      * Initial authentication state
-     * 
-     * !! -- Try setting to true?
-     * 
      */
-    this._authenticated = false;    // Should be set to a boolean indicating if auth AJAX headers have been set
+    this._authenticated = false;    // Boolean indicating if auth AJAX headers have been set
   }
   
 

@@ -6,71 +6,7 @@ class _GroupService {
 
   constructor() {
 
-    /**
-     * Cache keys for last active and groups array
-     * 
-     * !! -- DEPRICATED???
-     * 
-     */
-    this._lastActiveKey = 'lastActive';
-    this._groupKey = 'groups';
-
   } 
-
-  /**
-   * Clears last active cache entry
-   */
-  clearLastActive() {
-    CacheService.remove(this._lastActiveKey);
-  }
-
-  /**
-   * Caches the last active group name
-   *
-   * @param      {String}  groupName  The last active group name
-   */
-  saveLastActive(groupName) {
-    CacheService.cache(this._lastActiveKey, groupName);
-  }
-
-
-  /**
-   * Gets the last active group from cache
-   *
-   * @return     {String}  The last active group name.
-   */
-  getLastActive() {
-    return CacheService.get(this._lastActiveKey);
-  }
-
-
-  /**
-   * Caches a group list
-   *
-   * @param      { [ Groups ] }  groups  Array of groups objects to cache
-   */
-  cacheGroups(groups) {
-    CacheService.cache(this._groupKey, groups);
-  }
-
-
-  /**
-   * Gets the cached group list
-   *
-   * @return     { [ Groups ] }  Array of group objects
-   */
-  getGroupsFromCache() {
-    return CacheService.get(this._groupKey);
-  }
-
-
-  /**
-   * Removes the cached group list
-   */
-  clearGroups() {
-    CacheService.remove(this._groupKey);
-  }
-
 
   /**
    * Used to make a join request for a given group

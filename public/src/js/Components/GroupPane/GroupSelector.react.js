@@ -3,46 +3,47 @@ import Logger from '../../Utility/Logging';
 
 import { GroupActions } from '../../Actions/GroupActions';
 
+const _handleGroupChange = evt => {
+  if (evt.target.nodeName !== 'BUTTON') return;
+  const groupName = evt.target.getAttribute('name');
+  GroupActions.setActive(groupName)
+};
+
 
 /**
  * Component provides a list of groups available to the user
  * Clicking a group will make it the active group 
  *
  * @class      GroupSelector (name)
+ * @param      {Object}  arg1              Component props
+ * @param      {Boolean}  arg1.hasGroups    Indicates if groups are available
+ * @param      { [ Object ] }  arg1.groups       List of groups
+ * @param      {String}  arg1.activeGroup  The active group ID
+ * @return     {Object}  React component
  */
-export default class GroupSelector extends Component {
-  constructor(props, context) {
-    super(props, context);
+const GroupSelector = ({
+  hasGroups,
+  groups,
+  activeGroup
+}) => (
 
-    this._handleGroupChange = this._handleGroupChange.bind(this);
-  }
-
-  _handleGroupChange(e) {
-    if (e.target.nodeName !== 'BUTTON') return;
-    let groupName = e.target.getAttribute('name');
-    GroupActions.setActive(groupName)
-  }
-
-  render() {
-    return(
-      <ul className="group--selector" onClick={this._handleGroupChange}>
+  <ul className="group--selector" onClick={_handleGroupChange}>
        
-        {/* If no groups availalbe, render nothing
-          * !-- SHOULD RENDER "NO GROUPS' MESSAGE
-          */}
-        {/* Render new item for each group, if group is active, give active class */}
-        {(this.props.hasGroups) ? 
+    {/* If no groups availalbe, render nothing
+      * !-- SHOULD RENDER "NO GROUPS' MESSAGE
+      */}
+    {/* Render new item for each group, if group is active, give active class */}
+    {(hasGroups) ? 
 
-            this.props.groups.map(function(group, i) {
-              return (<li key={i} className="group--item"><button name={group.name} title={group.name} className={(this.props.activeGroup === group.name) ? 'group--btn active' : 'group--btn'}>{group.name}</button></li>)
-            }.bind(this))
-          : 
-            null
-        }
+        groups.map(function(group, i) {
+          return (<li key={i} className="group--item"><button name={group.name} title={group.name} className={(activeGroup === group.name) ? 'group--btn active' : 'group--btn'}>{group.name}</button></li>)
+        }.bind(this))
+      : 
+        null
+    }
 
-        
+  </ul>
 
-      </ul>
-    )
-  }
-}
+);
+
+export default GroupSelector;

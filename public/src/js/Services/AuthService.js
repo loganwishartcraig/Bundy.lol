@@ -2,6 +2,8 @@ import * as axios from 'axios';
 import Logger from '../Utility/Logging';
 
 import { CacheService } from './CacheService';
+import { ProfileService } from './ProfileService';
+
 import { AuthActions } from '../Actions/AuthActions';
 
 
@@ -37,7 +39,7 @@ class _AuthService {
       let cached = CacheService.get(this.cacheKey)
 
       if (cached !== undefined) {
-        this._setSession(cached)
+        this._setSession(cached);
         res();
       } else {
         rej();
@@ -54,8 +56,6 @@ class _AuthService {
    * @param      {String}  token   The authentication token to use
    */
   _setSession (token) {
-
-    Logger.log('Setting & caching session', token)
 
     CacheService.cache(this.cacheKey, token);
     
@@ -78,33 +78,26 @@ class _AuthService {
 
     return new Promise((res, rej) => {
 
-      Logger.log('POST-ing login request to server', loginReq)
-
       axios.post('/auth/login', {
         credentials: loginReq
       })
       .then(response => {
-        Logger.log('POST Successful!', response.data)
 
         /**
          * Set session using returned token
          */
         this._setSession(response.data.token);
 
-
         /**
-         * prep returned profile object for app use
+         * ProfileService transforms server returned object to what app expects
+         * 
+         * !! -- Needs to be reworked
          */
-        let user = response.data.user,
-            groups = user.memberOf;
-            delete user.memberOf;
-
-        res({user: user, groups: groups});
+        res(ProfileService.processUser(response.data.user));
 
 
       })
       .catch(err => {
-        Logger.error('POST Failed...', err);
         rej(err.response.data);
       });
 
@@ -117,8 +110,6 @@ class _AuthService {
    * Requests user creation serve-side
    * Response includes auth token and created user profile
    * 
-   * !! -- Response handler duplicates functionlity form login handler. Use profle service processProfile(profile)?
-   *
    * @param      {Object}   userReq  Info for user to create
    * @return     {Promise}  Resolves with user and group info { user: Object, groups: [ Object ] } on successful creation, rejects with error payload otherwise  
    */
@@ -127,13 +118,11 @@ class _AuthService {
 
     return new Promise((res, rej) => {
 
-      Logger.log('POST-ing create request...')
 
       axios.post('/user/create', {
         user: userReq
       })
       .then(response => {
-        Logger.log('POST Successful!', response.data);
         
         /**
          * Set session using returned token
@@ -142,13 +131,11 @@ class _AuthService {
 
 
         /**
-         * prep returned profile object for app use
+         * ProfileService transforms server returned object to what app expects
+         * 
+         * !! -- Needs to be reworked
          */
-        let user = response.data.user,
-            groups = user.memberOf;
-            delete user.memberOf;
-
-          res({user: user, groups: groups});
+        res(ProfileService.processUser(response.data.user));
 
       })
       .catch(err => {
@@ -166,23 +153,10 @@ class _AuthService {
    */
   logout() {
 
-    Logger.log('Removing cache and Auth headers')
     CacheService.remove(this.cacheKey);
     axios.defaults.headers.common['Authorization'] = undefined;
 
   }
-
-  /**
-   * Public session setting function.
-   * 
-   * !! -- DEPRICATED. Do not think this is used
-   *
-   * @param      {String}  sessionToken  The auth token to set
-   */
-  setSession(sessionToken) {
-    this._setSession(sessionToken);
-  }
-
 
 }
 

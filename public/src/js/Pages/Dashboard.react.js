@@ -22,9 +22,9 @@ export class Dashboard extends Component {
   }
 
 
-  componentWillMount() {
-    Logger.log('<Dashboard /> mounting');
-  }
+  // componentWillMount() {
+  //   Logger.log('<Dashboard /> mounting');
+  // }
 
   render() {
     return (

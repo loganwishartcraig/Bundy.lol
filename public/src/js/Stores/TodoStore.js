@@ -222,7 +222,7 @@ const handleGroupChange = () => {
 }
 
 const TodoDispatchToken = AppDispatcher.register(action => {
-// console.warn(action)
+
   switch(action.type) {
 
     case AuthConstants.TOKEN_SET:
@@ -233,7 +233,6 @@ const TodoDispatchToken = AppDispatcher.register(action => {
       TodoStore.reset();
       TodoStore.emitChange();
       break;
-
 
 
     /**
@@ -308,11 +307,6 @@ const TodoDispatchToken = AppDispatcher.register(action => {
       TodoStore.resetEditing();
       TodoStore.emitChange();
       break;
-    // case TodoConstants.COMIT_EDIT:
-    //   TodoStore.updateTodo(action.id, action.todo);
-    //   TodoStore.resetEditing();
-    //   TodoStore.emitChange();  
-      // break;
 
     default:
       break;

@@ -19,7 +19,7 @@ class _ProfileService {
    * 
    * !! -- Should likely be reworked to just use single user object & waitFor in store action hanlders
    *
-   * @param      {<type>}  user    The full server returned user object
+   * @param      {Object}  user    The full server returned user object
    * @return     {Object}  Split user object into user {Object}, and groups { [ Object ] }
    */
   processUser(user) {

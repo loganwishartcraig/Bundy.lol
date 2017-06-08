@@ -12,6 +12,19 @@ const _handleTodoAdd = () => {
 }
 
 
+/**
+ * Generates an event handler to complete a todo. 
+ * Uses closure with access to todosId.
+ *
+ * !! -- Could be reworked to use event bubbling
+ *
+ * @param      {String}  todoId  ID of the todo being completed
+ * @return     {Function}  Function that executes on todo complete button press, completeing the todo
+ */
+const _handleTodoComplete = (todoId) => (
+  (evt) => { TodoActions.markComplete(todoId); }
+)
+
 
 /**
  * Component populates a new todo item for each todo in a given list
@@ -37,6 +50,7 @@ const TodoList = ({
     <ul className={(hasTodos) ? "todo--list" : "todo--list empty"}>
 
       {/* Displays todo items if has todos, 'empty' message if not */} 
+
       {(hasTodos) ?  
 
         todos.sort((a, b) => (
@@ -51,7 +65,7 @@ const TodoList = ({
           (editingId === todo._id) ? 
             <TodoItemEditing key={i} userId={userId} text={todo.title} todoId={todo._id} userId={userId} /> 
               : 
-            <TodoItem key={i} userId={userId} {...todo} />)
+            <TodoItem key={i} userId={userId} onComplete={_handleTodoComplete(todo._id)} {...todo} />)
           )
       :
         <li>No pending tasks... <br/> You should <button onClick={_handleTodoAdd} className="empty--req--add light--text--btn">add</button> some</li>

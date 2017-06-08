@@ -7,48 +7,7 @@ class _TodoService {
 
   constructor() {
 
-    /**
-     * Cache key for todos
-     */
-    this._cacheKey = 'todos';
-  
   } 
-
-
-  /**
-   * Caches a list of todos
-   *
-   * !! -- UNUSED?
-   *
-   * @param      { [ Object ] }  todos   Array of todo objects to cache
-   */
-  cacheTodos(todos) {
-    CacheService.cache(this._cacheKey, todos)
-  }
-
-
-  /**
-   * Gets the cached todo list
-   * 
-   * !! -- UNUSED?
-   *
-   * @return     { [ Object ] }  Array of cached todo objects.
-   */
-  getTodosFromCache() {
-    return CacheService.get(this._cacheKey);
-  }
-
-
-  /**
-   * Clears the todo cache
-   * 
-   * !! -- UNUSED?
-   * 
-   */
-  clearTodos() {
-    CacheService.remove(this._cacheKey);
-  }
-
 
   /**
    * Used to make todo creation requests

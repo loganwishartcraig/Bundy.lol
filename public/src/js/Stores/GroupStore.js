@@ -36,9 +36,7 @@ class _GroupStore extends EventEmitter {
 
   /**
    * Used to initalize the current state from cache
-   * 
-   * !! -- Should be in constructor?
-   * 
+   * Will only be called on TOKEN_SET action if no state is already set
    */
   setFromCache() {
 
@@ -61,10 +59,6 @@ class _GroupStore extends EventEmitter {
     CacheService.cache(this._cacheKey, {groups: this._groups, activeGroup: this._activeGroup})
   }
 
-
-  /**
-   * Used to clear the cached state
-   */
   clearCache() {
     CacheService.remove(this._cacheKey);
   }
@@ -78,6 +72,8 @@ class _GroupStore extends EventEmitter {
   }
 
   /**
+   * Gets the currently active group object
+   *
    * @return     {Object}  The active group reference in the groups array.
    */
   getActiveGroup() {
@@ -86,11 +82,6 @@ class _GroupStore extends EventEmitter {
 
   getActiveMembers() {
     if (this.hasActive()) return this._groups.filter(group => group.name === this._activeGroup)[0].members;
-  }
-
-  // !! -- DEPRICATED?
-  getmanagingInfo() {
-    if (this.isManaging()) return this._groups.filter(group => group.name === this._managing)[0];
   }
 
   isAdding() {
@@ -221,8 +212,6 @@ class _GroupStore extends EventEmitter {
 
   /**
    * resets managing state
-   * 
-   * !! -- UNUSED?
    */
   clearManaging() {
     this._managing = false;
@@ -279,7 +268,7 @@ const GroupStore = new _GroupStore();
 
 
 /**
- * Updates todos for active group when todo store changes for caching purposes
+ * Updates todos for active group when todo store changes. For caching purposes
  */
 const handleTodoChange = () => {
   AppDispatcher.waitFor([TodoDispatchToken]);
@@ -288,9 +277,8 @@ const handleTodoChange = () => {
 
 
 const GroupDispatchToken = AppDispatcher.register(action => {
-// console.warn(action)
-  switch(action.type) {
 
+  switch(action.type) {
 
     /**
      * On token set, if groups included, set, otherwise set from cache
@@ -305,7 +293,6 @@ const GroupDispatchToken = AppDispatcher.register(action => {
       break;
 
 
-    // !! -- DEPRICATED?
     case ProfileConstants.SET_PROFILE:
       GroupStore.setGroups(action.groups);
       GroupStore.emitChange();

@@ -59,7 +59,7 @@ class _CacheService {
    * @return     {Varries}  Returns data associated with key if found, undefined if not
    */
   get(key) {
-    Logger.log('Getting from cache', {key: key})
+    Logger.log('Getting from cache', {key: key});
     if (!this._enabled) return undefined;
     return store.get(key);
   }
@@ -73,8 +73,8 @@ class _CacheService {
    * @param      {Varries}  data    The data to cache
    */
   cache(key, data) {
-    Logger.log('Caching...', {key: key, enabled: this._enabled})
-    if (this._enabled) store.set(key, data)
+    Logger.log('Caching...', {key: key, enabled: this._enabled});
+    if (this._enabled) store.set(key, data);
   }
 
 

@@ -1,13 +1,27 @@
 import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 
+import { ErrorActions } from './ErrorActions';
+
 import { TodoConstants } from '../Constants/TodoConstants';
 import { TodoService } from '../Services/TodoService';
 
 
 /**
+ * Internal function used to handle AJAX request failures.
+ * Sets the error message if available
+ *
+ * @param      {Object}  err     The server-returned error message {msg: String, status: Integer}
+ */
+const _handleReqFail = err => {
+  console.warn(err);
+  if (err.msg) ErrorActions.setError(err.msg);  
+};
+
+
+/**
  * Action used to create a new todo
  *
- * @param      {Object}  todoReq  The todo request object, {title: String, toFave: Boolean}
+ * @param      {Object}  todoReq  The todo request object, {title: String, groupId: String, toFave: Boolean}
  */
 const createTodo = (todoReq) => {
 
@@ -15,15 +29,13 @@ const createTodo = (todoReq) => {
     .createTodo(todoReq)
     .then(res => {
 
-      console.warn(res);
       /**
        * Fires action based on if todo was to be added to favorite list
        */
       (res.toFave) ? addAndFaveTodo(res.task, res.toFave) : addTodo(res.task)
+
     })
-    .catch(err => {
-      console.error(err)
-    });
+    .catch(_handleReqFail);
 
 };
 
@@ -37,12 +49,8 @@ const createTodo = (todoReq) => {
 const deleteTodo = todoId => {
   TodoService
     .deleteTodo(todoId)
-    .then(() => {
-      removeTodo(todoId);
-    })
-    .catch(err => {
-      console.warn('got err', err)
-    })
+    .then(() => { removeTodo(todoId); })
+    .catch(_handleReqFail)
 };
 
 
@@ -55,12 +63,8 @@ const deleteTodo = todoId => {
 const markComplete = todoId => {
   TodoService
     .markComplete(todoId)
-    .then(todo => {
-      updateTodo(todoId, todo);
-    })
-    .catch(err => {
-      console.warn('got err', err);
-    });
+    .then(todo => { updateTodo(todoId, todo); })
+    .catch(_handleReqFail);
 };
 
 
@@ -73,18 +77,13 @@ const markComplete = todoId => {
  * @param      {String}  newText  The new todo text
  * @param      {String}  todoId   ID of the todo to update
  * @param      {String}  userId   ID of the user updating
- * @return     {null}
  */
 const comitEdit = (newText, todoId, userId) => {
 
   TodoService
     .comitEdit(newText, todoId, userId)
-    .then(todo => {
-      updateTodo(todoId, todo);
-    })
-    .catch(err => {
-      console.warn(err);
-    })  ;
+    .then(todo => { updateTodo(todoId, todo); })
+    .catch(_handleReqFail)
 
 };
 
@@ -92,7 +91,6 @@ const comitEdit = (newText, todoId, userId) => {
  * Action used to add a todo
  *
  * @param      {Object}  todo    The todo object to add.
- * @return     {null} 
  */
 const addTodo = todo => {
   AppDispatcher.dispatch({
@@ -109,7 +107,6 @@ const addTodo = todo => {
  *
  * @param      {Object}  todo    The todo object to add
  * @param      {Object}  toFave  The todo favorite object
- * @return     {null} 
  */
 const addAndFaveTodo = (todo, toFave) => {
   AppDispatcher.dispatch({
@@ -124,7 +121,6 @@ const addAndFaveTodo = (todo, toFave) => {
  *
  * @param      {String}  todoId  ID of the todo to update
  * @param      {Object}  todo    The todo object to update with
- * @return     {null} 
  */
 const updateTodo = (todoId, todo) => {
   AppDispatcher.dispatch({
@@ -140,7 +136,6 @@ const updateTodo = (todoId, todo) => {
  * Action used to remove a todo
  *
  * @param      {String}  todoId  ID of the todo to remove
- * @return     {null}  
  */
 const removeTodo = todoId => {
   AppDispatcher.dispatch({
@@ -154,7 +149,6 @@ const removeTodo = todoId => {
  * Action used to set the active todo filter
  *
  * @param      {String}  filterId  The ID of the filter
- * @return     {null} 
  */
 const setFilter = filterId => {
 
@@ -168,8 +162,6 @@ const setFilter = filterId => {
 
 /**
  * Action used to start creating a todo
- *
- * @return     {null} 
  */
 const startCreate = () => {
   AppDispatcher.dispatch({
@@ -180,8 +172,6 @@ const startCreate = () => {
 
 /**
  * Action used to end creating a todo
- *
- * @return     {null}
  */
 const endCreate = () => {
   AppDispatcher.dispatch({
@@ -194,7 +184,6 @@ const endCreate = () => {
  * Action used to start a todo edit
  *
  * @param      {String}  todoId  ID of the todo to edit
- * @return     {null}
  */
 const startEdit = todoId => {
   AppDispatcher.dispatch({
@@ -206,8 +195,6 @@ const startEdit = todoId => {
 
 /**
  * Action used to end an edit
- *
- * @return     {null}
  */
 const endEdit = () => {
   AppDispatcher.dispatch({
@@ -217,33 +204,12 @@ const endEdit = () => {
 
 /**
  * Action used to show the favorites lits
- *
- * @return     {null}
  */
 const showFaves = () => {
   AppDispatcher.dispatch({
     type: TodoConstants.SHOW_FAVES
   });
 };
-
-
-/////////////////////////////////////////////////////////////////////
-/**
- * Action used to dispatch an edit to a todo.
- * !! -- DEPRICATED: Should use updateTodo(todoId, todo)
- *
- * @param      {String}  todoId  ID of the todo to update
- * @param      {Object}  todo    The todo object to update with
- * @return     {<type>}  { description_of_the_return_value }
- */
-// const dispatchEdit = (todoId, todo) => {
-//   AppDispatcher.dispatch({
-//     type: TodoConstants.COMIT_EDIT,
-//     id: todoId,
-//     todo: todo
-//   });
-// };
-/////////////////////////////////////////////////////////////////////
 
 
 export const TodoActions = {

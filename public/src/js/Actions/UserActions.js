@@ -2,27 +2,21 @@ import { AppDispatcher } from '../Dispatcher/AppDispatcher';
 
 import Logger from '../Utility/Logging';
 
+import { ErrorActions } from './ErrorActions';
+
 import { CacheService } from '../Services/CacheService';
 import { UserService } from '../Services/UserService';
 import { UserConstants } from '../Constants/UserConstants';
 
-
-
 /**
- * Action used set user from cache
- * 
- * !! -- This should be reworked
+ * Internal function used to handle AJAX request failures.
+ * Sets the error message if available
  *
- * @return     {null} 
+ * @param      {Object}  err     The server-returned error message {msg: String, status: Integer}
  */
-const setFromCache = () => {
-
-  Logger.log('setting user from cache');
-
-  AppDispatcher.dispatch({
-    type: UserConstants.SET_USER_FROM_CACHE
-  });
-
+const _handleReqFail = err => {
+  console.warn(err);
+  if (err.msg) ErrorActions.setError(err.msg);  
 };
 
 
@@ -102,7 +96,6 @@ const removeFave = (faveId) => {
 
 export const UserActions = {
 
-  setFromCache,
   setUser,
   updateUser,
   deleteFave
