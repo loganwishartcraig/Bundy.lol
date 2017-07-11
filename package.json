@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently --prefix \"[{command}] -\" --prefix--colors \"red, green, blue, yellow\" --kill-others \"mongod\" \"nodemon\" \"webpack\" \"gulp\""
+    "dev": "concurrently --prefix \"[{command}] -\" --prefix--colors \"red, green, blue, yellow\" --kill-others \"mongod\" \"nodemon\" \"webpack\" \"gulp\"",
+    "start" "node bin/www":
   },
   "dependencies": {
     "axios": "^0.15.2",
