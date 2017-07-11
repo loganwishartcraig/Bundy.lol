@@ -6,7 +6,9 @@ import { GroupActions } from '../../Actions/GroupActions'
 import ErrorDisplay from '../ErrorDisplay/ErrorDisplay.react';
 import Form from '../Form/Form.react';
 
-const _handleGroupJoin = evt => {
+
+// non arrow due to rebind of this by 'Form' component
+const _handleGroupJoin = function(evt) {
   evt.preventDefault();
   GroupActions.joinGroup(this.state);
 };
