@@ -12,6 +12,8 @@ Technologies used include
 * Gulp + Webpack
 * Stylus
 
+Check out a preview at [bundylol.herokuapp.com/](http://bundylol.herokuapp.com/)
+
 ### Running Bundy.lol
 
 Bundy.lol requires Node.js and a local MongoDB server instance to run.
