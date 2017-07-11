@@ -17695,9 +17695,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _objectDestructuringEmpty(obj) { if (obj == null) throw new TypeError("Cannot destructure undefined"); }
 
+// non arrow due to rebind of this by 'Form' component
 var _handleGroupJoin = function _handleGroupJoin(evt) {
   evt.preventDefault();
-  _GroupActions.GroupActions.joinGroup(undefined.state);
+  _GroupActions.GroupActions.joinGroup(this.state);
 };
 
 var _handleGroupCancel = function _handleGroupCancel(evt) {
