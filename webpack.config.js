@@ -1,5 +1,5 @@
 var path = require('path');
-var LiveReloadPlugin = require('webpack-livereload-plugin');
+// var LiveReloadPlugin = require('webpack-livereload-plugin');
 
 module.exports = {
   entry: path.resolve(__dirname, './public/src/js/entry.js'),
@@ -19,11 +19,11 @@ module.exports = {
       }
     }]
   },
-  plugins: [
-    new LiveReloadPlugin({
-      hostname: 'localhost', 
-      port: 35729, 
-      appendScriptTag: true
-    })
-  ]
+  // plugins: [
+  //   new LiveReloadPlugin({
+  //     hostname: 'localhost', 
+  //     port: 35729, 
+  //     appendScriptTag: true
+  //   })
+  // ]
 };
