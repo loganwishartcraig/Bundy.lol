@@ -14,7 +14,9 @@ Technologies used include
 
 Check out a preview at [bundylol.herokuapp.com/](http://bundylol.herokuapp.com/)
 
-### Running Bundy.lol
+Make an account, create a group, then post a task!
+
+### Running Bundy.lol locally
 
 Bundy.lol requires Node.js and a local MongoDB server instance to run.
 
@@ -29,6 +31,7 @@ In a new shell, install the dependencies and start the server.
 ```sh
 cd bundylol
 npm install
+set MONGODB_URI={{your mongoDB instance URI}}
 npm run dev
 ```
 

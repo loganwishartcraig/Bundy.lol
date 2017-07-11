@@ -11,9 +11,8 @@ const AuthOps = require('../auth/AuthOps');
 /**
  * defines required params for create/join group requests
  *  'name'       {String}    Name of the group to add
- *  'password'   {String}    Password for the group
  */
-const validateGroupReq = new RequestFilter(['name', 'password']);
+const validateGroupReq = new RequestFilter(['name']);
 
 
 
