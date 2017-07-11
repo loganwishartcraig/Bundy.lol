@@ -157,7 +157,7 @@ const joinGroup = (groupReq, user) => {
            * On successful save, re-populate group object.
            * Needed to populate creating users info correctly.
            */
-          GroupModel.populate(group, {
+          GroupModel.populate(existing, {
             path: 'members',
             select: '_id fName lName'
           }).then(populated => {
