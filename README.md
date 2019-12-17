@@ -1,5 +1,7 @@
 # Bundy.lol
 
+*NOTE:* This project is no longer under active development.
+
 Bundy.lol is a full-stack JavaScript application allowing users to create and join groups to which they can post common tasks for completion by group members.
 
 Technologies used include
@@ -11,10 +13,6 @@ Technologies used include
 * Bcrypt password hashing
 * Gulp + Webpack
 * Stylus
-
-Check out a preview at [bundylol.herokuapp.com/](http://bundylol.herokuapp.com/)
-
-Make an account, create a group, then post a task!
 
 ### Running Bundy.lol locally
 
