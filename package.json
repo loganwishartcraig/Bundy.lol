@@ -17,7 +17,7 @@
     "jsonwebtoken": "^7.1.9",
     "livereload-js": "^2.2.2",
     "localforage": "^1.4.3",
-    "mongoose": "^4.7.0",
+    "mongoose": "^5.8.1",
     "morgan": "~1.7.0",
     "node-uuid": "^1.4.7",
     "react": "^15.4.2",
