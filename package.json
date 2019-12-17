@@ -6,7 +6,7 @@
     "dev": "concurrently --prefix \"[{command}] -\" --prefix--colors \"red, green, blue, yellow\" --kill-others \"mongod\" \"nodemon\" \"webpack\" \"gulp\""
   },
   "dependencies": {
-    "axios": "^0.15.2",
+    "axios": "^0.19.0",
     "bcryptjs": "^2.3.0",
     "body-parser": "~1.15.1",
     "cookie-parser": "~1.4.3",
