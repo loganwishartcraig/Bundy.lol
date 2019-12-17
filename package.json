@@ -18,7 +18,7 @@
     "livereload-js": "^2.2.2",
     "localforage": "^1.4.3",
     "mongoose": "^4.7.0",
-    "morgan": "~1.7.0",
+    "morgan": "~1.9.1",
     "node-uuid": "^1.4.7",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
