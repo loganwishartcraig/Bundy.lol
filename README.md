@@ -1,6 +1,6 @@
 # Bundy.lol
 
-*NOTE:* This project is no longer under active development.
+**NOTE:** This project is no longer under active development.
 
 Bundy.lol is a full-stack JavaScript application allowing users to create and join groups to which they can post common tasks for completion by group members.
 
